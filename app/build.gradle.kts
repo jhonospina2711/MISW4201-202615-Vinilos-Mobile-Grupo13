@@ -4,16 +4,6 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-val configuredApiBaseUrl = providers.gradleProperty("vinilosApiBaseUrl").orNull
-
-fun quotedBaseUrl(url: String): String {
-    require(url.startsWith("http://") || url.startsWith("https://")) {
-        "vinilosApiBaseUrl must start with http:// or https://"
-    }
-    require(url.endsWith("/")) { "vinilosApiBaseUrl must end with /" }
-    return "\"${url.replace("\\", "\\\\").replace("\"", "\\\"")}\""
-}
-
 android {
     namespace = "com.example.vinilosmobile"
     compileSdk {
@@ -35,15 +25,16 @@ android {
             buildConfigField(
                 "String",
                 "BACK_VYNILS_BASE_URL",
-                quotedBaseUrl(configuredApiBaseUrl ?: "http://10.0.2.2:3000/"),
+                "\"http://10.0.2.2:3000/\""
             )
         }
         release {
             buildConfigField(
                 "String",
                 "BACK_VYNILS_BASE_URL",
-                quotedBaseUrl(configuredApiBaseUrl ?: "https://example.invalid/"),
+                "\"https://backvynils-q6yc.onrender.com/\""
             )
+            signingConfig = signingConfigs.getByName("debug")
             optimization {
                 enable = true
                 packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
