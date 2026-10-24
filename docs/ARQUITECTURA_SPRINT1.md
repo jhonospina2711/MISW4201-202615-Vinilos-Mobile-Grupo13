@@ -134,7 +134,7 @@ sequenceDiagram
     opt Selecciona un artista
       Usuario->>Vista: Toca fila
       Vista->>Detail: abre con ArtistKey
-      Note over Detail,Server: Solicita /musicians/{id} o /bands/{id}; consulta premios si existen
+      Note over Detail,Server: Solicita el detalle y los premios cuando existen
     end
   else Falla una consulta o no hay red
     Server--xAPI: error
