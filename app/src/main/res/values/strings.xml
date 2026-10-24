@@ -26,4 +26,16 @@
     <string name="album_detail_error">No pudimos cargar el álbum</string>
     <string name="album_record_label">Sello discográfico</string>
     <string name="back">Volver</string>
+    <string name="entry_tagline">Explora álbumes, artistas y coleccionistas</string>
+    <string name="entry_question">¿Cómo quieres ingresar?</string>
+    <string name="entry_visitor">Visitante</string>
+    <string name="entry_visitor_description">Consulta el catálogo de álbumes, artistas y coleccionistas.</string>
+    <string name="entry_collector">Coleccionista</string>
+    <string name="entry_collector_description">Además de consultar, agrega álbumes y tracks al catálogo.</string>
+    <string name="entry_read_error_title">No pudimos cargar tu preferencia</string>
+    <string name="entry_read_error_body">Intenta de nuevo para continuar.</string>
+    <string name="entry_save_error">No pudimos guardar tu elección. Intenta de nuevo.</string>
+    <string name="change_access_type">Cambiar tipo de acceso</string>
+    <string name="add_album">Nuevo álbum</string>
+    <string name="add_album_coming_soon">Agregar próximamente</string>
 </resources>

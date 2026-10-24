@@ -1,4 +1,4 @@
-package com.example.vinilosmobile.feature.albums.detail
+package com.example.vinilosmobile.feature.albumdetail
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,7 +8,7 @@ import com.example.vinilosmobile.domain.repository.AlbumNotFoundException
 import com.example.vinilosmobile.domain.models.RequestFailure
 import com.example.vinilosmobile.domain.models.RequestFailureKind
 import com.example.vinilosmobile.domain.usecase.GetAlbumUseCase
-import com.example.vinilosmobile.feature.albums.detail.models.AlbumDetailUiState
+import com.example.vinilosmobile.feature.albumdetail.models.AlbumDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException

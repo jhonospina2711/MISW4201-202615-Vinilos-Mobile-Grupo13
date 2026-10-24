@@ -5,4 +5,5 @@
     <dimen name="vinilos_space_md">16dp</dimen>
     <dimen name="vinilos_space_lg">24dp</dimen>
     <dimen name="vinilos_radius_card">12dp</dimen>
+    <dimen name="vinilos_option_stroke">1dp</dimen>
 </resources>

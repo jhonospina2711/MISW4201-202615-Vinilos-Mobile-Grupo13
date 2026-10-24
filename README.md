@@ -6,6 +6,8 @@ La aplicación permite consultar el catálogo de álbumes, el listado de artista
 
 > **Estado de `sprint-1`:** un módulo `:app`, navegación inferior con tres Fragments y gesto horizontal, catálogo HU01 con Hilt, Repository y caché Room, y un detalle inicial de álbum. Artistas y Coleccionistas tienen pantallas iniciales. El avance y la documentación del producto están en la [wiki del proyecto](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki).
 
+Al abrir por primera vez, la app permite elegir Visitante o Coleccionista y guarda la selección con DataStore. Las siguientes aperturas entran directamente a Inicio. La arquitectura de ese flujo está descrita en [docs/ACCESO.md](docs/ACCESO.md).
+
 ---
 
 ## 1. Requisitos
@@ -116,7 +118,7 @@ La aplicación consume la API REST de **BackVynils**:
 
 - Repositorio del backend: <https://github.com/TheSoftwareDesignLab/BackVynils>
 
-El cliente Retrofit y el permiso `android.permission.INTERNET` ya están configurados. La URL predeterminada `https://sadasdasdadsa/` sigue siendo temporal. Para probar otra URL sin editar el código, pasar `-PvinilosApiBaseUrl=https://servidor/` a Gradle. El Repository intenta la red primero y usa la copia de Room si falla. Sin datos guardados muestra un error general traducido al español. Room usa esquema versión 1 y se conserva el mínimo de Android 5.0 (API 21). El estado del despliegue de TSDC y los pasos para Docker local están en [Backend para desarrollo](docs/BACKEND.md).
+El cliente Retrofit y el permiso `android.permission.INTERNET` ya están configurados. Debug apunta por defecto al backend Docker del emulador (`http://10.0.2.2:3000/`); para otra URL, pasar `-PvinilosApiBaseUrl=https://servidor/` a Gradle. El Repository intenta la red primero y usa la copia de Room si falla. Sin datos guardados muestra un error general traducido al español. Room usa esquema versión 1 y se conserva el mínimo de Android 5.0 (API 21). El estado del despliegue de TSDC y los pasos para Docker local están en [Backend para desarrollo](docs/BACKEND.md).
 
 ## 7. Flujo de trabajo en Git
 

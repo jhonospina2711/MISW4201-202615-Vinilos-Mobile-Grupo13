@@ -1,4 +1,4 @@
-package com.example.vinilosmobile.feature.albums.detail.models
+package com.example.vinilosmobile.feature.albumdetail.models
 
 import com.example.vinilosmobile.domain.models.Album
 import com.example.vinilosmobile.domain.models.RequestFailureKind

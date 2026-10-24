@@ -10,6 +10,7 @@
     <color name="vinilos_on_surface">#E6E0E9</color>
     <color name="vinilos_on_surface_variant">#CAC4D0</color>
     <color name="vinilos_error">#F2B8B5</color>
+    <color name="vinilos_outline">#49454F</color>
     <color name="vinilos_cover_one">#51348C</color>
     <color name="vinilos_cover_two">#633D4B</color>
     <color name="vinilos_cover_three">#4C4656</color>

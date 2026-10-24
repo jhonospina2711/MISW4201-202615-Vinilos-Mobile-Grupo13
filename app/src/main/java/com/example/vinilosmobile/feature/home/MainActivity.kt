@@ -1,9 +1,12 @@
 package com.example.vinilosmobile.feature.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -11,23 +14,43 @@ import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.example.vinilosmobile.R
 import com.example.vinilosmobile.databinding.ActivityMainBinding
-import com.example.vinilosmobile.feature.albums.detail.AlbumDetailFragment
+import com.example.vinilosmobile.domain.models.UserRole
+import com.example.vinilosmobile.feature.albumdetail.AlbumDetailFragment
+import com.example.vinilosmobile.feature.entry.EntryActivity
 import com.example.vinilosmobile.feature.home.adapters.HomeSectionPagerAdapter
 import com.example.vinilosmobile.feature.home.navigation.AlbumNavigator
-import kotlin.math.abs
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), AlbumNavigator {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var detailBackCallback: OnBackPressedCallback
+    private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        viewModel.selectedRole.observe(this) { role ->
+            if (role == null) {
+                startActivity(Intent(this, EntryActivity::class.java))
+                finish()
+            } else {
+                binding.addAlbumFab.isVisible = role == UserRole.COLLECTOR
+            }
+        }
+        binding.changeRoleButton.setOnClickListener {
+            startActivity(
+                Intent(this, EntryActivity::class.java)
+                    .putExtra(EntryActivity.EXTRA_ALLOW_ROLE_CHANGE, true),
+            )
+        }
+        binding.addAlbumFab.setOnClickListener {
+            Toast.makeText(this, R.string.add_album_coming_soon, Toast.LENGTH_SHORT).show()
+        }
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(bars.left, bars.top, bars.right, bars.bottom)

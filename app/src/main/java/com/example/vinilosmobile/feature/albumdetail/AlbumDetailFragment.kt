@@ -1,4 +1,4 @@
-package com.example.vinilosmobile.feature.albums.detail
+package com.example.vinilosmobile.feature.albumdetail
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.vinilosmobile.R
 import com.example.vinilosmobile.databinding.FragmentAlbumDetailBinding
 import com.example.vinilosmobile.domain.models.Album
-import com.example.vinilosmobile.feature.albums.detail.models.AlbumDetailUiState
+import com.example.vinilosmobile.feature.albumdetail.models.AlbumDetailUiState
 import com.example.vinilosmobile.feature.shared.messageRes
 import dagger.hilt.android.AndroidEntryPoint
 

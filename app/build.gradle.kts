@@ -4,14 +4,15 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-val vinilosApiBaseUrl = providers.gradleProperty("vinilosApiBaseUrl")
-    .orElse("https://sadasdasdadsa/")
-    .get()
-require(vinilosApiBaseUrl.startsWith("http://") || vinilosApiBaseUrl.startsWith("https://")) {
-    "vinilosApiBaseUrl must start with http:// or https://"
+val configuredApiBaseUrl = providers.gradleProperty("vinilosApiBaseUrl").orNull
+
+fun quotedBaseUrl(url: String): String {
+    require(url.startsWith("http://") || url.startsWith("https://")) {
+        "vinilosApiBaseUrl must start with http:// or https://"
+    }
+    require(url.endsWith("/")) { "vinilosApiBaseUrl must end with /" }
+    return "\"${url.replace("\\", "\\\\").replace("\"", "\\\"")}\""
 }
-require(vinilosApiBaseUrl.endsWith("/")) { "vinilosApiBaseUrl must end with /" }
-val escapedApiBaseUrl = vinilosApiBaseUrl.replace("\\", "\\\\").replace("\"", "\\\"")
 
 android {
     namespace = "com.example.vinilosmobile"
@@ -25,14 +26,24 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
-        // Override with -PvinilosApiBaseUrl=... when a backend is available.
-        buildConfigField("String", "BACK_VYNILS_BASE_URL", "\"$escapedApiBaseUrl\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            buildConfigField(
+                "String",
+                "BACK_VYNILS_BASE_URL",
+                quotedBaseUrl(configuredApiBaseUrl ?: "http://10.0.2.2:3000/"),
+            )
+        }
         release {
+            buildConfigField(
+                "String",
+                "BACK_VYNILS_BASE_URL",
+                quotedBaseUrl(configuredApiBaseUrl ?: "https://example.invalid/"),
+            )
             optimization {
                 enable = true
                 packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
@@ -74,6 +85,7 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+    implementation(libs.androidx.datastore.preferences)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
