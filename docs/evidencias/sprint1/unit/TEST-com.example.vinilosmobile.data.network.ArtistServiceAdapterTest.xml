@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.vinilosmobile.data.network.ArtistServiceAdapterTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-24T22:27:14.940Z" hostname="dscombita.local" time="0.799">
+  <properties/>
+  <testcase name="bandDetailUsesBandEndpointAndMembers" classname="com.example.vinilosmobile.data.network.ArtistServiceAdapterTest" time="0.76"/>
+  <testcase name="musicianDetailResolvesAwardNameFromPrizeCatalog" classname="com.example.vinilosmobile.data.network.ArtistServiceAdapterTest" time="0.011"/>
+  <testcase name="combinesMusiciansAndBandsSortedById" classname="com.example.vinilosmobile.data.network.ArtistServiceAdapterTest" time="0.014"/>
+  <testcase name="skipsInvalidRecordsWithoutDroppingValidArtists" classname="com.example.vinilosmobile.data.network.ArtistServiceAdapterTest" time="0.007"/>
+  <testcase name="prizeEndpointFailureDoesNotHideArtistDetail" classname="com.example.vinilosmobile.data.network.ArtistServiceAdapterTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (/Users/davidcombita/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.18.2/62f38a6faf7f069d661b79a07d566f504b0b20c4/byte-buddy-agent-1.18.2.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+</testsuite>

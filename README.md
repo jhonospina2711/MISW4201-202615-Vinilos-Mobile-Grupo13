@@ -4,7 +4,7 @@ Aplicación móvil Android de **Vinilos**, desarrollada en Kotlin para el proyec
 
 La aplicación permite consultar el catálogo y detalle de álbumes, así como el listado y detalle de músicos y bandas. La sección de coleccionistas y las acciones de creación se completarán en una iteración posterior.
 
-> **Estado de `sprint-1`:** un módulo `:app`, navegación inferior con tres Fragments y gesto horizontal, catálogo HU01 con caché Room, detalle de álbum en una Activity, listado de artistas con filtros y detalle de músico o banda en otra Activity. La sección Coleccionistas es una pantalla inicial. Las 15 pruebas Espresso pasaron en API 31; siguen pendientes la validación en API 21 y el backend HTTPS de entrega. Véase [estrategia y resultados de pruebas](docs/PRUEBAS_SPRINT1.md).
+> **Estado de `sprint-1`:** HU01–HU04 implementadas en un módulo `:app`. Hay navegación inferior con tres Fragments y gesto horizontal, catálogo de álbumes con caché Room, detalles en Activities y filtros de artistas. La sección Coleccionistas es una pantalla inicial. Pasaron 34 pruebas unitarias y las 15 Espresso en API 28 y 31; siguen pendientes la validación en API 21 y el backend HTTPS de entrega. Véanse la [arquitectura](docs/ARQUITECTURA_SPRINT1.md) y los [resultados de pruebas](docs/PRUEBAS_SPRINT1.md).
 
 Al abrir por primera vez, la app permite elegir Visitante o Coleccionista y guarda la selección con DataStore. Las siguientes aperturas entran directamente a Inicio. La arquitectura de ese flujo está descrita en [docs/ACCESO.md](docs/ACCESO.md).
 
@@ -50,7 +50,7 @@ No se necesita instalar Gradle ni Kotlin aparte: el proyecto usa el *wrapper* in
 | Compilar el APK de depuración | `./gradlew assembleDebug` |
 | Compilar el APK Release | `./gradlew :app:assembleRelease` |
 | Compilar e instalar en un dispositivo o emulador conectado | `./gradlew installDebug` |
-| Ejecutar las pruebas unitarias | `./gradlew test` |
+| Ejecutar las pruebas unitarias con JUnit y MockK | `./gradlew :app:testDebugUnitTest --no-configuration-cache` |
 | Ejecutar las 15 pruebas Espresso (requiere dispositivo o emulador) | `./gradlew :app:connectedDebugAndroidTest --no-configuration-cache` |
 | Comprobar la API Docker de HU01–HU04 | `python3 scripts/smoke_sprint1_api.py` |
 | Limpiar los artefactos de compilación | `./gradlew clean` |
@@ -111,7 +111,10 @@ Las versiones se declaran centralizadas en `gradle/libs.versions.toml`.
 | `com.google.dagger:hilt-android` | 2.59.2 | Inyección de dependencias |
 | `com.google.devtools.ksp` | 2.3.6 | Procesamiento de Hilt y Room |
 | `androidx.room:*` | 2.7.2 | Caché local de álbumes |
+| `androidx.datastore:datastore-preferences` | 1.1.7 | Persistencia del rol Visitante/Coleccionista |
 | `junit:junit` | 4.13.2 | Pruebas unitarias |
+| `io.mockk:mockk` | 1.14.11 | Dobles y verificaciones en pruebas unitarias |
+| `org.robolectric:robolectric` | 4.17 | Pruebas unitarias de Room real en memoria |
 | `androidx.test.ext:junit` | 1.1.5 | Pruebas instrumentadas |
 | `androidx.test.espresso:espresso-core` | 3.5.1 | Pruebas de interfaz |
 
@@ -121,7 +124,7 @@ La aplicación consume la API REST de **BackVynils**:
 
 - Repositorio del backend: <https://github.com/TheSoftwareDesignLab/BackVynils>
 
-El cliente Retrofit y el permiso `android.permission.INTERNET` ya están configurados. Debug apunta por defecto al backend Docker del emulador (`http://10.0.2.2:3000/`); para otra URL, pasar `-PvinilosApiBaseUrl=https://servidor/` a Gradle. El Repository de álbumes intenta la red primero y usa la copia de Room si falla; los artistas se consultan por red. Sin datos guardados se muestra un error traducido al español. Room usa esquema versión 1 y se conserva el mínimo de Android 5.0 (API 21). El estado del despliegue de TSDC y los pasos para Docker local están en [Backend para desarrollo](docs/BACKEND.md).
+El cliente Retrofit y el permiso `android.permission.INTERNET` ya están configurados. Debug apunta por defecto al backend Docker del emulador (`http://10.0.2.2:3000/`); para otra URL, pasar `-PvinilosApiBaseUrl=https://servidor/` a Gradle. El Repository de álbumes intenta la red primero y usa la copia de Room si falla; los artistas se consultan por red y **no tienen caché offline en este sprint**. La copia Room de un detalle de álbum no incluye tracks, comentarios ni fecha completa. Sin datos guardados se muestra un error traducido al español. Room usa esquema versión 1 y se conserva el mínimo de Android 5.0 (API 21). El diseño completo está en [Arquitectura Sprint 1](docs/ARQUITECTURA_SPRINT1.md), y el estado del despliegue de TSDC y los pasos para Docker local están en [Backend para desarrollo](docs/BACKEND.md).
 
 ## 7. Flujo de trabajo en Git
 
@@ -137,6 +140,8 @@ El repositorio sigue GitFlow:
 
 Cada funcionalidad entra a `develop` por *pull request* aprobado por otro integrante, con **squash and merge**. Las reglas completas están en la wiki: [Flujo de trabajo en Git](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki/9.Flujo-de-trabajo-en-Git).
 
+Para la entrega de esta iteración, los cambios consolidados de `sprint-1` se proponen a `main` mediante un PR sujeto a revisión del equipo. El PR no sustituye la validación pendiente en API 21 ni la corrección del backend HTTPS.
+
 ## 8. Documentación del proyecto
 
 Toda la documentación vive en la wiki del repositorio:
@@ -150,6 +155,8 @@ Toda la documentación vive en la wiki del repositorio:
 | Flujo de trabajo en Git | [9. Flujo de trabajo en Git](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki/9.Flujo-de-trabajo-en-Git) |
 | Iteraciones | [Sprint 1](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki/6.Sprint-1) · [Sprint 2](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki/7.Sprint-2) · [Sprint 3](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki/8.Sprint-3) |
 | Tablero de trabajo | [GitHub Projects](https://github.com/jhonospina2711/projects/1) |
+| Arquitectura Sprint 1 | [Capas, diagramas y decisiones técnicas](docs/ARQUITECTURA_SPRINT1.md) |
+| Pruebas Sprint 1 | [Estrategia, casos y resultados](docs/PRUEBAS_SPRINT1.md) |
 
 ## 9. Equipo
 
