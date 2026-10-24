@@ -37,6 +37,7 @@ La batería usa respuestas HTTP de prueba. Por sí sola no demuestra disponibili
 
 | Entorno o comando | Resultado |
 |---|---|
+| Emulador Vinilos_API28, Android 9/API 28, `bash gradlew :app:connectedDebugAndroidTest --no-configuration-cache` | **15 pruebas, 0 fallos, 0 errores, 0 omitidas.** [JUnit XML](evidencias/sprint1/espresso-api28.xml). |
 | Emulador Medium_Phone, Android 12/API 31, `bash gradlew :app:connectedDebugAndroidTest --no-configuration-cache` | **15 pruebas, 0 fallos, 0 errores, 0 omitidas.** [JUnit XML](evidencias/sprint1/espresso-api31.xml). |
 | `python3 scripts/smoke_sprint1_api.py` contra Docker local | **4 HU aprobadas:** 4 álbumes; detalle de álbum 100 con 2 tracks; endpoints de músicos y bandas; detalles y premios. |
 | M01–M04 manuales en API 31 con Debug y Docker | **Aprobadas.** Visitante vio 4 álbumes; detalle de Buscando América con 2 tracks y 1 comentario; filtros mostraron Rubén Blades y Queen; ambos detalles cargaron y el músico mostró Grammy Award. La banda del conjunto de datos local no tiene integrantes. |
@@ -54,6 +55,8 @@ bash gradlew :app:connectedDebugAndroidTest --no-configuration-cache
 python3 scripts/smoke_sprint1_api.py http://127.0.0.1:3000/
 bash gradlew :app:assembleRelease --no-configuration-cache
 ```
+
+Antes de probar API 21, iniciar solo ese emulador y comprobar `adb shell getprop ro.build.version.sdk`; debe devolver `21`. Entonces ejecutar el comando Espresso anterior y repetir M01–M06. Si hay varios dispositivos conectados, usar `ANDROID_SERIAL=<serial>` para seleccionar el API 21.
 
 El script de API asume datos semilla con al menos un álbum, músico y banda. El emulador usa `10.0.2.2` para conectarse al Docker del computador; un dispositivo físico requiere otra URL alcanzable o `adb reverse`.
 
