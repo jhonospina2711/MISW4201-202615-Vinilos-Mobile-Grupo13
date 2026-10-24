@@ -10,9 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.vinilosmobile.R
 import com.example.vinilosmobile.coreui.molecules.AlbumCardAdapter
-import com.example.vinilosmobile.coreui.models.AlbumCardUiModel
+import com.example.vinilosmobile.coreui.models.toCardUiModel
 import com.example.vinilosmobile.databinding.FragmentAlbumCatalogBinding
-import com.example.vinilosmobile.domain.models.Album
 import com.example.vinilosmobile.domain.models.AlbumSource
 import com.example.vinilosmobile.feature.home.albums.models.AlbumCatalogUiState
 import com.example.vinilosmobile.feature.home.navigation.AlbumNavigator
@@ -47,7 +46,7 @@ class AlbumCatalogFragment : Fragment() {
         when (state) {
             is AlbumCatalogUiState.Content -> {
                 binding.albumCount.text = getString(R.string.album_count, state.albums.size)
-                albumAdapter.submitList(state.albums.map(::toCardUiModel))
+                albumAdapter.submitList(state.albums.map { it.toCardUiModel(requireContext()) })
             }
             AlbumCatalogUiState.Empty -> {
                 binding.catalogMessage.show(R.string.catalog_empty)
@@ -62,17 +61,6 @@ class AlbumCatalogFragment : Fragment() {
             AlbumCatalogUiState.Loading -> Unit
         }
     }
-
-    private fun toCardUiModel(album: Album): AlbumCardUiModel = AlbumCardUiModel(
-        id = album.id,
-        title = album.name,
-        artist = album.artistNames.joinToString().ifBlank { getString(R.string.album_no_artist) },
-        metadata = listOf(
-            album.genre ?: getString(R.string.album_no_genre),
-            album.releaseYear ?: getString(R.string.album_no_year),
-        ).joinToString(" · "),
-        coverUrl = album.coverUrl,
-    )
 
     override fun onDestroyView() {
         binding.albumGrid.adapter = null

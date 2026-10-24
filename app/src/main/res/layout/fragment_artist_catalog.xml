@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vinilos_background"
+    android:orientation="vertical">
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/vinilos_space_md"
+        android:layout_marginTop="@dimen/vinilos_space_lg"
+        android:layout_marginEnd="@dimen/vinilos_space_md"
+        android:text="@string/nav_artists"
+        android:textAppearance="?attr/textAppearanceHeadlineMedium" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/artistFilters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/vinilos_space_md"
+        android:layout_marginTop="@dimen/vinilos_space_md"
+        android:layout_marginEnd="@dimen/vinilos_space_md"
+        app:chipSpacingHorizontal="@dimen/vinilos_space_sm"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+        <com.google.android.material.chip.Chip
+            android:id="@+id/filterAll"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/artist_filter_all" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/filterMusicians"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/artist_filter_musicians" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/filterBands"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/artist_filter_bands" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/artistList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/vinilos_space_sm"
+            android:paddingBottom="@dimen/vinilos_space_lg"
+            tools:listitem="@layout/vinilos_item_artist" />
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/artistLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/artists_loading" />
+        <com.example.vinilosmobile.coreui.organisms.ContentStateView
+            android:id="@+id/artistMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="@dimen/vinilos_space_lg"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

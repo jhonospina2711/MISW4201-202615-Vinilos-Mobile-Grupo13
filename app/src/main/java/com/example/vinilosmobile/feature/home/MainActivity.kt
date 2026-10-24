@@ -2,31 +2,32 @@ package com.example.vinilosmobile.feature.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.example.vinilosmobile.R
 import com.example.vinilosmobile.databinding.ActivityMainBinding
 import com.example.vinilosmobile.domain.models.UserRole
-import com.example.vinilosmobile.feature.albumdetail.AlbumDetailFragment
+import com.example.vinilosmobile.feature.albumdetail.AlbumDetailActivity
 import com.example.vinilosmobile.feature.entry.EntryActivity
 import com.example.vinilosmobile.feature.home.adapters.HomeSectionPagerAdapter
 import com.example.vinilosmobile.feature.home.navigation.AlbumNavigator
+import com.example.vinilosmobile.feature.home.navigation.ArtistNavigator
+import com.example.vinilosmobile.feature.artistdetail.ArtistDetailActivity
+import com.example.vinilosmobile.domain.models.ArtistKey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.abs
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), AlbumNavigator {
+class MainActivity : AppCompatActivity(), AlbumNavigator, ArtistNavigator {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var detailBackCallback: OnBackPressedCallback
     private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +35,10 @@ class MainActivity : AppCompatActivity(), AlbumNavigator {
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        WindowInsetsControllerCompat(window, binding.root).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
         viewModel.selectedRole.observe(this) { role ->
             if (role == null) {
                 startActivity(Intent(this, EntryActivity::class.java))
@@ -56,11 +61,6 @@ class MainActivity : AppCompatActivity(), AlbumNavigator {
             view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
             insets
         }
-
-        detailBackCallback = object : OnBackPressedCallback(false) {
-            override fun handleOnBackPressed() = closeAlbumDetail()
-        }
-        onBackPressedDispatcher.addCallback(this, detailBackCallback)
 
         binding.sectionPager.adapter = HomeSectionPagerAdapter(this)
         binding.sectionPager.offscreenPageLimit = 2
@@ -88,31 +88,13 @@ class MainActivity : AppCompatActivity(), AlbumNavigator {
             true
         }
 
-        val detailIsOpen = supportFragmentManager.findFragmentByTag(DETAIL_TAG) != null
-        binding.tabsContent.isVisible = !detailIsOpen
-        binding.detailContainer.isVisible = detailIsOpen
-        detailBackCallback.isEnabled = detailIsOpen
     }
 
     override fun openAlbum(id: Long) {
-        binding.tabsContent.visibility = View.GONE
-        binding.detailContainer.visibility = View.VISIBLE
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.detailContainer, AlbumDetailFragment.newInstance(id), DETAIL_TAG)
-            .commitNow()
-        detailBackCallback.isEnabled = true
+        startActivity(AlbumDetailActivity.intent(this, id))
     }
 
-    private fun closeAlbumDetail() {
-        supportFragmentManager.findFragmentByTag(DETAIL_TAG)?.let { fragment ->
-            supportFragmentManager.beginTransaction().remove(fragment).commitNow()
-        }
-        binding.detailContainer.visibility = View.GONE
-        binding.tabsContent.visibility = View.VISIBLE
-        detailBackCallback.isEnabled = false
-    }
-
-    private companion object {
-        const val DETAIL_TAG = "album_detail"
+    override fun openArtist(key: ArtistKey) {
+        startActivity(ArtistDetailActivity.intent(this, key))
     }
 }

@@ -29,6 +29,14 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name=".feature.albumdetail.AlbumDetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".feature.artistdetail.ArtistDetailActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

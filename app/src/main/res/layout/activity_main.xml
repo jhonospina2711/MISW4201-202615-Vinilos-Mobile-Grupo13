@@ -68,10 +68,4 @@
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/detailContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/vinilos_background"
-        android:visibility="gone" />
 </FrameLayout>

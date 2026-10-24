@@ -2,9 +2,9 @@
 
 Aplicación móvil Android de **Vinilos**, desarrollada en Kotlin para el proyecto transversal del curso Ingeniería de Software para Aplicaciones Móviles (MISO). Consume la API REST de [BackVynils](https://github.com/TheSoftwareDesignLab/BackVynils).
 
-La aplicación permite consultar el catálogo de álbumes, el listado de artistas y el listado de coleccionistas, con el detalle de cada uno. En el rol de coleccionista permite además crear álbumes y asociarles tracks.
+La aplicación permite consultar el catálogo y detalle de álbumes, así como el listado y detalle de músicos y bandas. La sección de coleccionistas y las acciones de creación se completarán en una iteración posterior.
 
-> **Estado de `sprint-1`:** un módulo `:app`, navegación inferior con tres Fragments y gesto horizontal, catálogo HU01 con Hilt, Repository y caché Room, y un detalle inicial de álbum. Artistas y Coleccionistas tienen pantallas iniciales. El avance y la documentación del producto están en la [wiki del proyecto](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki).
+> **Estado de `sprint-1`:** un módulo `:app`, navegación inferior con tres Fragments y gesto horizontal, catálogo HU01 con caché Room, detalle de álbum en una Activity, listado de artistas con filtros y detalle de músico o banda en otra Activity. La sección Coleccionistas es una pantalla inicial. El cierre de las historias requiere los escenarios Espresso y la evidencia descritos en la [wiki del proyecto](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki).
 
 Al abrir por primera vez, la app permite elegir Visitante o Coleccionista y guarda la selección con DataStore. Las siguientes aperturas entran directamente a Inicio. La arquitectura de ese flujo está descrita en [docs/ACCESO.md](docs/ACCESO.md).
 
@@ -15,7 +15,7 @@ Al abrir por primera vez, la app permite elegir Visitante o Coleccionista y guar
 | Requisito | Versión |
 |---|---|
 | Android Studio | Versión estable reciente, con el SDK de Android instalado |
-| JDK | 11 o superior |
+| JDK | 17 o superior |
 | Android SDK Platform | 37 (`compileSdk` y `targetSdk`) |
 | Android SDK Build-Tools | Los que Android Studio instala por defecto |
 | Gradle | 9.6.0 — lo descarga el wrapper, no hace falta instalarlo |
@@ -118,7 +118,7 @@ La aplicación consume la API REST de **BackVynils**:
 
 - Repositorio del backend: <https://github.com/TheSoftwareDesignLab/BackVynils>
 
-El cliente Retrofit y el permiso `android.permission.INTERNET` ya están configurados. Debug apunta por defecto al backend Docker del emulador (`http://10.0.2.2:3000/`); para otra URL, pasar `-PvinilosApiBaseUrl=https://servidor/` a Gradle. El Repository intenta la red primero y usa la copia de Room si falla. Sin datos guardados muestra un error general traducido al español. Room usa esquema versión 1 y se conserva el mínimo de Android 5.0 (API 21). El estado del despliegue de TSDC y los pasos para Docker local están en [Backend para desarrollo](docs/BACKEND.md).
+El cliente Retrofit y el permiso `android.permission.INTERNET` ya están configurados. Debug apunta por defecto al backend Docker del emulador (`http://10.0.2.2:3000/`); para otra URL, pasar `-PvinilosApiBaseUrl=https://servidor/` a Gradle. El Repository de álbumes intenta la red primero y usa la copia de Room si falla; los artistas se consultan por red. Sin datos guardados se muestra un error traducido al español. Room usa esquema versión 1 y se conserva el mínimo de Android 5.0 (API 21). El estado del despliegue de TSDC y los pasos para Docker local están en [Backend para desarrollo](docs/BACKEND.md).
 
 ## 7. Flujo de trabajo en Git
 
@@ -127,7 +127,7 @@ El repositorio sigue GitFlow:
 | Rama | Propósito |
 |---|---|
 | `main` | Versiones liberadas |
-| `sprint-1` | Rama de trabajo solicitada para la base y HU01 |
+| `sprint-1` | Rama de trabajo de la base y HU01–HU04 |
 | `releases` | Preparación de la entrega de cada iteración |
 | `develop` | Integración del trabajo del equipo |
 | `feature/HUxx-descripcion` | Una funcionalidad por historia de usuario |

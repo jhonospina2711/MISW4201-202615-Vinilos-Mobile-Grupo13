@@ -3,6 +3,7 @@ package com.example.vinilosmobile.di
 import com.example.vinilosmobile.BuildConfig
 import com.example.vinilosmobile.data.network.interceptors.RequestHeadersInterceptor
 import com.example.vinilosmobile.data.network.services.AlbumApiService
+import com.example.vinilosmobile.data.network.services.ArtistApiService
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -51,4 +52,8 @@ object NetworkModule {
     @Provides
     fun provideAlbumApiService(retrofit: Retrofit): AlbumApiService =
         retrofit.create(AlbumApiService::class.java)
+
+    @Provides
+    fun provideArtistApiService(retrofit: Retrofit): ArtistApiService =
+        retrofit.create(ArtistApiService::class.java)
 }

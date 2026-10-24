@@ -1,6 +1,5 @@
 package com.example.vinilosmobile.data.network.models
 
-/** Nullable fields reflect responses that have not yet been verified on the deployed API. */
 data class AlbumDto(
     val id: Long? = null,
     val name: String? = null,
@@ -10,4 +9,6 @@ data class AlbumDto(
     val genre: String? = null,
     val recordLabel: String? = null,
     val performers: List<PerformerDto>? = null,
+    val tracks: List<TrackDto>? = null,
+    val comments: List<AlbumCommentDto>? = null,
 )
