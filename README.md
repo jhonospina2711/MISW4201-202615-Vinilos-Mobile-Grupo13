@@ -4,7 +4,7 @@ Aplicación móvil Android de **Vinilos**, desarrollada en Kotlin para el proyec
 
 La aplicación permite consultar el catálogo de álbumes, el listado de artistas y el listado de coleccionistas, con el detalle de cada uno. En el rol de coleccionista permite además crear álbumes y asociarles tracks.
 
-> **Estado del repositorio:** contiene el proyecto Android base (una actividad de ejemplo). Las ocho historias de usuario del MVP se implementan en los sprints 1 a 3. El avance y la documentación están en la [wiki del proyecto](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki).
+> **Estado de `sprint-1`:** un módulo `:app`, navegación inferior con tres Fragments y gesto horizontal, catálogo HU01 con Hilt, Repository y caché Room, y un detalle inicial de álbum. Artistas y Coleccionistas tienen pantallas iniciales. El avance y la documentación del producto están en la [wiki del proyecto](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki).
 
 ---
 
@@ -18,7 +18,7 @@ La aplicación permite consultar el catálogo de álbumes, el listado de artista
 | Android SDK Build-Tools | Los que Android Studio instala por defecto |
 | Gradle | 9.6.0 — lo descarga el wrapper, no hace falta instalarlo |
 | Android Gradle Plugin | 9.4.1 |
-| Versión mínima del dispositivo | Android 7.0 (API 24) |
+| Versión mínima del dispositivo | Android 5.0 (API 21) |
 
 No se necesita instalar Gradle ni Kotlin aparte: el proyecto usa el *wrapper* incluido (`gradlew`) y el plugin de Android declarado en `gradle/libs.versions.toml`.
 
@@ -64,6 +64,15 @@ El APK de depuración queda en `app/build/outputs/apk/debug/app-debug.apk`.
 │   └── src/
 │       ├── main/
 │       │   ├── java/…/           Código Kotlin de la aplicación
+│       │   │   ├── coreui/       Componentes Android Views reutilizables
+│       │   │   │   ├── atoms/    Vistas elementales
+│       │   │   │   ├── molecules/ Tarjetas y adapters reutilizables
+│       │   │   │   ├── organisms/ Estados de contenido reutilizables
+│       │   │   │   └── models/   Modelos de presentación compartidos
+│       │   │   ├── domain/       Modelos, contratos y casos de uso
+│       │   │   ├── data/         API, modelos DTO, Room, mappers y repositorios
+│       │   │   ├── di/           Módulos Hilt de red, base de datos y repositorios
+│       │   │   └── feature/      Fragments y ViewModels por HU
 │       │   ├── res/              Recursos: layouts, temas, textos, iconos
 │       │   └── AndroidManifest.xml
 │       ├── test/                 Pruebas unitarias (JUnit)
@@ -84,9 +93,18 @@ Las versiones se declaran centralizadas en `gradle/libs.versions.toml`.
 |---|---|---|
 | `androidx.core:core-ktx` | 1.10.1 | Extensiones de Kotlin para Android |
 | `androidx.appcompat:appcompat` | 1.6.1 | Compatibilidad hacia atrás |
-| `com.google.android.material:material` | 1.10.0 | Componentes de Material Design |
+| `com.google.android.material:material` | 1.13.0 | Componentes Material 3 para Android Views |
 | `androidx.activity:activity-ktx` | 1.8.0 | APIs de `Activity` para Kotlin |
 | `androidx.constraintlayout:constraintlayout` | 2.1.4 | Layouts con `ConstraintLayout` |
+| `androidx.viewpager2:viewpager2` | 1.1.0 | Transición animada y gesto horizontal entre secciones |
+| `androidx.recyclerview:recyclerview` | 1.4.0 | Grilla de álbumes |
+| `androidx.fragment:fragment-ktx` | 1.8.9 | Fragments y delegados de ViewModel |
+| `androidx.lifecycle:*` | 2.9.4 | ViewModel, coroutines y estados observables |
+| `com.squareup.retrofit2:*` | 3.0.0 | API REST y conversión JSON |
+| `com.github.bumptech.glide:glide` | 4.16.0 | Carga de portadas |
+| `com.google.dagger:hilt-android` | 2.59.2 | Inyección de dependencias |
+| `com.google.devtools.ksp` | 2.3.6 | Procesamiento de Hilt y Room |
+| `androidx.room:*` | 2.7.2 | Caché local de álbumes |
 | `junit:junit` | 4.13.2 | Pruebas unitarias |
 | `androidx.test.ext:junit` | 1.1.5 | Pruebas instrumentadas |
 | `androidx.test.espresso:espresso-core` | 3.5.1 | Pruebas de interfaz |
@@ -97,7 +115,7 @@ La aplicación consume la API REST de **BackVynils**:
 
 - Repositorio del backend: <https://github.com/TheSoftwareDesignLab/BackVynils>
 
-La URL base de la API y la configuración del cliente HTTP se definen durante el Sprint 1, junto con la primera historia que consume el servicio. Para que la aplicación pueda hacer peticiones de red necesita el permiso `android.permission.INTERNET` en el `AndroidManifest.xml`, que todavía no está declarado.
+El cliente Retrofit y el permiso `android.permission.INTERNET` ya están configurados. La URL en `app/build.gradle.kts` es **temporal**: `https://sadasdasdadsa/`. Reemplaza el valor de `BACK_VYNILS_BASE_URL` por la URL real del backend (terminada en `/`) y sincroniza Gradle. El Repository intenta la red primero, reemplaza la caché al recibir el catálogo y, si falla la red, muestra los álbumes guardados con un aviso y opción de reintentar. Sin datos guardados muestra el estado de error. Room usa esquema versión 1; cualquier cambio posterior requiere una migración explícita. Se conserva el mínimo de Android 5.0 (API 21).
 
 ## 7. Flujo de trabajo en Git
 
@@ -106,6 +124,7 @@ El repositorio sigue GitFlow:
 | Rama | Propósito |
 |---|---|
 | `main` | Versiones liberadas |
+| `sprint-1` | Rama de trabajo solicitada para la base y HU01 |
 | `releases` | Preparación de la entrega de cada iteración |
 | `develop` | Integración del trabajo del equipo |
 | `feature/HUxx-descripcion` | Una funcionalidad por historia de usuario |

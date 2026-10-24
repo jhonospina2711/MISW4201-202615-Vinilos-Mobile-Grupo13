@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vinilos_background"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/detailToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationContentDescription="@string/back"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="@string/album_detail_title" />
+
+    <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <ScrollView
+            android:id="@+id/detailContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/vinilos_space_md">
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
+                    android:layout_gravity="center_horizontal"
+                    app:cardBackgroundColor="@color/vinilos_cover_one"
+                    app:cardCornerRadius="@dimen/vinilos_radius_card">
+                    <ImageView
+                        android:id="@+id/detailCover"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:importantForAccessibility="no"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_album_placeholder" />
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/detailName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vinilos_space_md"
+                    android:gravity="center"
+                    android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                    tools:text="Buscando América" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/detailArtist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vinilos_space_xs"
+                    android:gravity="center"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    tools:text="Rubén Blades" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/detailMetadata"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vinilos_space_md"
+                    android:gravity="center"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    tools:text="Salsa · 1984" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vinilos_space_lg"
+                    android:text="@string/album_record_label"
+                    android:textAppearance="?attr/textAppearanceTitleMedium" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/detailLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vinilos_space_xs"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    tools:text="Elektra" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vinilos_space_lg"
+                    android:text="@string/album_detail_description"
+                    android:textAppearance="?attr/textAppearanceTitleMedium" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/detailDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vinilos_space_xs"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    tools:text="Descripción del álbum" />
+            </LinearLayout>
+        </ScrollView>
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/detailLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <com.example.vinilosmobile.coreui.organisms.ContentStateView
+            android:id="@+id/detailMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="@dimen/vinilos_space_lg"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>
