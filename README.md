@@ -4,7 +4,7 @@ Aplicación móvil Android de **Vinilos**, desarrollada en Kotlin para el proyec
 
 La aplicación permite consultar el catálogo y detalle de álbumes, así como el listado y detalle de músicos y bandas. La sección de coleccionistas y las acciones de creación se completarán en una iteración posterior.
 
-> **Estado de `sprint-1`:** un módulo `:app`, navegación inferior con tres Fragments y gesto horizontal, catálogo HU01 con caché Room, detalle de álbum en una Activity, listado de artistas con filtros y detalle de músico o banda en otra Activity. La sección Coleccionistas es una pantalla inicial. El cierre de las historias requiere los escenarios Espresso y la evidencia descritos en la [wiki del proyecto](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki).
+> **Estado de `sprint-1`:** un módulo `:app`, navegación inferior con tres Fragments y gesto horizontal, catálogo HU01 con caché Room, detalle de álbum en una Activity, listado de artistas con filtros y detalle de músico o banda en otra Activity. La sección Coleccionistas es una pantalla inicial. Las 15 pruebas Espresso pasaron en API 31; siguen pendientes la validación en API 21 y el backend HTTPS de entrega. Véase [estrategia y resultados de pruebas](docs/PRUEBAS_SPRINT1.md).
 
 Al abrir por primera vez, la app permite elegir Visitante o Coleccionista y guarda la selección con DataStore. Las siguientes aperturas entran directamente a Inicio. La arquitectura de ese flujo está descrita en [docs/ACCESO.md](docs/ACCESO.md).
 
@@ -48,14 +48,17 @@ No se necesita instalar Gradle ni Kotlin aparte: el proyecto usa el *wrapper* in
 | Acción | Comando |
 |---|---|
 | Compilar el APK de depuración | `./gradlew assembleDebug` |
+| Compilar el APK Release | `./gradlew :app:assembleRelease` |
 | Compilar e instalar en un dispositivo o emulador conectado | `./gradlew installDebug` |
 | Ejecutar las pruebas unitarias | `./gradlew test` |
-| Ejecutar las pruebas instrumentadas (requiere dispositivo o emulador) | `./gradlew connectedAndroidTest` |
+| Ejecutar las 15 pruebas Espresso (requiere dispositivo o emulador) | `./gradlew :app:connectedDebugAndroidTest --no-configuration-cache` |
+| Comprobar la API Docker de HU01–HU04 | `python3 scripts/smoke_sprint1_api.py` |
 | Limpiar los artefactos de compilación | `./gradlew clean` |
 
 En Windows usa `gradlew.bat` en lugar de `./gradlew`.
 
 El APK de depuración queda en `app/build/outputs/apk/debug/app-debug.apk`.
+El APK Release queda en `app/build/outputs/apk/release/app-release.apk`. Actualmente usa la firma Debug y la URL HTTPS publicada responde HTTP 500; no debe tratarse como APK final de entrega hasta resolver esos puntos.
 
 ## 4. Estructura del proyecto
 
