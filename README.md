@@ -4,7 +4,7 @@ Aplicación móvil Android de **Vinilos**, desarrollada en Kotlin para el proyec
 
 La aplicación permite consultar el catálogo y detalle de álbumes, así como el listado y detalle de músicos y bandas. La sección de coleccionistas y las acciones de creación se completarán en una iteración posterior.
 
-> **Estado de `sprint-1`:** HU01–HU04 implementadas en un módulo `:app`. Hay navegación inferior con tres Fragments y gesto horizontal, catálogo de álbumes con caché Room, detalles en Activities y filtros de artistas. La sección Coleccionistas es una pantalla inicial. Pasaron 34 pruebas unitarias y las 15 Espresso en API 28 y 31; siguen pendientes la validación en API 21 y el backend HTTPS de entrega. Véanse la [arquitectura](docs/ARQUITECTURA_SPRINT1.md) y los [resultados de pruebas](docs/PRUEBAS_SPRINT1.md).
+> **Estado de `sprint-1`:** HU01–HU04 implementadas en un módulo `:app`. Hay navegación inferior con tres Fragments y gesto horizontal, catálogo de álbumes con caché Room, detalles en Activities y filtros de artistas. La sección Coleccionistas es una pantalla inicial. Pasaron 41 pruebas unitarias y las 15 Espresso en API 28 y 31; siguen pendientes la validación en API 21 y el backend HTTPS de entrega. Véanse la [arquitectura](docs/ARQUITECTURA_SPRINT1.md) y los [resultados de pruebas](docs/PRUEBAS_SPRINT1.md).
 
 Al abrir por primera vez, la app permite elegir Visitante o Coleccionista y guarda la selección con DataStore. Las siguientes aperturas entran directamente a Inicio. La arquitectura de ese flujo está descrita en [docs/ACCESO.md](docs/ACCESO.md).
 

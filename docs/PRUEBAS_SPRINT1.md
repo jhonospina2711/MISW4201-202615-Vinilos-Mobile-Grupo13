@@ -8,7 +8,7 @@ Revisión: 24 de octubre de 2026. Alcance: HU01 catálogo de álbumes, HU02 deta
 2. **Contrato de la API real:** ejecutar [`smoke_sprint1_api.py`](../scripts/smoke_sprint1_api.py) contra BackVynils local. Hace solicitudes de solo lectura a `/albums`, `/albums/{id}`, `/musicians`, `/bands`, ambos detalles y `/performerprizes`; valida códigos 200, JSON e identificadores para las cuatro HU.
 3. **E2E manuales:** recorrer la app Debug con el backend Docker real y confirmar datos, navegación y retorno. Repetir los casos críticos en un dispositivo con Android 5.0/API 21 y otro Android posterior antes del release.
 4. **Release:** compilar, verificar firma, instalar y abrir el APK optimizado. Ejecutar las cuatro HU contra el backend HTTPS definitivo antes de publicar un APK de entrega.
-5. **Unitarias JVM:** JUnit y MockK verifican casos de uso, repositorios, adaptación de artistas, mapeo de errores y persistencia del rol. Robolectric ejecuta `AlbumDao` contra Room en memoria para comprobar SQL, orden, `upsert` y `replaceAll`.
+5. **Unitarias JVM:** JUnit y MockK verifican casos de uso, repositorios, adaptación de artistas, DTO, interceptor, mapeo de errores y persistencia del rol. Robolectric ejecuta `AlbumDao` contra Room en memoria para comprobar SQL, orden, `upsert` y `replaceAll`.
 
 Una HU se acepta cuando pasan sus casos Espresso, los escenarios manuales acordados y la consulta al backend de entrega, sin defectos abiertos de severidad alta. Los fallos se registran como issues con etiqueta `bug`, pasos de reproducción, entorno, resultado esperado y real.
 
@@ -30,13 +30,15 @@ La batería usa respuestas HTTP de prueba. Por sí sola no demuestra disponibili
 | `AlbumRepositoryImplTest` | 8 | Red primero, reemplazo de caché Room, orden, catálogo vacío, detalle guardado, caída de red, 404 y cancelación. |
 | `AlbumDaoTest` | 3 | Consultas SQL sobre Room real en memoria, orden y marca de catálogo, reemplazo y `upsert`. |
 | `ArtistServiceAdapterTest` | 5 | Unión de músicos/bandas, descarte de datos inválidos, endpoints de detalle, integrantes y premios. |
+| `AlbumMappersTest` y `ArtistMappersTest` | 6 | Validación y transformación de DTO, relaciones, fechas y límites de la copia Room. |
+| `RequestHeadersInterceptorTest` | 1 | Cabecera JSON y delegación única a OkHttp. |
 | `ArtistRepositoryImplTest` | 5 | Delegación, detalle por tipo/ID, timeout, 404 y cancelación. |
 | `NetworkErrorMapperTest` | 3 | Conexión, timeout, permisos, servidor y errores ya traducidos. |
 | `UserRolePreferencesDataSourceTest` y `UserRoleRepositoryImplTest` | 4 | Lectura y escritura del rol, valor desconocido y flujo de cambios. |
 | `UseCasesTest` | 6 | Los seis casos de uso delegan sin perder ID, tipo, origen o rol. |
-| **Total** | **34** | ViewModels y Views quedan cubiertos por Espresso, sin tests unitarios directos. |
+| **Total** | **41** | ViewModels y Views quedan cubiertos por Espresso, sin tests unitarios directos. |
 
-[Resultados JUnit XML de las 34 unitarias](evidencias/sprint1/unit/). MockK sustituye colaboradores en las pruebas aisladas; `AlbumDaoTest` usa Room real para verificar la base de datos y no la sustituye por un mock.
+[Resultados JUnit XML de las 41 unitarias](evidencias/sprint1/unit/). MockK sustituye colaboradores en las pruebas aisladas; los mappers se prueban con DTO reales y `AlbumDaoTest` usa Room real para verificar la base de datos.
 
 ## Guiones E2E manuales
 
@@ -53,7 +55,7 @@ La batería usa respuestas HTTP de prueba. Por sí sola no demuestra disponibili
 
 | Entorno o comando | Resultado |
 |---|---|
-| `bash gradlew :app:testDebugUnitTest --no-configuration-cache` | **34 pruebas, 0 fallos, 0 errores, 0 omitidas.** MockK + Room en memoria con Robolectric API 28. [JUnit XML](evidencias/sprint1/unit/). |
+| `bash gradlew :app:testDebugUnitTest --no-configuration-cache` | **41 pruebas, 0 fallos, 0 errores, 0 omitidas.** MockK + Room en memoria con Robolectric API 28. [JUnit XML](evidencias/sprint1/unit/). |
 | Emulador Vinilos_API28, Android 9/API 28, `bash gradlew :app:connectedDebugAndroidTest --no-configuration-cache` | **15 pruebas, 0 fallos, 0 errores, 0 omitidas.** [JUnit XML](evidencias/sprint1/espresso-api28.xml). |
 | Emulador Medium_Phone, Android 12/API 31, `bash gradlew :app:connectedDebugAndroidTest --no-configuration-cache` | **15 pruebas, 0 fallos, 0 errores, 0 omitidas.** [JUnit XML](evidencias/sprint1/espresso-api31.xml). |
 | `python3 scripts/smoke_sprint1_api.py` contra Docker local | **4 HU aprobadas:** 4 álbumes; detalle de álbum 100 con 2 tracks; endpoints de músicos y bandas; detalles y premios. |

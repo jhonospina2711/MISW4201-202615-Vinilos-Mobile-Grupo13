@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-24T22:27:16.087Z" hostname="dscombita.local" time="0.062">
+<testsuite name="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-24T22:32:48.107Z" hostname="dscombita.local" time="0.083">
   <properties/>
-  <testcase name="listsArtistsFromAdapter" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.023"/>
-  <testcase name="timeoutBecomesTypedFailure" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.004"/>
-  <testcase name="retrievesDetailWithTypeAndId" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.024"/>
-  <testcase name="cancellationIsNotConvertedToNetworkFailure" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.005"/>
+  <testcase name="listsArtistsFromAdapter" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.028"/>
+  <testcase name="timeoutBecomesTypedFailure" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.009"/>
+  <testcase name="retrievesDetailWithTypeAndId" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.029"/>
+  <testcase name="cancellationIsNotConvertedToNetworkFailure" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.01"/>
   <testcase name="missingArtistKeepsNotFoundMeaning" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.006"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

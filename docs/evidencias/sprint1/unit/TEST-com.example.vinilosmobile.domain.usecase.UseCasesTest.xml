@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.vinilosmobile.domain.usecase.UseCasesTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-24T22:27:16.179Z" hostname="dscombita.local" time="0.107">
+<testsuite name="com.example.vinilosmobile.domain.usecase.UseCasesTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-24T22:32:48.227Z" hostname="dscombita.local" time="0.137">
   <properties/>
-  <testcase name="getArtistPassesTypeAndId" classname="com.example.vinilosmobile.domain.usecase.UseCasesTest" time="0.053"/>
-  <testcase name="getAlbumPassesSelectedId" classname="com.example.vinilosmobile.domain.usecase.UseCasesTest" time="0.024"/>
-  <testcase name="setRoleDelegatesSelection" classname="com.example.vinilosmobile.domain.usecase.UseCasesTest" time="0.005"/>
-  <testcase name="getRoleExposesPersistedFlow" classname="com.example.vinilosmobile.domain.usecase.UseCasesTest" time="0.002"/>
-  <testcase name="getAlbumsPreservesSourceInformation" classname="com.example.vinilosmobile.domain.usecase.UseCasesTest" time="0.019"/>
-  <testcase name="getArtistsPassesCatalog" classname="com.example.vinilosmobile.domain.usecase.UseCasesTest" time="0.003"/>
+  <testcase name="getArtistPassesTypeAndId" classname="com.example.vinilosmobile.domain.usecase.UseCasesTest" time="0.066"/>
+  <testcase name="getAlbumPassesSelectedId" classname="com.example.vinilosmobile.domain.usecase.UseCasesTest" time="0.027"/>
+  <testcase name="setRoleDelegatesSelection" classname="com.example.vinilosmobile.domain.usecase.UseCasesTest" time="0.008"/>
+  <testcase name="getRoleExposesPersistedFlow" classname="com.example.vinilosmobile.domain.usecase.UseCasesTest" time="0.004"/>
+  <testcase name="getAlbumsPreservesSourceInformation" classname="com.example.vinilosmobile.domain.usecase.UseCasesTest" time="0.026"/>
+  <testcase name="getArtistsPassesCatalog" classname="com.example.vinilosmobile.domain.usecase.UseCasesTest" time="0.006"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
