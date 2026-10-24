@@ -1,4 +1,4 @@
-package com.example.vinilosmobile.feature.albums.catalog
+package com.example.vinilosmobile.feature.home.albums
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,14 +8,15 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.vinilosmobile.AlbumNavigator
 import com.example.vinilosmobile.R
 import com.example.vinilosmobile.coreui.molecules.AlbumCardAdapter
 import com.example.vinilosmobile.coreui.models.AlbumCardUiModel
 import com.example.vinilosmobile.databinding.FragmentAlbumCatalogBinding
 import com.example.vinilosmobile.domain.models.Album
 import com.example.vinilosmobile.domain.models.AlbumSource
-import com.example.vinilosmobile.feature.albums.catalog.models.AlbumCatalogUiState
+import com.example.vinilosmobile.feature.home.albums.models.AlbumCatalogUiState
+import com.example.vinilosmobile.feature.home.navigation.AlbumNavigator
+import com.example.vinilosmobile.feature.shared.messageRes
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -51,10 +52,10 @@ class AlbumCatalogFragment : Fragment() {
             AlbumCatalogUiState.Empty -> {
                 binding.catalogMessage.show(R.string.catalog_empty)
             }
-            AlbumCatalogUiState.Error -> {
+            is AlbumCatalogUiState.Error -> {
                 binding.catalogMessage.show(
                     R.string.catalog_error_title,
-                    R.string.catalog_error_body,
+                    state.kind.messageRes(),
                     R.string.retry,
                 ) { viewModel.reload() }
             }

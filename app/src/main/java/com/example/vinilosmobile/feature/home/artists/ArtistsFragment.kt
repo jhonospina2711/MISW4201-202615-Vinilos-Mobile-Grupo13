@@ -1,4 +1,4 @@
-package com.example.vinilosmobile.feature.collectors
+package com.example.vinilosmobile.feature.home.artists
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.example.vinilosmobile.R
 import com.example.vinilosmobile.databinding.FragmentPendingSectionBinding
 
-class CollectorsFragment : Fragment() {
+class ArtistsFragment : Fragment() {
     private var _binding: FragmentPendingSectionBinding? = null
     private val binding get() = requireNotNull(_binding)
 
@@ -18,8 +18,8 @@ class CollectorsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.sectionTitle.setText(R.string.nav_collectors)
-        binding.sectionMessage.setText(R.string.collectors_pending)
+        binding.sectionTitle.setText(R.string.nav_artists)
+        binding.sectionMessage.setText(R.string.artists_pending)
     }
 
     override fun onDestroyView() {

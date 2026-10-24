@@ -12,6 +12,7 @@ import com.example.vinilosmobile.R
 import com.example.vinilosmobile.databinding.FragmentAlbumDetailBinding
 import com.example.vinilosmobile.domain.models.Album
 import com.example.vinilosmobile.feature.albums.detail.models.AlbumDetailUiState
+import com.example.vinilosmobile.feature.shared.messageRes
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,7 +36,7 @@ class AlbumDetailFragment : Fragment() {
     private fun render(state: AlbumDetailUiState) {
         binding.detailLoading.isVisible = state is AlbumDetailUiState.Loading
         binding.detailContent.isVisible = state is AlbumDetailUiState.Content
-        binding.detailMessage.isVisible = state == AlbumDetailUiState.NotFound || state == AlbumDetailUiState.Error
+        binding.detailMessage.isVisible = state == AlbumDetailUiState.NotFound || state is AlbumDetailUiState.Error
         when (state) {
             is AlbumDetailUiState.Content -> showAlbum(state.album)
             AlbumDetailUiState.NotFound -> {
@@ -43,8 +44,8 @@ class AlbumDetailFragment : Fragment() {
                     requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
             }
-            AlbumDetailUiState.Error -> {
-                binding.detailMessage.show(R.string.album_detail_error, actionRes = R.string.retry) {
+            is AlbumDetailUiState.Error -> {
+                binding.detailMessage.show(R.string.album_detail_error, state.kind.messageRes(), R.string.retry) {
                     viewModel.load(albumId)
                 }
             }

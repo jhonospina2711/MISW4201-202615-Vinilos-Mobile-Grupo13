@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vinilosmobile.domain.repository.AlbumNotFoundException
+import com.example.vinilosmobile.domain.models.RequestFailure
+import com.example.vinilosmobile.domain.models.RequestFailureKind
 import com.example.vinilosmobile.domain.usecase.GetAlbumUseCase
 import com.example.vinilosmobile.feature.albums.detail.models.AlbumDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,8 +31,10 @@ class AlbumDetailViewModel @Inject constructor(private val getAlbum: GetAlbumUse
                 throw exception
             } catch (_: AlbumNotFoundException) {
                 _state.value = AlbumDetailUiState.NotFound
-            } catch (_: Exception) {
-                _state.value = AlbumDetailUiState.Error
+            } catch (exception: Exception) {
+                _state.value = AlbumDetailUiState.Error(
+                    (exception as? RequestFailure)?.kind ?: RequestFailureKind.UNKNOWN,
+                )
             } finally {
                 activeRequest = false
             }

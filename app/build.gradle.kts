@@ -4,6 +4,15 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+val vinilosApiBaseUrl = providers.gradleProperty("vinilosApiBaseUrl")
+    .orElse("https://sadasdasdadsa/")
+    .get()
+require(vinilosApiBaseUrl.startsWith("http://") || vinilosApiBaseUrl.startsWith("https://")) {
+    "vinilosApiBaseUrl must start with http:// or https://"
+}
+require(vinilosApiBaseUrl.endsWith("/")) { "vinilosApiBaseUrl must end with /" }
+val escapedApiBaseUrl = vinilosApiBaseUrl.replace("\\", "\\\\").replace("\"", "\\\"")
+
 android {
     namespace = "com.example.vinilosmobile"
     compileSdk {
@@ -16,8 +25,8 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
-        // URL temporal indicada por el equipo; reemplazar al confirmar BackVynils.
-        buildConfigField("String", "BACK_VYNILS_BASE_URL", "\"https://sadasdasdadsa/\"")
+        // Override with -PvinilosApiBaseUrl=... when a backend is available.
+        buildConfigField("String", "BACK_VYNILS_BASE_URL", "\"$escapedApiBaseUrl\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -57,6 +66,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
     implementation(libs.glide)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

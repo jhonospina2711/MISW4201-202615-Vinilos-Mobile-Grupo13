@@ -1,6 +1,6 @@
-package com.example.vinilosmobile.data.remote
+package com.example.vinilosmobile.data.network.services
 
-import com.example.vinilosmobile.data.remote.models.AlbumDto
+import com.example.vinilosmobile.data.network.models.AlbumDto
 
 import retrofit2.http.GET
 import retrofit2.http.Path

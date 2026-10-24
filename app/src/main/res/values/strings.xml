@@ -8,7 +8,11 @@
     <string name="catalog_cached">Mostrando álbumes guardados</string>
     <string name="catalog_empty">Aún no hay álbumes</string>
     <string name="catalog_error_title">No pudimos cargar el catálogo</string>
-    <string name="catalog_error_body">Revisa tu conexión a internet e intenta de nuevo.</string>
+    <string name="request_no_connection">No hay conexión con el servicio. Revisa internet e intenta de nuevo.</string>
+    <string name="request_timeout">El servicio tardó demasiado en responder. Intenta de nuevo.</string>
+    <string name="request_unauthorized">No tienes permiso para consultar esta información.</string>
+    <string name="request_server">El servicio tiene un problema temporal. Intenta de nuevo más tarde.</string>
+    <string name="request_unknown">No pudimos completar la consulta. Intenta de nuevo.</string>
     <string name="retry">Reintentar</string>
     <string name="artists_pending">Aquí aparecerá el listado de músicos y bandas.</string>
     <string name="collectors_pending">Aquí aparecerá el listado de coleccionistas.</string>

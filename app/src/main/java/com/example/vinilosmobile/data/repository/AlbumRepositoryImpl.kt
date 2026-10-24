@@ -3,7 +3,8 @@ package com.example.vinilosmobile.data.repository
 import com.example.vinilosmobile.data.local.AlbumDao
 import com.example.vinilosmobile.data.mappers.toDomain
 import com.example.vinilosmobile.data.mappers.toEntity
-import com.example.vinilosmobile.data.remote.AlbumApiService
+import com.example.vinilosmobile.data.network.errors.NetworkErrorMapper
+import com.example.vinilosmobile.data.network.services.AlbumApiService
 import com.example.vinilosmobile.domain.models.Album
 import com.example.vinilosmobile.domain.models.AlbumCatalog
 import com.example.vinilosmobile.domain.models.AlbumSource
@@ -18,6 +19,7 @@ class AlbumRepositoryImpl @Inject constructor(
     private val service: AlbumApiService,
     private val dao: AlbumDao,
     private val gson: Gson,
+    private val errorMapper: NetworkErrorMapper,
 ) : AlbumRepository {
     override suspend fun getAlbums(): AlbumCatalog = try {
         val albums = service.getAlbums().mapNotNull { it.toDomain() }
@@ -27,7 +29,7 @@ class AlbumRepositoryImpl @Inject constructor(
         throw exception
     } catch (exception: Exception) {
         val cached = dao.getAll().map { it.toDomain(gson) }
-        if (cached.isEmpty()) throw exception
+        if (cached.isEmpty()) throw errorMapper.map(exception)
         AlbumCatalog(cached, AlbumSource.CACHE)
     }
 
@@ -42,8 +44,8 @@ class AlbumRepositoryImpl @Inject constructor(
         throw exception
     } catch (exception: HttpException) {
         if (exception.code() == 404) throw AlbumNotFoundException()
-        dao.getById(id)?.toDomain(gson) ?: throw exception
+        dao.getById(id)?.toDomain(gson) ?: throw errorMapper.map(exception)
     } catch (exception: Exception) {
-        dao.getById(id)?.toDomain(gson) ?: throw exception
+        dao.getById(id)?.toDomain(gson) ?: throw errorMapper.map(exception)
     }
 }

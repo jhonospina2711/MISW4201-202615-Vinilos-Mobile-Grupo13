@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/vinilos_background"
-    tools:context=".MainActivity">
+    tools:context=".feature.home.MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/tabsContent"

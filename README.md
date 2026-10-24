@@ -70,9 +70,9 @@ El APK de depuración queda en `app/build/outputs/apk/debug/app-debug.apk`.
 │       │   │   │   ├── organisms/ Estados de contenido reutilizables
 │       │   │   │   └── models/   Modelos de presentación compartidos
 │       │   │   ├── domain/       Modelos, contratos y casos de uso
-│       │   │   ├── data/         API, modelos DTO, Room, mappers y repositorios
+│       │   │   ├── data/         Network/Retrofit, Room, mappers y repositorios
 │       │   │   ├── di/           Módulos Hilt de red, base de datos y repositorios
-│       │   │   └── feature/      Fragments y ViewModels por HU
+│       │   │   └── feature/      Home, detalles y ViewModels por pantalla
 │       │   ├── res/              Recursos: layouts, temas, textos, iconos
 │       │   └── AndroidManifest.xml
 │       ├── test/                 Pruebas unitarias (JUnit)
@@ -102,6 +102,7 @@ Las versiones se declaran centralizadas en `gradle/libs.versions.toml`.
 | `androidx.lifecycle:*` | 2.9.4 | ViewModel, coroutines y estados observables |
 | `com.squareup.retrofit2:*` | 3.0.0 | API REST y conversión JSON |
 | `com.github.bumptech.glide:glide` | 4.16.0 | Carga de portadas |
+| `com.squareup.okhttp3:okhttp` y `logging-interceptor` | 4.12.0 | Cliente compartido, interceptores y registro básico en Debug |
 | `com.google.dagger:hilt-android` | 2.59.2 | Inyección de dependencias |
 | `com.google.devtools.ksp` | 2.3.6 | Procesamiento de Hilt y Room |
 | `androidx.room:*` | 2.7.2 | Caché local de álbumes |
@@ -115,7 +116,7 @@ La aplicación consume la API REST de **BackVynils**:
 
 - Repositorio del backend: <https://github.com/TheSoftwareDesignLab/BackVynils>
 
-El cliente Retrofit y el permiso `android.permission.INTERNET` ya están configurados. La URL en `app/build.gradle.kts` es **temporal**: `https://sadasdasdadsa/`. Reemplaza el valor de `BACK_VYNILS_BASE_URL` por la URL real del backend (terminada en `/`) y sincroniza Gradle. El Repository intenta la red primero, reemplaza la caché al recibir el catálogo y, si falla la red, muestra los álbumes guardados con un aviso y opción de reintentar. Sin datos guardados muestra el estado de error. Room usa esquema versión 1; cualquier cambio posterior requiere una migración explícita. Se conserva el mínimo de Android 5.0 (API 21).
+El cliente Retrofit y el permiso `android.permission.INTERNET` ya están configurados. La URL predeterminada `https://sadasdasdadsa/` sigue siendo temporal. Para probar otra URL sin editar el código, pasar `-PvinilosApiBaseUrl=https://servidor/` a Gradle. El Repository intenta la red primero y usa la copia de Room si falla. Sin datos guardados muestra un error general traducido al español. Room usa esquema versión 1 y se conserva el mínimo de Android 5.0 (API 21). El estado del despliegue de TSDC y los pasos para Docker local están en [Backend para desarrollo](docs/BACKEND.md).
 
 ## 7. Flujo de trabajo en Git
 

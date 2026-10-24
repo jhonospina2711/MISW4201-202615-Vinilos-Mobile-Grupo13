@@ -1,11 +1,13 @@
-package com.example.vinilosmobile.feature.albums.catalog
+package com.example.vinilosmobile.feature.home.albums
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vinilosmobile.domain.usecase.GetAlbumsUseCase
-import com.example.vinilosmobile.feature.albums.catalog.models.AlbumCatalogUiState
+import com.example.vinilosmobile.domain.models.RequestFailure
+import com.example.vinilosmobile.domain.models.RequestFailureKind
+import com.example.vinilosmobile.feature.home.albums.models.AlbumCatalogUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
@@ -29,8 +31,10 @@ class AlbumCatalogViewModel @Inject constructor(private val getAlbums: GetAlbums
                 else AlbumCatalogUiState.Content(catalog.albums, catalog.source)
             } catch (exception: CancellationException) {
                 throw exception
-            } catch (_: Exception) {
-                _state.value = AlbumCatalogUiState.Error
+            } catch (exception: Exception) {
+                _state.value = AlbumCatalogUiState.Error(
+                    (exception as? RequestFailure)?.kind ?: RequestFailureKind.UNKNOWN,
+                )
             } finally {
                 activeRequest = false
             }

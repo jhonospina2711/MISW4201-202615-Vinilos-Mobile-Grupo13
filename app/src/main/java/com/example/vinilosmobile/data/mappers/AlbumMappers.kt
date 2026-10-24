@@ -1,7 +1,7 @@
 package com.example.vinilosmobile.data.mappers
 
 import com.example.vinilosmobile.data.local.models.AlbumEntity
-import com.example.vinilosmobile.data.remote.models.AlbumDto
+import com.example.vinilosmobile.data.network.models.AlbumDto
 import com.example.vinilosmobile.domain.models.Album
 import com.google.gson.Gson
 
