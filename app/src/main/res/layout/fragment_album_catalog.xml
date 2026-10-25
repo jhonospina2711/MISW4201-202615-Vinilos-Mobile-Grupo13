@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vinilos_background"
+    android:orientation="vertical">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/vinilos_space_md"
+        android:layout_marginTop="@dimen/vinilos_space_lg"
+        android:layout_marginEnd="@dimen/vinilos_space_md"
+        android:text="@string/nav_albums"
+        android:textAppearance="?attr/textAppearanceHeadlineMedium" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/albumCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/vinilos_space_md"
+        android:layout_marginTop="@dimen/vinilos_space_xs"
+        android:layout_marginEnd="@dimen/vinilos_space_md"
+        android:layout_marginBottom="@dimen/vinilos_space_sm"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        tools:text="6 álbumes en el catálogo" />
+
+    <LinearLayout
+        android:id="@+id/cachedNotice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/vinilos_space_md"
+        android:paddingEnd="@dimen/vinilos_space_md"
+        android:visibility="gone">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/catalog_cached"
+            android:textAppearance="?attr/textAppearanceBodySmall" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cachedRetry"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/retry" />
+    </LinearLayout>
+
+    <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/albumGrid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="@dimen/vinilos_space_sm"
+            android:paddingEnd="@dimen/vinilos_space_sm"
+            android:paddingBottom="@dimen/vinilos_space_md"
+            tools:listitem="@layout/vinilos_item_album" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/catalogLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/catalog_loading" />
+
+        <com.example.vinilosmobile.coreui.organisms.ContentStateView
+            android:id="@+id/catalogMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="@dimen/vinilos_space_lg"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

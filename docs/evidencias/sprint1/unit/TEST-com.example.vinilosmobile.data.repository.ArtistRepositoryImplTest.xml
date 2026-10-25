@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-25T02:24:19.327Z" hostname="dscombita.local" time="0.356">
+  <properties/>
+  <testcase name="listsArtistsFromAdapter" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.038"/>
+  <testcase name="timeoutBecomesTypedFailure" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.015"/>
+  <testcase name="independentCancellationIsNotConvertedToNetworkFailure" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.024"/>
+  <testcase name="retrievesDetailWithTypeAndId" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.133"/>
+  <testcase name="missingArtistKeepsNotFoundMeaning" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.146"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
