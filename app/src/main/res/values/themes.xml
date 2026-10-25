@@ -1,9 +1,21 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.VinilosMobile" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<resources>
+    <style name="Widget.Vinilos.BottomNavigation.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/vinilos_cover_three</item>
     </style>
 
-    <style name="Theme.VinilosMobile" parent="Base.Theme.VinilosMobile" />
+    <style name="Theme.VinilosMobile" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/vinilos_primary</item>
+        <item name="colorOnPrimary">@color/vinilos_on_primary</item>
+        <item name="colorPrimaryContainer">@color/vinilos_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/vinilos_on_primary_container</item>
+        <item name="colorSurface">@color/vinilos_surface</item>
+        <item name="colorSurfaceContainer">@color/vinilos_surface_container</item>
+        <item name="colorOnSurface">@color/vinilos_on_surface</item>
+        <item name="colorOnSurfaceVariant">@color/vinilos_on_surface_variant</item>
+        <item name="colorError">@color/vinilos_error</item>
+        <item name="android:colorBackground">@color/vinilos_background</item>
+        <item name="android:statusBarColor">@color/vinilos_background</item>
+        <item name="android:navigationBarColor">@color/vinilos_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
 </resources>
