@@ -60,6 +60,20 @@ En Windows usa `gradlew.bat` en lugar de `./gradlew`.
 El APK de depuración queda en `app/build/outputs/apk/debug/app-debug.apk`.
 El APK Release queda en `app/build/outputs/apk/release/app-release.apk`. Actualmente usa la firma Debug y la URL HTTPS publicada responde HTTP 500; no debe tratarse como APK final de entrega hasta resolver esos puntos.
 
+### APK listo para instalar
+
+El APK de la entrega del Sprint 1 está versionado en el repositorio y no requiere compilar:
+
+**[`releases/sprint-1/vinilos-sprint1.apk`](releases/sprint-1/vinilos-sprint1.apk)** — 11 MB, `minSdk` 21 (Android 5.0 Lollipop).
+
+Instalación directa:
+
+```bash
+adb install releases/sprint-1/vinilos-sprint1.apk
+```
+
+El SHA-256, las advertencias de firma y los defectos conocidos están en [`releases/sprint-1/LEEME.md`](releases/sprint-1/LEEME.md).
+
 ## 4. Estructura del proyecto
 
 ```
@@ -85,6 +99,9 @@ El APK Release queda en `app/build/outputs/apk/release/app-release.apk`. Actualm
 ├── gradle/
 │   ├── libs.versions.toml        Catálogo de versiones de dependencias
 │   └── wrapper/                  Wrapper de Gradle
+├── releases/                     APK versionados por sprint
+├── scripts/                      Scripts de verificación de la API
+├── docs/                         Arquitectura, pruebas y evidencias
 ├── build.gradle.kts              Build raíz
 ├── settings.gradle.kts           Módulos y repositorios
 └── gradle.properties             Propiedades de Gradle
