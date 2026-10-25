@@ -8,4 +8,5 @@ sealed interface AlbumDetailUiState {
     data class Content(val album: Album) : AlbumDetailUiState
     data object NotFound : AlbumDetailUiState
     data class Error(val kind: RequestFailureKind) : AlbumDetailUiState
+    data object Cancelled : AlbumDetailUiState
 }

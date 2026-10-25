@@ -14,6 +14,7 @@
     <string name="request_server">El servicio tiene un problema temporal. Intenta de nuevo más tarde.</string>
     <string name="request_unknown">No pudimos completar la consulta. Intenta de nuevo.</string>
     <string name="retry">Reintentar</string>
+    <string name="request_cancelled">Se canceló la solicitud</string>
     <string name="artists_loading">Cargando artistas…</string>
     <string name="artists_empty">No hay artistas para mostrar.</string>
     <string name="artists_error">No pudimos cargar los artistas</string>

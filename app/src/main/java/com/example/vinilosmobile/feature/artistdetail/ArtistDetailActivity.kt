@@ -72,7 +72,8 @@ class ArtistDetailActivity : AppCompatActivity() {
     private fun render(state: ArtistDetailUiState) {
         binding.detailLoading.isVisible = state == ArtistDetailUiState.Loading
         binding.detailContent.isVisible = state is ArtistDetailUiState.Content
-        binding.detailMessage.isVisible = state == ArtistDetailUiState.NotFound || state is ArtistDetailUiState.Error
+        binding.detailMessage.isVisible = state == ArtistDetailUiState.NotFound ||
+            state is ArtistDetailUiState.Error || state == ArtistDetailUiState.Cancelled
         when (state) {
             is ArtistDetailUiState.Content -> showArtist(state.artist)
             ArtistDetailUiState.NotFound -> binding.detailMessage.show(
@@ -83,6 +84,10 @@ class ArtistDetailActivity : AppCompatActivity() {
                 R.string.artist_detail_error,
                 state.kind.messageRes(),
                 R.string.retry,
+            ) { viewModel.load(artistKey) }
+            ArtistDetailUiState.Cancelled -> binding.detailMessage.show(
+                R.string.request_cancelled,
+                actionRes = R.string.retry,
             ) { viewModel.load(artistKey) }
             ArtistDetailUiState.Loading -> Unit
         }

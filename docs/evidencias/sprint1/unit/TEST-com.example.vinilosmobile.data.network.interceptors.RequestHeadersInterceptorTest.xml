@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.vinilosmobile.data.network.interceptors.RequestHeadersInterceptorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-25T01:57:07.672Z" hostname="dscombita.local" time="0.084">
+<testsuite name="com.example.vinilosmobile.data.network.interceptors.RequestHeadersInterceptorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-25T02:24:18.580Z" hostname="dscombita.local" time="0.148">
   <properties/>
-  <testcase name="addsJsonAcceptHeaderAndProceedsOnce" classname="com.example.vinilosmobile.data.network.interceptors.RequestHeadersInterceptorTest" time="0.084"/>
+  <testcase name="addsJsonAcceptHeaderAndProceedsOnce" classname="com.example.vinilosmobile.data.network.interceptors.RequestHeadersInterceptorTest" time="0.148"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vinilosmobile.domain.models.ArtistKey
+import com.example.vinilosmobile.domain.models.DataError
+import com.example.vinilosmobile.domain.models.DataResult
 import com.example.vinilosmobile.domain.models.RequestFailure
 import com.example.vinilosmobile.domain.models.RequestFailureKind
 import com.example.vinilosmobile.domain.repository.ArtistNotFoundException
@@ -33,10 +35,17 @@ class ArtistDetailViewModel @Inject constructor(
         if (activeRequest) return
         activeRequest = true
         viewModelScope.launch {
-            _state.value = ArtistDetailUiState.Loading
             try {
-                getArtist(key).collect { artist ->
-                    _state.value = ArtistDetailUiState.Content(artist)
+                getArtist(key).collect { result ->
+                    when (result) {
+                        DataResult.Loading -> _state.value = ArtistDetailUiState.Loading
+                        is DataResult.Success -> _state.value = ArtistDetailUiState.Content(result.value)
+                        is DataResult.Error -> when (val reason = result.reason) {
+                            DataError.NotFound -> _state.value = ArtistDetailUiState.NotFound
+                            is DataError.Request -> _state.value = ArtistDetailUiState.Error(reason.kind)
+                        }
+                        DataResult.Cancelled -> _state.value = ArtistDetailUiState.Cancelled
+                    }
                 }
             } catch (exception: CancellationException) {
                 throw exception

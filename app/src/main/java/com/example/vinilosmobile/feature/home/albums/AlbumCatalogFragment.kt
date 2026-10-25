@@ -42,7 +42,8 @@ class AlbumCatalogFragment : Fragment() {
         binding.albumGrid.isVisible = state is AlbumCatalogUiState.Content
         binding.albumCount.isVisible = state is AlbumCatalogUiState.Content
         binding.cachedNotice.isVisible = state is AlbumCatalogUiState.Content && state.source == AlbumSource.CACHE
-        binding.catalogMessage.isVisible = state is AlbumCatalogUiState.Empty || state is AlbumCatalogUiState.Error
+        binding.catalogMessage.isVisible = state is AlbumCatalogUiState.Empty ||
+            state is AlbumCatalogUiState.Error || state == AlbumCatalogUiState.Cancelled
         when (state) {
             is AlbumCatalogUiState.Content -> {
                 binding.albumCount.text = getString(R.string.album_count, state.albums.size)
@@ -58,6 +59,10 @@ class AlbumCatalogFragment : Fragment() {
                     R.string.retry,
                 ) { viewModel.reload() }
             }
+            AlbumCatalogUiState.Cancelled -> binding.catalogMessage.show(
+                R.string.request_cancelled,
+                actionRes = R.string.retry,
+            ) { viewModel.reload() }
             AlbumCatalogUiState.Loading -> Unit
         }
     }

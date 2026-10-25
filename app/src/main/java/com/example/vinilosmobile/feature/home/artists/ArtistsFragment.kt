@@ -58,7 +58,8 @@ class ArtistsFragment : Fragment() {
     private fun render(state: ArtistCatalogUiState) {
         binding.artistLoading.isVisible = state == ArtistCatalogUiState.Loading
         binding.artistList.isVisible = state is ArtistCatalogUiState.Content
-        binding.artistMessage.isVisible = state == ArtistCatalogUiState.Empty || state is ArtistCatalogUiState.Error
+        binding.artistMessage.isVisible = state == ArtistCatalogUiState.Empty ||
+            state is ArtistCatalogUiState.Error || state == ArtistCatalogUiState.Cancelled
         when (state) {
             is ArtistCatalogUiState.Content -> artistAdapter.submitList(state.artists.map(::toRow))
             ArtistCatalogUiState.Empty -> binding.artistMessage.show(R.string.artists_empty)
@@ -66,6 +67,10 @@ class ArtistsFragment : Fragment() {
                 R.string.artists_error,
                 state.kind.messageRes(),
                 R.string.retry,
+            ) { viewModel.reload() }
+            ArtistCatalogUiState.Cancelled -> binding.artistMessage.show(
+                R.string.request_cancelled,
+                actionRes = R.string.retry,
             ) { viewModel.reload() }
             ArtistCatalogUiState.Loading -> Unit
         }

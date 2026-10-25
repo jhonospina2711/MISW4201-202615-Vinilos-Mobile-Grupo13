@@ -66,7 +66,8 @@ class AlbumDetailActivity : AppCompatActivity() {
     private fun render(state: AlbumDetailUiState) {
         binding.detailLoading.isVisible = state == AlbumDetailUiState.Loading
         binding.detailContent.isVisible = state is AlbumDetailUiState.Content
-        binding.detailMessage.isVisible = state == AlbumDetailUiState.NotFound || state is AlbumDetailUiState.Error
+        binding.detailMessage.isVisible = state == AlbumDetailUiState.NotFound ||
+            state is AlbumDetailUiState.Error || state == AlbumDetailUiState.Cancelled
         when (state) {
             is AlbumDetailUiState.Content -> showAlbum(state.album)
             AlbumDetailUiState.NotFound -> binding.detailMessage.show(
@@ -77,6 +78,10 @@ class AlbumDetailActivity : AppCompatActivity() {
                 R.string.album_detail_error,
                 state.kind.messageRes(),
                 R.string.retry,
+            ) { viewModel.load(albumId) }
+            AlbumDetailUiState.Cancelled -> binding.detailMessage.show(
+                R.string.request_cancelled,
+                actionRes = R.string.retry,
             ) { viewModel.load(albumId) }
             AlbumDetailUiState.Loading -> Unit
         }

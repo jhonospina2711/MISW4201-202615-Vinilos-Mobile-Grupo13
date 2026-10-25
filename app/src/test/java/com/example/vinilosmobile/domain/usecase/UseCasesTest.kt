@@ -6,6 +6,7 @@ import com.example.vinilosmobile.domain.models.AlbumSource
 import com.example.vinilosmobile.domain.models.Artist
 import com.example.vinilosmobile.domain.models.ArtistKey
 import com.example.vinilosmobile.domain.models.ArtistType
+import com.example.vinilosmobile.domain.models.DataResult
 import com.example.vinilosmobile.domain.models.UserRole
 import com.example.vinilosmobile.domain.repository.AlbumRepository
 import com.example.vinilosmobile.domain.repository.ArtistRepository
@@ -33,29 +34,32 @@ class UseCasesTest {
 
     @Test fun getAlbumsPreservesSourceInformation() = runBlocking {
         val expected = AlbumCatalog(listOf(album), AlbumSource.CACHE)
-        every { albums.getAlbums() } returns flowOf(expected)
+        every { albums.getAlbums() } returns flowOf(DataResult.Loading, DataResult.Success(expected))
 
-        assertEquals(expected, GetAlbumsUseCase(albums)().toList().single())
+        assertEquals(
+            listOf(DataResult.Loading, DataResult.Success(expected)),
+            GetAlbumsUseCase(albums)().toList(),
+        )
         verify(exactly = 1) { albums.getAlbums() }
     }
 
     @Test fun getAlbumPassesSelectedId() = runBlocking {
-        every { albums.getAlbum(1) } returns flowOf(album)
+        every { albums.getAlbum(1) } returns flowOf(DataResult.Success(album))
 
-        assertEquals(album, GetAlbumUseCase(albums)(1).toList().single())
+        assertEquals(listOf(DataResult.Success(album)), GetAlbumUseCase(albums)(1).toList())
         verify(exactly = 1) { albums.getAlbum(1) }
     }
 
     @Test fun getArtistsPassesCatalog() = runBlocking {
-        every { artists.getArtists() } returns flowOf(listOf(artist))
+        every { artists.getArtists() } returns flowOf(DataResult.Success(listOf(artist)))
 
-        assertEquals(listOf(artist), GetArtistsUseCase(artists)().toList().single())
+        assertEquals(listOf(DataResult.Success(listOf(artist))), GetArtistsUseCase(artists)().toList())
     }
 
     @Test fun getArtistPassesTypeAndId() = runBlocking {
-        every { artists.getArtist(artistKey) } returns flowOf(artist)
+        every { artists.getArtist(artistKey) } returns flowOf(DataResult.Success(artist))
 
-        assertEquals(artist, GetArtistUseCase(artists)(artistKey).toList().single())
+        assertEquals(listOf(DataResult.Success(artist)), GetArtistUseCase(artists)(artistKey).toList())
         verify(exactly = 1) { artists.getArtist(artistKey) }
     }
 

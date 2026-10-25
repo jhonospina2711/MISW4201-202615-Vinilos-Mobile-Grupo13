@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vinilosmobile.domain.models.Artist
 import com.example.vinilosmobile.domain.models.ArtistType
+import com.example.vinilosmobile.domain.models.DataError
+import com.example.vinilosmobile.domain.models.DataResult
 import com.example.vinilosmobile.domain.models.RequestFailure
 import com.example.vinilosmobile.domain.models.RequestFailureKind
 import com.example.vinilosmobile.domain.usecase.GetArtistsUseCase
@@ -40,11 +42,20 @@ class ArtistCatalogViewModel @Inject constructor(
         if (activeRequest) return
         activeRequest = true
         viewModelScope.launch {
-            _state.value = ArtistCatalogUiState.Loading
             try {
-                getArtists().collect { artists ->
-                    allArtists = artists
-                    showArtists(artists)
+                getArtists().collect { result ->
+                    when (result) {
+                        DataResult.Loading -> _state.value = ArtistCatalogUiState.Loading
+                        is DataResult.Success -> {
+                            allArtists = result.value
+                            showArtists(result.value)
+                        }
+                        is DataResult.Error -> _state.value = ArtistCatalogUiState.Error(
+                            (result.reason as? DataError.Request)?.kind
+                                ?: RequestFailureKind.UNKNOWN,
+                        )
+                        DataResult.Cancelled -> _state.value = ArtistCatalogUiState.Cancelled
+                    }
                 }
             } catch (exception: CancellationException) {
                 throw exception

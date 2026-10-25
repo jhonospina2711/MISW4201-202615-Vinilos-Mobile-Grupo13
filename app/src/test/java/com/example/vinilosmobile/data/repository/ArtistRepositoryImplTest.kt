@@ -5,9 +5,9 @@ import com.example.vinilosmobile.data.network.errors.NetworkErrorMapper
 import com.example.vinilosmobile.domain.models.Artist
 import com.example.vinilosmobile.domain.models.ArtistKey
 import com.example.vinilosmobile.domain.models.ArtistType
-import com.example.vinilosmobile.domain.models.RequestFailure
+import com.example.vinilosmobile.domain.models.DataError
+import com.example.vinilosmobile.domain.models.DataResult
 import com.example.vinilosmobile.domain.models.RequestFailureKind
-import com.example.vinilosmobile.domain.repository.ArtistNotFoundException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
 import org.junit.Test
 import retrofit2.HttpException
 import retrofit2.Response
@@ -31,24 +30,30 @@ class ArtistRepositoryImplTest {
     @Test fun listsArtistsFromAdapter() = runBlocking {
         coEvery { adapter.getArtists() } returns listOf(artist)
 
-        assertEquals(listOf(artist), repository.getArtists().toList().single())
+        assertEquals(
+            listOf(DataResult.Loading, DataResult.Success(listOf(artist))),
+            repository.getArtists().toList(),
+        )
         coVerify(exactly = 1) { adapter.getArtists() }
     }
 
     @Test fun retrievesDetailWithTypeAndId() = runBlocking {
         coEvery { adapter.getArtist(key) } returns artist
 
-        assertEquals(artist, repository.getArtist(key).toList().single())
+        assertEquals(
+            listOf(DataResult.Loading, DataResult.Success(artist)),
+            repository.getArtist(key).toList(),
+        )
         coVerify(exactly = 1) { adapter.getArtist(key) }
     }
 
     @Test fun timeoutBecomesTypedFailure() = runBlocking {
         coEvery { adapter.getArtists() } throws SocketTimeoutException("slow")
 
-        val failure = assertThrows(RequestFailure::class.java) {
-            runBlocking { repository.getArtists().toList() }
-        }
-        assertEquals(RequestFailureKind.TIMEOUT, failure.kind)
+        assertEquals(
+            listOf(DataResult.Loading, DataResult.Error(DataError.Request(RequestFailureKind.TIMEOUT))),
+            repository.getArtists().toList(),
+        )
     }
 
     @Test fun missingArtistKeepsNotFoundMeaning() = runBlocking {
@@ -56,18 +61,18 @@ class ArtistRepositoryImplTest {
             Response.error<String>(404, "missing".toResponseBody()),
         )
 
-        assertThrows(ArtistNotFoundException::class.java) {
-            runBlocking { repository.getArtist(key).toList() }
-        }
-        Unit
+        assertEquals(
+            listOf(DataResult.Loading, DataResult.Error(DataError.NotFound)),
+            repository.getArtist(key).toList(),
+        )
     }
 
-    @Test fun cancellationIsNotConvertedToNetworkFailure() = runBlocking {
+    @Test fun independentCancellationIsNotConvertedToNetworkFailure() = runBlocking {
         coEvery { adapter.getArtists() } throws CancellationException("cancelled")
 
-        assertThrows(CancellationException::class.java) {
-            runBlocking { repository.getArtists().toList() }
-        }
-        Unit
+        assertEquals(
+            listOf(DataResult.Loading, DataResult.Cancelled),
+            repository.getArtists().toList(),
+        )
     }
 }

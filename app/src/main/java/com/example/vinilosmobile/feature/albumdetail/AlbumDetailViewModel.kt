@@ -10,6 +10,8 @@ import com.example.vinilosmobile.domain.models.RequestFailureKind
 import com.example.vinilosmobile.domain.usecase.GetAlbumUseCase
 import com.example.vinilosmobile.domain.usecase.GetUserRoleUseCase
 import com.example.vinilosmobile.domain.models.UserRole
+import com.example.vinilosmobile.domain.models.DataError
+import com.example.vinilosmobile.domain.models.DataResult
 import com.example.vinilosmobile.feature.albumdetail.models.AlbumDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -49,10 +51,21 @@ class AlbumDetailViewModel @Inject constructor(
         if (activeRequest) return
         activeRequest = true
         viewModelScope.launch {
-            _state.value = AlbumDetailUiState.Loading
             try {
-                getAlbum(id).collect { album ->
-                    _state.value = AlbumDetailUiState.Content(album)
+                getAlbum(id).collect { result ->
+                    when (result) {
+                        DataResult.Loading -> _state.value = AlbumDetailUiState.Loading
+                        is DataResult.Success -> _state.value = AlbumDetailUiState.Content(result.value)
+                        is DataResult.Error -> when (val reason = result.reason) {
+                            DataError.NotFound -> _state.value = AlbumDetailUiState.NotFound
+                            is DataError.Request -> if (_state.value !is AlbumDetailUiState.Content) {
+                                _state.value = AlbumDetailUiState.Error(reason.kind)
+                            }
+                        }
+                        DataResult.Cancelled -> if (_state.value !is AlbumDetailUiState.Content) {
+                            _state.value = AlbumDetailUiState.Cancelled
+                        }
+                    }
                 }
             } catch (exception: CancellationException) {
                 throw exception

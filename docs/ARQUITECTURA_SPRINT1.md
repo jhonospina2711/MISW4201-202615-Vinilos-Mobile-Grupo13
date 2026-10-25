@@ -15,11 +15,11 @@ flowchart LR
   end
   subgraph Domain[Dominio sin Android]
     UC[Casos de uso que exponen Flow]
-    Contracts[Contratos Flow y modelos]
+    Contracts[Contratos Flow de DataResult y modelos]
     UC --> Contracts
   end
   subgraph Data[Datos]
-    Repo[Repository emite modelos en Flow]
+    Repo[Repository emite DataResult en Flow]
     Adapter[ArtistServiceAdapter y mappers]
     Api[Retrofit + OkHttp]
     Room[Room: AlbumDao]
@@ -38,7 +38,9 @@ flowchart LR
   Hilt -. provee .-> Store
 ```
 
-Una pantalla envía eventos al ViewModel y observa su `LiveData` (`viewLifecycleOwner` en Fragments, Activity como propietario en Activities). El ViewModel recoge con `collect` el `Flow` del caso de uso y actualiza un `MutableLiveData` privado; expone únicamente `LiveData` de estados sellados (`Loading`, `Content`, `Empty`, `Error` y, en los detalles, `NotFound`). El caso de uso transmite el `Flow` del contrato de dominio y el Repository emite modelos cada vez que obtiene datos. `LiveData` queda en presentación para no introducir dependencias Android en `domain/`. DTO y entidades Room no llegan a la UI. El `NetworkErrorMapper` transforma fallos técnicos en categorías para mensajes legibles. Los interceptores añaden cabeceras comunes y registran solo datos básicos en Debug; Release desactiva ese registro.
+Una pantalla envía eventos al ViewModel y observa su `LiveData` (`viewLifecycleOwner` en Fragments, Activity como propietario en Activities). El ViewModel recoge con `collect` el `Flow<DataResult<T>>` del caso de uso y actualiza un `MutableLiveData` privado; expone únicamente `LiveData` de estados sellados (`Loading`, `Content`, `Empty`, `Error`, `Cancelled` y, en los detalles, `NotFound`). El Repository emite `DataResult.Loading`, `Success`, `Error` o `Cancelled`, y el caso de uso transmite ese flujo sin introducir Android en `domain/`. `Success` puede llegar más de una vez en álbumes: primero caché y después red. `Error` lleva `DataError.Request` con una categoría segura para UI o `DataError.NotFound`; si ya hay álbum guardado, el ViewModel conserva ese contenido ante un error de red. `LiveData` queda solo en presentación. DTO y entidades Room no llegan a la UI. El `NetworkErrorMapper` transforma fallos técnicos en categorías para mensajes legibles. Los interceptores añaden cabeceras comunes y registran solo datos básicos en Debug; Release desactiva ese registro.
+
+`Cancelled` representa una solicitud interrumpida de forma independiente mientras el ViewModel sigue activo y permite mostrar Reintentar. Una cancelación del `viewModelScope` por cierre de pantalla se propaga como `CancellationException`; no se intenta emitir ni pintar un estado después de destruir la pantalla. Esto sigue la [transparencia de excepciones de Kotlin Flow](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/catch.html) y el consumo de [LiveData según el ciclo de vida de Views](https://developer.android.com/topic/architecture/views/ui-layer). La preferencia de rol continúa como `Flow<UserRole?>` porque es una fuente continua de valores, no una operación de carga de las cuatro HU.
 
 ## Relaciones principales
 
@@ -113,7 +115,10 @@ sequenceDiagram
   Usuario->>Vista: Abre Artistas
   Vista->>VM: observe(state, viewLifecycleOwner) y reload()
   VM->>UC: invoke()
-  UC->>Repo: getArtists() retorna Flow
+  UC->>Repo: getArtists() retorna Flow de DataResult
+  Repo-->>UC: Loading
+  UC-->>VM: Flow emite Loading
+  VM-->>Vista: LiveData muestra Loading
   Repo->>Adapter: getArtists()
   par Consultas concurrentes
     Adapter->>API: getMusicians()
@@ -127,8 +132,8 @@ sequenceDiagram
   alt Ambas respuestas correctas
     Adapter->>Adapter: DTO a Artist, combinar y ordenar
     Adapter-->>Repo: List<Artist>
-    Repo-->>UC: emit(List de Artist)
-    UC-->>VM: Flow emite lista
+    Repo-->>UC: Success(List de Artist)
+    UC-->>VM: Flow emite Success
     VM->>VM: collect y actualiza MutableLiveData
     VM-->>Vista: observer recibe Content o Empty
     Vista-->>Usuario: Lista y filtros locales
@@ -139,10 +144,15 @@ sequenceDiagram
     end
   else Falla una consulta o no hay red
     Server--xAPI: error
-    Repo--xVM: RequestFailure
+    Repo-->>UC: Error(DataError.Request)
+    UC-->>VM: Flow emite Error
     VM->>VM: actualiza MutableLiveData con Error
     VM-->>Vista: observer muestra Error y Reintentar
     Note over Repo,Server: Artistas no tienen caché Room en Sprint 1
+  else Solicitud cancelada independientemente
+    Repo-->>UC: Cancelled
+    UC-->>VM: Flow emite Cancelled
+    VM-->>Vista: observer muestra Cancelled y Reintentar
   end
 ```
 
@@ -164,12 +174,15 @@ sequenceDiagram
   Usuario->>Vista: Abre Álbumes
   Vista->>VM: observe(state, viewLifecycleOwner)
   VM->>UC: invoke()
-  UC->>Repo: getAlbums() retorna Flow
+  UC->>Repo: getAlbums() retorna Flow de DataResult
+  Repo-->>UC: Loading
+  UC-->>VM: Flow emite Loading
+  VM-->>Vista: LiveData muestra Loading
   Repo->>Room: getAll()
   opt Hay álbumes guardados
     Room-->>Repo: AlbumEntity[]
-    Repo-->>UC: emit(AlbumCatalog CACHE)
-    UC-->>VM: Flow emite CACHE
+    Repo-->>UC: Success(AlbumCatalog CACHE)
+    UC-->>VM: Flow emite Success CACHE
     VM->>VM: collect y actualiza MutableLiveData
     VM-->>Vista: observer muestra Content guardado
   end
@@ -177,19 +190,24 @@ sequenceDiagram
   alt Respuesta correcta
     API-->>Repo: AlbumDto[]
     Repo->>Room: replaceAll(AlbumEntity[])
-    Repo-->>UC: emit(AlbumCatalog REMOTE)
-    UC-->>VM: Flow emite REMOTE
+    Repo-->>UC: Success(AlbumCatalog REMOTE)
+    UC-->>VM: Flow emite Success REMOTE
     VM->>VM: collect y actualiza MutableLiveData
     VM-->>Vista: observer muestra Content o Empty actualizado
   else Error de red o servidor
     API--xRepo: excepción
+    Repo-->>UC: Error(DataError.Request)
+    UC-->>VM: Flow emite Error
     alt Ya se emitió caché
       Note over Repo,Vista: Se conserva Content guardado
     else No hay datos guardados
-      Repo--xVM: RequestFailure
       VM->>VM: actualiza MutableLiveData con Error
       VM-->>Vista: observer muestra Error y Reintentar
     end
+  else Solicitud cancelada independientemente
+    Repo-->>UC: Cancelled
+    UC-->>VM: Flow emite Cancelled
+    VM-->>Vista: observer conserva caché o muestra Reintentar
   end
 ```
 
@@ -202,7 +220,7 @@ El detalle de álbum usa el mismo flujo y puede emitir el detalle guardado antes
 | Un módulo `:app`; paquetes `feature`, `domain`, `data`, `di`, `coreui` | Mantiene límites claros sin el coste de módulos Gradle adicionales para cuatro HU. |
 | Kotlin + Android Views/XML + Material | Implementa los diseños en el stack acordado y conserva soporte desde API 21. |
 | `coreui/atoms`, `molecules`, `organisms`, `models` | Reúne vistas reutilizables; “atomic design” guía la organización, no añade un módulo ni sustituye XML. |
-| Repository y casos de uso con Kotlin Flow | Permiten emitir primero Room y después red sin bloquear la pantalla; mantienen el dominio libre de Android. |
+| Repository y casos de uso con `Flow<DataResult<T>>` | Transmiten carga, éxitos, errores tipados y cancelación independiente; permiten emitir primero Room y después red sin bloquear la pantalla. |
 | ViewModel + LiveData + estados sellados | `collect` transforma emisiones de dominio en estados observables con el ciclo de vida de la pantalla. |
 | Hilt + KSP | Provee servicios, repositorios, Room, DataStore y ViewModels sin construirlos en Activities. |
 | Retrofit + Gson + OkHttp | Un cliente y una URL configurables para BackVynils; errores y cabeceras centralizados. |

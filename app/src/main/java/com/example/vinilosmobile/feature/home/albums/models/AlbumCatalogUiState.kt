@@ -9,4 +9,5 @@ sealed interface AlbumCatalogUiState {
     data class Content(val albums: List<Album>, val source: AlbumSource) : AlbumCatalogUiState
     data object Empty : AlbumCatalogUiState
     data class Error(val kind: RequestFailureKind) : AlbumCatalogUiState
+    data object Cancelled : AlbumCatalogUiState
 }

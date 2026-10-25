@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vinilosmobile.domain.usecase.GetAlbumsUseCase
+import com.example.vinilosmobile.domain.models.DataResult
+import com.example.vinilosmobile.domain.models.DataError
 import com.example.vinilosmobile.domain.models.RequestFailure
 import com.example.vinilosmobile.domain.models.RequestFailureKind
 import com.example.vinilosmobile.feature.home.albums.models.AlbumCatalogUiState
@@ -18,6 +20,7 @@ import kotlinx.coroutines.launch
 class AlbumCatalogViewModel @Inject constructor(private val getAlbums: GetAlbumsUseCase) : ViewModel() {
     private val _state = MutableLiveData<AlbumCatalogUiState>(AlbumCatalogUiState.Loading)
     val state: LiveData<AlbumCatalogUiState> = _state
+    private var activeRequest = false
 
     init { reload() }
 
@@ -25,11 +28,27 @@ class AlbumCatalogViewModel @Inject constructor(private val getAlbums: GetAlbums
         if (activeRequest) return
         activeRequest = true
         viewModelScope.launch {
-            _state.value = AlbumCatalogUiState.Loading
             try {
-                getAlbums().collect { catalog ->
-                    _state.value = if (catalog.albums.isEmpty()) AlbumCatalogUiState.Empty
-                    else AlbumCatalogUiState.Content(catalog.albums, catalog.source)
+                getAlbums().collect { result ->
+                    when (result) {
+                        DataResult.Loading -> _state.value = AlbumCatalogUiState.Loading
+                        is DataResult.Success -> {
+                            val catalog = result.value
+                            _state.value = if (catalog.albums.isEmpty()) AlbumCatalogUiState.Empty
+                            else AlbumCatalogUiState.Content(catalog.albums, catalog.source)
+                        }
+                        is DataResult.Error -> {
+                            if (_state.value !is AlbumCatalogUiState.Content) {
+                                val kind = (result.reason as? DataError.Request)?.kind ?: RequestFailureKind.UNKNOWN
+                                _state.value = AlbumCatalogUiState.Error(kind)
+                            }
+                        }
+                        DataResult.Cancelled -> {
+                            if (_state.value !is AlbumCatalogUiState.Content) {
+                                _state.value = AlbumCatalogUiState.Cancelled
+                            }
+                        }
+                    }
                 }
             } catch (exception: CancellationException) {
                 throw exception
@@ -43,5 +62,4 @@ class AlbumCatalogViewModel @Inject constructor(private val getAlbums: GetAlbums
         }
     }
 
-    private var activeRequest = false
 }

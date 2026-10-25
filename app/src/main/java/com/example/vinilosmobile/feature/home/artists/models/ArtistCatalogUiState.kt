@@ -8,4 +8,5 @@ sealed interface ArtistCatalogUiState {
     data class Content(val artists: List<Artist>) : ArtistCatalogUiState
     data object Empty : ArtistCatalogUiState
     data class Error(val kind: RequestFailureKind) : ArtistCatalogUiState
+    data object Cancelled : ArtistCatalogUiState
 }
