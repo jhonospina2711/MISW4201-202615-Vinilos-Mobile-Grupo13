@@ -1,5 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
+}
+
+val configuredApiBaseUrl = providers.gradleProperty("vinilosApiBaseUrl").orNull
+
+fun quotedBaseUrl(url: String): String {
+    require(url.startsWith("http://") || url.startsWith("https://")) {
+        "vinilosApiBaseUrl must start with http:// or https://"
+    }
+    require(url.endsWith("/")) { "vinilosApiBaseUrl must end with /" }
+    return "\"${url.replace("\\", "\\\\").replace("\"", "\\\"")}\""
 }
 
 android {
@@ -10,26 +22,46 @@ android {
 
     defaultConfig {
         applicationId = "com.example.vinilosmobile"
-        minSdk = 24
+        minSdk = 21
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.example.vinilosmobile.VinilosTestRunner"
     }
 
     buildTypes {
+        debug {
+            buildConfigField(
+                "String",
+                "BACK_VYNILS_BASE_URL",
+                quotedBaseUrl(configuredApiBaseUrl ?: "http://10.0.2.2:3000/")
+            )
+        }
         release {
+            buildConfigField(
+                "String",
+                "BACK_VYNILS_BASE_URL",
+                quotedBaseUrl(configuredApiBaseUrl ?: "https://backvynils-q6yc.onrender.com/")
+            )
+            signingConfig = signingConfigs.getByName("debug")
             optimization {
                 enable = true
-                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
             }
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+    buildFeatures {
+        buildConfig = true
+        viewBinding = true
+    }
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {
@@ -38,7 +70,27 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
+    implementation(libs.glide)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
+    implementation(libs.androidx.datastore.preferences)
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.robolectric)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
 }
