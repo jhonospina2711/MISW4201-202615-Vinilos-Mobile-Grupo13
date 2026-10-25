@@ -4,7 +4,8 @@ import com.example.vinilosmobile.domain.models.Artist
 import com.example.vinilosmobile.domain.models.ArtistKey
 import com.example.vinilosmobile.domain.repository.ArtistRepository
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class GetArtistUseCase @Inject constructor(private val repository: ArtistRepository) {
-    suspend operator fun invoke(key: ArtistKey): Artist = repository.getArtist(key)
+    operator fun invoke(key: ArtistKey): Flow<Artist> = repository.getArtist(key)
 }

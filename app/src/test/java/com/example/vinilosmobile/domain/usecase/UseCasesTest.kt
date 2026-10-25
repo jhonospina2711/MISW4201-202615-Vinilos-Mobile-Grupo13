@@ -14,6 +14,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
@@ -32,30 +33,30 @@ class UseCasesTest {
 
     @Test fun getAlbumsPreservesSourceInformation() = runBlocking {
         val expected = AlbumCatalog(listOf(album), AlbumSource.CACHE)
-        coEvery { albums.getAlbums() } returns expected
+        every { albums.getAlbums() } returns flowOf(expected)
 
-        assertEquals(expected, GetAlbumsUseCase(albums)())
-        coVerify(exactly = 1) { albums.getAlbums() }
+        assertEquals(expected, GetAlbumsUseCase(albums)().toList().single())
+        verify(exactly = 1) { albums.getAlbums() }
     }
 
     @Test fun getAlbumPassesSelectedId() = runBlocking {
-        coEvery { albums.getAlbum(1) } returns album
+        every { albums.getAlbum(1) } returns flowOf(album)
 
-        assertEquals(album, GetAlbumUseCase(albums)(1))
-        coVerify(exactly = 1) { albums.getAlbum(1) }
+        assertEquals(album, GetAlbumUseCase(albums)(1).toList().single())
+        verify(exactly = 1) { albums.getAlbum(1) }
     }
 
     @Test fun getArtistsPassesCatalog() = runBlocking {
-        coEvery { artists.getArtists() } returns listOf(artist)
+        every { artists.getArtists() } returns flowOf(listOf(artist))
 
-        assertEquals(listOf(artist), GetArtistsUseCase(artists)())
+        assertEquals(listOf(artist), GetArtistsUseCase(artists)().toList().single())
     }
 
     @Test fun getArtistPassesTypeAndId() = runBlocking {
-        coEvery { artists.getArtist(artistKey) } returns artist
+        every { artists.getArtist(artistKey) } returns flowOf(artist)
 
-        assertEquals(artist, GetArtistUseCase(artists)(artistKey))
-        coVerify(exactly = 1) { artists.getArtist(artistKey) }
+        assertEquals(artist, GetArtistUseCase(artists)(artistKey).toList().single())
+        verify(exactly = 1) { artists.getArtist(artistKey) }
     }
 
     @Test fun getRoleExposesPersistedFlow() = runBlocking {

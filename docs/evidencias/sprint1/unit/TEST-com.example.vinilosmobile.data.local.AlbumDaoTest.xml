@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.vinilosmobile.data.local.AlbumDaoTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-24T22:32:41.326Z" hostname="dscombita.local" time="5.348">
+<testsuite name="com.example.vinilosmobile.data.local.AlbumDaoTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-25T01:57:02.145Z" hostname="dscombita.local" time="4.533">
   <properties/>
-  <testcase name="catalogQueryExcludesDetailOnlyRowsAndKeepsPosition" classname="com.example.vinilosmobile.data.local.AlbumDaoTest" time="4.868"/>
-  <testcase name="upsertUpdatesExistingAlbumByPrimaryKey" classname="com.example.vinilosmobile.data.local.AlbumDaoTest" time="0.016"/>
-  <testcase name="replaceAllClearsStaleAlbumsAndStoresNewCatalog" classname="com.example.vinilosmobile.data.local.AlbumDaoTest" time="0.02"/>
+  <testcase name="catalogQueryExcludesDetailOnlyRowsAndKeepsPosition" classname="com.example.vinilosmobile.data.local.AlbumDaoTest" time="4.176"/>
+  <testcase name="upsertUpdatesExistingAlbumByPrimaryKey" classname="com.example.vinilosmobile.data.local.AlbumDaoTest" time="0.014"/>
+  <testcase name="replaceAllClearsStaleAlbumsAndStoresNewCatalog" classname="com.example.vinilosmobile.data.local.AlbumDaoTest" time="0.018"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

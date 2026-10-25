@@ -51,7 +51,9 @@ class AlbumDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = AlbumDetailUiState.Loading
             try {
-                _state.value = AlbumDetailUiState.Content(getAlbum(id))
+                getAlbum(id).collect { album ->
+                    _state.value = AlbumDetailUiState.Content(album)
+                }
             } catch (exception: CancellationException) {
                 throw exception
             } catch (_: AlbumNotFoundException) {

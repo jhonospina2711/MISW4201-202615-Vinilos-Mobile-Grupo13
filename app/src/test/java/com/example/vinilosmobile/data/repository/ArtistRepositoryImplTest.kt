@@ -13,6 +13,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import java.net.SocketTimeoutException
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
@@ -30,14 +31,14 @@ class ArtistRepositoryImplTest {
     @Test fun listsArtistsFromAdapter() = runBlocking {
         coEvery { adapter.getArtists() } returns listOf(artist)
 
-        assertEquals(listOf(artist), repository.getArtists())
+        assertEquals(listOf(artist), repository.getArtists().toList().single())
         coVerify(exactly = 1) { adapter.getArtists() }
     }
 
     @Test fun retrievesDetailWithTypeAndId() = runBlocking {
         coEvery { adapter.getArtist(key) } returns artist
 
-        assertEquals(artist, repository.getArtist(key))
+        assertEquals(artist, repository.getArtist(key).toList().single())
         coVerify(exactly = 1) { adapter.getArtist(key) }
     }
 
@@ -45,7 +46,7 @@ class ArtistRepositoryImplTest {
         coEvery { adapter.getArtists() } throws SocketTimeoutException("slow")
 
         val failure = assertThrows(RequestFailure::class.java) {
-            runBlocking { repository.getArtists() }
+            runBlocking { repository.getArtists().toList() }
         }
         assertEquals(RequestFailureKind.TIMEOUT, failure.kind)
     }
@@ -56,7 +57,7 @@ class ArtistRepositoryImplTest {
         )
 
         assertThrows(ArtistNotFoundException::class.java) {
-            runBlocking { repository.getArtist(key) }
+            runBlocking { repository.getArtist(key).toList() }
         }
         Unit
     }
@@ -65,7 +66,7 @@ class ArtistRepositoryImplTest {
         coEvery { adapter.getArtists() } throws CancellationException("cancelled")
 
         assertThrows(CancellationException::class.java) {
-            runBlocking { repository.getArtists() }
+            runBlocking { repository.getArtists().toList() }
         }
         Unit
     }

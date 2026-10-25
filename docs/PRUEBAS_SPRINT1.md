@@ -27,7 +27,7 @@ La batería usa respuestas HTTP de prueba. Por sí sola no demuestra disponibili
 
 | Clase de prueba | Casos | Cobertura |
 |---|---:|---|
-| `AlbumRepositoryImplTest` | 8 | Red primero, reemplazo de caché Room, orden, catálogo vacío, detalle guardado, caída de red, 404 y cancelación. |
+| `AlbumRepositoryImplTest` | 11 | Emisión inmediata de Room y posterior actualización de red, reemplazo de caché, orden, catálogo vacío, detalle guardado, caída de red, 404 y cancelación. |
 | `AlbumDaoTest` | 3 | Consultas SQL sobre Room real en memoria, orden y marca de catálogo, reemplazo y `upsert`. |
 | `ArtistServiceAdapterTest` | 5 | Unión de músicos/bandas, descarte de datos inválidos, endpoints de detalle, integrantes y premios. |
 | `AlbumMappersTest` y `ArtistMappersTest` | 6 | Validación y transformación de DTO, relaciones, fechas y límites de la copia Room. |
@@ -36,9 +36,9 @@ La batería usa respuestas HTTP de prueba. Por sí sola no demuestra disponibili
 | `NetworkErrorMapperTest` | 3 | Conexión, timeout, permisos, servidor y errores ya traducidos. |
 | `UserRolePreferencesDataSourceTest` y `UserRoleRepositoryImplTest` | 4 | Lectura y escritura del rol, valor desconocido y flujo de cambios. |
 | `UseCasesTest` | 6 | Los seis casos de uso delegan sin perder ID, tipo, origen o rol. |
-| **Total** | **41** | ViewModels y Views quedan cubiertos por Espresso, sin tests unitarios directos. |
+| **Total** | **44** | ViewModels y Views quedan cubiertos por Espresso, sin tests unitarios directos. |
 
-[Resultados JUnit XML de las 41 unitarias](evidencias/sprint1/unit/). MockK sustituye colaboradores en las pruebas aisladas; los mappers se prueban con DTO reales y `AlbumDaoTest` usa Room real para verificar la base de datos.
+[Resultados JUnit XML de las 44 unitarias](evidencias/sprint1/unit/). MockK sustituye colaboradores en las pruebas aisladas; los mappers se prueban con DTO reales y `AlbumDaoTest` usa Room real para verificar la base de datos.
 
 ## Guiones E2E manuales
 
@@ -55,12 +55,12 @@ La batería usa respuestas HTTP de prueba. Por sí sola no demuestra disponibili
 
 | Entorno o comando | Resultado |
 |---|---|
-| `bash gradlew :app:testDebugUnitTest --no-configuration-cache` | **41 pruebas, 0 fallos, 0 errores, 0 omitidas.** MockK + Room en memoria con Robolectric API 28. [JUnit XML](evidencias/sprint1/unit/). |
-| Emulador Vinilos_API28, Android 9/API 28, `bash gradlew :app:connectedDebugAndroidTest --no-configuration-cache` | **15 pruebas, 0 fallos, 0 errores, 0 omitidas.** [JUnit XML](evidencias/sprint1/espresso-api28.xml). |
-| Emulador Medium_Phone, Android 12/API 31, `bash gradlew :app:connectedDebugAndroidTest --no-configuration-cache` | **15 pruebas, 0 fallos, 0 errores, 0 omitidas.** [JUnit XML](evidencias/sprint1/espresso-api31.xml). |
+| `bash gradlew :app:testDebugUnitTest --no-configuration-cache` | **44 pruebas, 0 fallos, 0 errores, 0 omitidas.** MockK + Room en memoria con Robolectric API 28. [JUnit XML](evidencias/sprint1/unit/). |
+| Emulador Vinilos_API28, Android 9/API 28, `bash gradlew :app:connectedDebugAndroidTest --no-configuration-cache` | **15 pruebas, 0 fallos, 0 errores, 0 omitidas** antes de la actualización de repositorios a `Flow`. [JUnit XML](evidencias/sprint1/espresso-api28.xml). |
+| Emulador Huawei(AVD), Android 12/API 31, `bash gradlew :app:connectedDebugAndroidTest --no-configuration-cache` | **15 pruebas, 0 fallos, 0 errores, 0 omitidas** después de la actualización a `Flow`. [JUnit XML](evidencias/sprint1/espresso-api31.xml). |
 | `python3 scripts/smoke_sprint1_api.py` contra Docker local | **4 HU aprobadas:** 4 álbumes; detalle de álbum 100 con 2 tracks; endpoints de músicos y bandas; detalles y premios. |
 | M01–M04 manuales en API 31 con Debug y Docker | **Aprobadas.** Visitante vio 4 álbumes; detalle de Buscando América con 2 tracks y 1 comentario; filtros mostraron Rubén Blades y Queen; ambos detalles cargaron y el músico mostró Grammy Award. La banda del conjunto de datos local no tiene integrantes. |
-| `bash gradlew :app:assembleRelease --no-configuration-cache` | **Compilación correcta tras añadir las unitarias.** APK de 2,6 MB; firma v1/v2 verificada; minSdk 21. La comprobación previa en API 31 instaló y abrió Release después de corregir R8. Una instalación limpia mostró la selección de rol y luego un error legible por el HTTP 500, sin cierre de la app. SHA-256 del APK actual: `f66862f3650e0f8ef096f9093ebed1b10272d99a47d0c902bd7d8462dd63b777`. |
+| `bash gradlew :app:assembleRelease --no-configuration-cache` | **Compilación correcta tras el cambio a `Flow`.** APK firmado para desarrollo; minSdk 21. La comprobación previa en API 31 instaló y abrió Release después de corregir R8. Una instalación limpia mostró la selección de rol y luego un error legible por el HTTP 500, sin cierre de la app. SHA-256 del APK actual: `fc0ebf30e7167bf7c25b332c0160aa27da2f1caedf2cae696f23302dfdf38eeb`. |
 | API 33, Pixel_6a | Ejecución instrumentada interrumpida por desconexión del emulador; el reporte quedó parcial y **no cuenta como batería aprobada**. |
 | Android 5.0/API 21 | **Pendiente.** No hay dispositivo ni imagen API 21 instalados en este equipo; `minSdk = 21` y compilación correcta no sustituyen esta ejecución. |
 | Backend HTTPS publicado | **Bloqueado:** `GET /albums` continúa respondiendo HTTP 500. Release abre y muestra el catálogo Room guardado si existe, pero no puede validar las cuatro HU contra ese servicio. |

@@ -11,6 +11,7 @@ import com.example.vinilosmobile.feature.home.albums.models.AlbumCatalogUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -26,9 +27,10 @@ class AlbumCatalogViewModel @Inject constructor(private val getAlbums: GetAlbums
         viewModelScope.launch {
             _state.value = AlbumCatalogUiState.Loading
             try {
-                val catalog = getAlbums()
-                _state.value = if (catalog.albums.isEmpty()) AlbumCatalogUiState.Empty
-                else AlbumCatalogUiState.Content(catalog.albums, catalog.source)
+                getAlbums().collect { catalog ->
+                    _state.value = if (catalog.albums.isEmpty()) AlbumCatalogUiState.Empty
+                    else AlbumCatalogUiState.Content(catalog.albums, catalog.source)
+                }
             } catch (exception: CancellationException) {
                 throw exception
             } catch (exception: Exception) {

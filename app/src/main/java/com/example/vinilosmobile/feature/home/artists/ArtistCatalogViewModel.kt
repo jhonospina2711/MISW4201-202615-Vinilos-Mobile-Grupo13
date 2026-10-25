@@ -14,6 +14,7 @@ import com.example.vinilosmobile.feature.home.artists.models.ArtistFilter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -41,8 +42,10 @@ class ArtistCatalogViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = ArtistCatalogUiState.Loading
             try {
-                allArtists = getArtists()
-                showArtists(requireNotNull(allArtists))
+                getArtists().collect { artists ->
+                    allArtists = artists
+                    showArtists(artists)
+                }
             } catch (exception: CancellationException) {
                 throw exception
             } catch (exception: Exception) {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.vinilosmobile.data.mappers.ArtistMappersTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-24T22:32:46.704Z" hostname="dscombita.local" time="0.004">
+<testsuite name="com.example.vinilosmobile.data.mappers.ArtistMappersTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-25T01:57:06.701Z" hostname="dscombita.local" time="0.005">
   <properties/>
-  <testcase name="musicianUsesBirthDateAlbumsAndPrizeFallback" classname="com.example.vinilosmobile.data.mappers.ArtistMappersTest" time="0.003"/>
-  <testcase name="invalidArtistIsIgnored" classname="com.example.vinilosmobile.data.mappers.ArtistMappersTest" time="0.001"/>
+  <testcase name="musicianUsesBirthDateAlbumsAndPrizeFallback" classname="com.example.vinilosmobile.data.mappers.ArtistMappersTest" time="0.005"/>
+  <testcase name="invalidArtistIsIgnored" classname="com.example.vinilosmobile.data.mappers.ArtistMappersTest" time="0.0"/>
   <testcase name="bandUsesCreationDateAndValidMembersOnly" classname="com.example.vinilosmobile.data.mappers.ArtistMappersTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

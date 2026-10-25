@@ -8,18 +8,18 @@ Implementación de HU01–HU04 en un único módulo Gradle `:app`. Se usan Kotli
 flowchart LR
   subgraph UI[Presentación]
     Screens[Entry, Home, detalle de álbum y artista]
-    VM[ViewModels y estados LiveData]
+    VM[ViewModels con MutableLiveData privado]
     CoreUI[coreui: atoms, molecules, organisms]
     Screens --> VM
     Screens --> CoreUI
   end
   subgraph Domain[Dominio sin Android]
-    UC[Casos de uso]
-    Contracts[Contratos y modelos]
+    UC[Casos de uso que exponen Flow]
+    Contracts[Contratos Flow y modelos]
     UC --> Contracts
   end
   subgraph Data[Datos]
-    Repo[Implementaciones Repository]
+    Repo[Repository emite modelos en Flow]
     Adapter[ArtistServiceAdapter y mappers]
     Api[Retrofit + OkHttp]
     Room[Room: AlbumDao]
@@ -38,7 +38,7 @@ flowchart LR
   Hilt -. provee .-> Store
 ```
 
-Una pantalla envía eventos al ViewModel y observa `LiveData`. El ViewModel mantiene `MutableLiveData` privado y publica estados sellados (`Loading`, `Content`, `Empty`, `Error` y, en los detalles, `NotFound`). Los casos de uso invocan contratos de dominio; los repositorios deciden la fuente de datos. DTO y entidades Room no llegan a la UI. El `NetworkErrorMapper` transforma fallos técnicos en categorías para mensajes legibles. Los interceptores añaden cabeceras comunes y registran solo datos básicos en Debug; Release desactiva ese registro.
+Una pantalla envía eventos al ViewModel y observa su `LiveData` (`viewLifecycleOwner` en Fragments, Activity como propietario en Activities). El ViewModel recoge con `collect` el `Flow` del caso de uso y actualiza un `MutableLiveData` privado; expone únicamente `LiveData` de estados sellados (`Loading`, `Content`, `Empty`, `Error` y, en los detalles, `NotFound`). El caso de uso transmite el `Flow` del contrato de dominio y el Repository emite modelos cada vez que obtiene datos. `LiveData` queda en presentación para no introducir dependencias Android en `domain/`. DTO y entidades Room no llegan a la UI. El `NetworkErrorMapper` transforma fallos técnicos en categorías para mensajes legibles. Los interceptores añaden cabeceras comunes y registran solo datos básicos en Debug; Release desactiva ese registro.
 
 ## Relaciones principales
 
@@ -111,9 +111,9 @@ sequenceDiagram
   participant Server as BackVynils
   participant Detail as ArtistDetailActivity
   Usuario->>Vista: Abre Artistas
-  Vista->>VM: observa state / reload()
+  Vista->>VM: observe(state, viewLifecycleOwner) y reload()
   VM->>UC: invoke()
-  UC->>Repo: getArtists()
+  UC->>Repo: getArtists() retorna Flow
   Repo->>Adapter: getArtists()
   par Consultas concurrentes
     Adapter->>API: getMusicians()
@@ -127,9 +127,10 @@ sequenceDiagram
   alt Ambas respuestas correctas
     Adapter->>Adapter: DTO a Artist, combinar y ordenar
     Adapter-->>Repo: List<Artist>
-    Repo-->>UC: List<Artist>
-    UC-->>VM: List<Artist>
-    VM-->>Vista: Content o Empty por LiveData
+    Repo-->>UC: emit(List de Artist)
+    UC-->>VM: Flow emite lista
+    VM->>VM: collect y actualiza MutableLiveData
+    VM-->>Vista: observer recibe Content o Empty
     Vista-->>Usuario: Lista y filtros locales
     opt Selecciona un artista
       Usuario->>Vista: Toca fila
@@ -138,46 +139,61 @@ sequenceDiagram
     end
   else Falla una consulta o no hay red
     Server--xAPI: error
-    Repo-->>VM: RequestFailure
-    VM-->>Vista: Error + Reintentar
+    Repo--xVM: RequestFailure
+    VM->>VM: actualiza MutableLiveData con Error
+    VM-->>Vista: observer muestra Error y Reintentar
     Note over Repo,Server: Artistas no tienen caché Room en Sprint 1
   end
 ```
 
-La lista pide músicos y bandas en paralelo. El filtro Todos/Músicos/Bandas opera sobre la lista recibida, sin nuevas solicitudes. Los detalles se consultan por tipo e ID; una consulta auxiliar a `/performerprizes` completa el nombre de premios cuando el backend no lo incluye. Si esa consulta auxiliar falla, el detalle principal sigue visible. **No se implementó modo offline de artistas**: sin red aparece estado de error y opción de reintento.
+La lista pide músicos y bandas en paralelo. El Repository emite la lista combinada cuando ambos endpoints responden; no muestra una lista parcial con solo músicos o bandas. El filtro Todos/Músicos/Bandas opera sobre la lista recibida, sin nuevas solicitudes. Los detalles usan el mismo flujo `Flow → collect → MutableLiveData → observe` y se consultan por tipo e ID; una consulta auxiliar a `/performerprizes` completa el nombre de premios cuando el backend no lo incluye. Si esa consulta auxiliar falla, el detalle principal sigue visible. **No se implementó modo offline de artistas**: sin red aparece estado de error y opción de reintento.
 
 ## Room y funcionamiento sin red
 
-Room usa `VinilosDatabase` versión 1, esquema exportado a `app/schemas/`, y una tabla `albums`. `AlbumEntity` guarda `id`, posición del catálogo, marca `inCatalog`, nombre, artistas como JSON, género, año, portada, sello y descripción. `AlbumDao.replaceAll` reemplaza el catálogo en una transacción; `upsert` actualiza un detalle sin añadirlo al catálogo si no estaba allí. El repositorio intenta primero `GET /albums` o `GET /albums/{id}`, convierte DTO a dominio y escribe Room. Ante una falla de red o servidor lee Room. `AlbumCatalog.source = CACHE` permite avisar al usuario que ve datos guardados. Un 404 de detalle se trata como inexistente y no muestra una copia vieja.
+Room usa `VinilosDatabase` versión 1, esquema exportado a `app/schemas/`, y una tabla `albums`. `AlbumEntity` guarda `id`, posición del catálogo, marca `inCatalog`, nombre, artistas como JSON, género, año, portada, sello y descripción. `AlbumDao.replaceAll` reemplaza el catálogo en una transacción; `upsert` actualiza un detalle sin añadirlo al catálogo si no estaba allí. Al iniciar una consulta, el Repository lee Room y emite de inmediato los datos guardados si existen. Después pide `GET /albums` o `GET /albums/{id}`, convierte el DTO a dominio, actualiza Room y emite la versión de red. Si la red falla, la emisión guardada permanece visible; sin copia local se emite un error. `AlbumCatalog.source = CACHE` permite avisar al usuario que ve datos guardados. Un 404 de detalle termina en `NotFound` aunque se haya emitido antes una copia local.
 
 ```mermaid
 sequenceDiagram
+  actor Usuario
+  participant Vista as AlbumCatalogFragment
   participant VM as AlbumCatalogViewModel
   participant UC as GetAlbumsUseCase
   participant Repo as AlbumRepositoryImpl
   participant API as AlbumApiService
   participant Room as AlbumDao
+  Usuario->>Vista: Abre Álbumes
+  Vista->>VM: observe(state, viewLifecycleOwner)
   VM->>UC: invoke()
-  UC->>Repo: getAlbums()
+  UC->>Repo: getAlbums() retorna Flow
+  Repo->>Room: getAll()
+  opt Hay álbumes guardados
+    Room-->>Repo: AlbumEntity[]
+    Repo-->>UC: emit(AlbumCatalog CACHE)
+    UC-->>VM: Flow emite CACHE
+    VM->>VM: collect y actualiza MutableLiveData
+    VM-->>Vista: observer muestra Content guardado
+  end
   Repo->>API: GET /albums
   alt Respuesta correcta
     API-->>Repo: AlbumDto[]
     Repo->>Room: replaceAll(AlbumEntity[])
-    Repo-->>VM: AlbumCatalog(REMOTE)
+    Repo-->>UC: emit(AlbumCatalog REMOTE)
+    UC-->>VM: Flow emite REMOTE
+    VM->>VM: collect y actualiza MutableLiveData
+    VM-->>Vista: observer muestra Content o Empty actualizado
   else Error de red o servidor
     API--xRepo: excepción
-    Repo->>Room: getAll()
-    alt Hay caché
-      Room-->>Repo: AlbumEntity[]
-      Repo-->>VM: AlbumCatalog(CACHE)
-    else No hay caché
-      Room-->>Repo: vacío
-      Repo-->>VM: RequestFailure
+    alt Ya se emitió caché
+      Note over Repo,Vista: Se conserva Content guardado
+    else No hay datos guardados
+      Repo--xVM: RequestFailure
+      VM->>VM: actualiza MutableLiveData con Error
+      VM-->>Vista: observer muestra Error y Reintentar
     end
   end
 ```
 
-La caché de álbumes es **parcial**: la entidad actual no guarda tracks, comentarios ni fecha completa. Un detalle sin red puede mostrar solo los campos persistidos. DataStore es separado de Room y guarda únicamente `selected_user_role` (`visitor` o `collector`), para conservar la elección entre aperturas.
+El detalle de álbum usa el mismo flujo y puede emitir el detalle guardado antes del detalle nuevo. La caché de álbumes es **parcial**: la entidad actual no guarda tracks, comentarios ni fecha completa. Un detalle sin red puede mostrar solo los campos persistidos. DataStore es separado de Room y guarda únicamente `selected_user_role` (`visitor` o `collector`), para conservar la elección entre aperturas. Su `Flow` se recoge en los ViewModels de Entry, Home y detalle; Entry usa `first()` para decidir la navegación inicial y Home observa cambios posteriores.
 
 ## Tecnologías y decisiones
 
@@ -186,7 +202,8 @@ La caché de álbumes es **parcial**: la entidad actual no guarda tracks, coment
 | Un módulo `:app`; paquetes `feature`, `domain`, `data`, `di`, `coreui` | Mantiene límites claros sin el coste de módulos Gradle adicionales para cuatro HU. |
 | Kotlin + Android Views/XML + Material | Implementa los diseños en el stack acordado y conserva soporte desde API 21. |
 | `coreui/atoms`, `molecules`, `organisms`, `models` | Reúne vistas reutilizables; “atomic design” guía la organización, no añade un módulo ni sustituye XML. |
-| ViewModel + LiveData + estados sellados | Conserva estado de pantalla en cambios de configuración y limita la lógica de UI al ViewModel. |
+| Repository y casos de uso con Kotlin Flow | Permiten emitir primero Room y después red sin bloquear la pantalla; mantienen el dominio libre de Android. |
+| ViewModel + LiveData + estados sellados | `collect` transforma emisiones de dominio en estados observables con el ciclo de vida de la pantalla. |
 | Hilt + KSP | Provee servicios, repositorios, Room, DataStore y ViewModels sin construirlos en Activities. |
 | Retrofit + Gson + OkHttp | Un cliente y una URL configurables para BackVynils; errores y cabeceras centralizados. |
 | Room | Copia local del catálogo y detalles básicos de álbumes para fallos de conexión. |
