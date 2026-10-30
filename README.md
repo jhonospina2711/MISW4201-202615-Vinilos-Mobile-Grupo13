@@ -137,11 +137,43 @@ Las versiones se declaran centralizadas en `gradle/libs.versions.toml`.
 
 ## 6. Conexión con el backend
 
-La aplicación consume la API REST de **BackVynils**:
+La aplicación consume la API REST de **BackVynils** (<https://github.com/TheSoftwareDesignLab/BackVynils>).
 
-- Repositorio del backend: <https://github.com/TheSoftwareDesignLab/BackVynils>
+### 6.1. Levantar el backend en local
 
-El cliente Retrofit y el permiso `android.permission.INTERNET` ya están configurados. Debug apunta por defecto al backend Docker del emulador (`http://10.0.2.2:3000/`); para otra URL, pasar `-PvinilosApiBaseUrl=https://servidor/` a Gradle. Los Repository y casos de uso exponen `Flow<DataResult<T>>` con estados sellados de carga, éxito, error y cancelación independiente; cada ViewModel recoge sus emisiones y actualiza un `MutableLiveData` privado que la pantalla observa. Para álbumes, el Repository emite primero la copia Room disponible y luego la respuesta nueva de la red. Si falla la red, deja visible la copia guardada; los artistas se consultan por red y **no tienen caché offline en este sprint**. La cancelación del ciclo de vida se propaga sin emitir un estado a una pantalla destruida. La copia Room de un detalle de álbum no incluye tracks, comentarios ni fecha completa. Sin datos guardados se muestra un error traducido al español. Room usa esquema versión 1 y se conserva el mínimo de Android 5.0 (API 21). El diseño completo está en [Arquitectura Sprint 1](docs/ARQUITECTURA_SPRINT1.md), y el estado del despliegue de TSDC y los pasos para Docker local están en [Backend para desarrollo](docs/BACKEND.md).
+```bash
+# 1. Clonar el backend como carpeta hermana de este repositorio
+git clone https://github.com/TheSoftwareDesignLab/BackVynils.git ../BackVynils
+
+# 2. Levantar la API y PostgreSQL
+docker compose -f docs/backvynils-compose.local.yml up -d --build
+
+# 3. Comprobar que responde
+curl http://localhost:3000/albums
+```
+
+El paso 3 debe devolver `HTTP 200` con cuatro álbumes de ejemplo. La base se crea y se siembra sola con la migración `DataSetup` del backend.
+
+| Acción | Comando |
+|---|---|
+| Ver el estado de los contenedores | `docker compose -f docs/backvynils-compose.local.yml ps` |
+| Ver los logs de la API | `docker compose -f docs/backvynils-compose.local.yml logs -f web` |
+| Detener el backend | `docker compose -f docs/backvynils-compose.local.yml down` |
+
+### 6.2. A qué URL apunta la aplicación
+
+| Variante | URL por defecto | Dónde funciona |
+|---|---|---|
+| **Debug** (APK entregado) | `http://10.0.2.2:3000/` | Emulador, con el backend local levantado |
+| Release | `https://backvynils-q6yc.onrender.com/` | Servicio publicado por TSDC; hoy no responde (ver issue #48) |
+
+`10.0.2.2` es el alias con el que el emulador llega al `localhost` del computador; dentro de Android, `localhost` apunta al propio dispositivo y produce `ConnectException`.
+
+Para usar otra URL, compilar con `-PvinilosApiBaseUrl=<url>`. En un **dispositivo físico** conectado por USB: `adb reverse tcp:3000 tcp:3000` y compilar con `-PvinilosApiBaseUrl=http://127.0.0.1:3000/`. El tráfico HTTP sin cifrar solo está permitido en Debug, mediante `app/src/debug/AndroidManifest.xml`.
+
+### 6.3. Uso de la API en la aplicación
+
+El cliente Retrofit y el permiso `android.permission.INTERNET` ya están configurados. Los Repository y casos de uso exponen `Flow<DataResult<T>>` con estados sellados de carga, éxito, error y cancelación independiente; cada ViewModel recoge sus emisiones y actualiza un `MutableLiveData` privado que la pantalla observa. Para álbumes, el Repository emite primero la copia Room disponible y luego la respuesta nueva de la red. Si falla la red, deja visible la copia guardada; los artistas se consultan por red y **no tienen caché offline en este sprint**. La cancelación del ciclo de vida se propaga sin emitir un estado a una pantalla destruida. La copia Room de un detalle de álbum no incluye tracks, comentarios ni fecha completa. Sin datos guardados se muestra un error traducido al español. Room usa esquema versión 1 y se conserva el mínimo de Android 5.0 (API 21). El diseño completo está en [Arquitectura Sprint 1](docs/ARQUITECTURA_SPRINT1.md), y el estado del despliegue de TSDC y los pasos para Docker local están en [Backend para desarrollo](docs/BACKEND.md).
 
 ## 7. Flujo de trabajo en Git
 
