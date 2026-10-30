@@ -27,7 +27,7 @@ Si ya hay una versión anterior instalada con la misma firma, se actualiza sin d
 
 ## Cómo se generó
 
-El APK se construyó desde la rama `sprint-1` con:
+El APK se construyó desde el código integrado en `main` con:
 
 ```bash
 ./gradlew :app:assembleDebug
@@ -36,8 +36,8 @@ El APK se construyó desde la rama `sprint-1` con:
 ## Advertencias conocidas
 
 - **Firma de depuración.** El APK está firmado con la clave de *debug*, no con una clave de release. Sirve para instalar y probar en dispositivos físicos, no para distribuir.
-- **Backend.** La app consume la API de BackVynils por HTTPS. El backend publicado responde HTTP 500 y ese fallo está reportado en el issue [#48](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/48). La construcción Release se cierra al iniciar por la configuración de R8, reportado en el issue [#47](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/47).
-- **API 21.** La batería de pruebas se ejecutó en API 28 y API 31. Falta la ejecución en API 21.
+- **Backend.** La app consume la API de BackVynils por HTTPS. El servicio publicado no responde y ese fallo está reportado en el issue [#48](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/48). Sin backend, la app muestra sus estados de error, que es el comportamiento previsto.
+- **Variante de este APK.** Este archivo es la construcción **Debug**, que es la variante que ejercita la suite automatizada. La construcción **Release** también compila y abre en API 21 desde que se resolvió el issue #47; su evidencia está en `docs/evidencias/sprint1/release-api21/`.
 
 ## Verificar la integridad
 
