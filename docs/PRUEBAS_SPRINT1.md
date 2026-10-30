@@ -258,6 +258,7 @@ La evidencia principal es esta tabla. Los archivos JUnit XML se conservan como r
 | **E2E Espresso** | **Android 12 / API 31** | **15** | **15** | **0** | **17,12 s · 2026-10-25** | [XML](evidencias/sprint1/espresso-api31.xml) |
 | Contrato de API | BackVynils local (Docker) | 4 verificaciones (HU01–HU04) | 4 | 0 | 2026-10-24 · duración no registrada | Sin archivo de salida en el repositorio |
 | Aceptación manual M01–M04 | Android 12 / API 31 | 4 | 4 | 0 | Fecha no registrada | Sin registro adjunto |
+| Compilación y arranque del APK de Release | Android 5.0.2 / API 21 (arm64) | build + 2 pantallas | 3 | 0 | 2026-10-30 | [Evidencia](evidencias/sprint1/release-api21/) |
 | Humo manual sobre el APK de entrega | Android 5.0.2 / API 21 (arm64) | 2 pantallas + 2 pestañas | 4 | 0 | 2026-10-30 | [Capturas](evidencias/sprint1/api21/) |
 | E2E Espresso | Android 13 / API 33 | No registrado | No registrado | No registrado | Ejecución interrumpida | Reporte parcial descartado |
 
@@ -297,7 +298,7 @@ El reporte HTML de cada corrida queda en `app/build/reports/` y los XML en `app/
 
 | ID | Título | Tipo | Impacto | Estado | Mitigación |
 |---|---|---|---|---|---|
-| #47 | Release se cierra al iniciar por configuración R8 | Defecto | Impide validar la variante Release y una instalación limpia de entrega; la app puede cerrarse al abrir. | Abierto; corrección integrada en `sprint-1`, pendiente de llevar al release final. | Verificar `assembleRelease`, instalación limpia y apertura; no usar el APK Release como entrega hasta cerrar el issue. Mantener Debug para la aceptación funcional. |
+| #47 | Release se cierra al iniciar por configuración R8 | Defecto | Impedía validar la variante Release; la app se cerraba al abrir. | **Resuelto y verificado el 2026-10-30**: `assembleRelease` compila, el APK de 2,5 MB instala y abre en API 21, sin `IllegalAccessError`. Evidencia en `evidencias/sprint1/release-api21/`. | Mantener `optimization.enable = true` sin `packageScope` personalizado, que era la causa. |
 | #48 | Backend HTTPS responde 500 y bloquea la validación Release | Defecto | No se pueden validar las cuatro HU contra el servicio de entrega ni firmar el release con esa URL. | Abierto. | Validar funcionalidad contra BackVynils local con Docker; permitir sobrescribir la URL base con `-PvinilosApiBaseUrl`; no aceptar la consulta en producción hasta que el servicio responda 200. |
 | API 21 sin suite automatizada | Humo manual en Lollipop; Espresso solo en API 28 y API 31 | Riesgo residual | La app funciona en Android 5.0.2, pero los 15 escenarios automatizados no se ejecutaron allí. | Verificado el 2026-10-30 con el APK de entrega. | Ejecutar `connectedDebugAndroidTest` en API 21 antes del cierre de la iteración. |
 | URL base por entorno | Dependencia de `10.0.2.2`, `adb reverse` o `-PvinilosApiBaseUrl` | Riesgo | Una configuración incorrecta produce fallos de conexión que parecen defectos de la app. | Vigente. | Documentar la URL por entorno; usar `adb reverse` en dispositivo físico; verificar la URL antes de cada corrida manual. |
@@ -326,7 +327,7 @@ Una historia se considera aceptada cuando:
 5. No tiene defectos abiertos de severidad alta sin mitigación documentada.
 6. La evidencia XML de la corrida está archivada en `docs/evidencias/sprint1/`.
 
-El sprint se considera cerrado cuando, además, la variante Release abre sin cierre (#47 resuelto), el backend HTTPS responde correctamente (#48 resuelto) y la suite Espresso se ejecutó en API 21. La verificación de humo en Lollipop ya está hecha; quedan #47 y #48, así que el cierre es parcial y así debe reportarse.
+El sprint se considera cerrado cuando el backend de entrega responde correctamente (#48) y la suite Espresso se ejecutó en API 21. La variante Release ya abre sin cierre. La verificación de humo en Lollipop ya está hecha; quedan #47 y #48, así que el cierre es parcial y así debe reportarse.
 
 ---
 
@@ -342,4 +343,4 @@ El tablero de GitHub Projects no expone en el repositorio identificadores de tar
 | HU04 — Consultar detalle de un artista | Detalle de músico y banda con premios e integrantes | E2E-12 a E2E-15 | `ArtistRepositoryImplTest` (5), `ArtistServiceAdapterTest` (5), `ArtistMappersTest` (3), `UseCasesTest::getArtistPassesTypeAndId` (1), `NetworkErrorMapperTest` (3) | Implementación: no registrado. Defectos relacionados: #47, #48 |
 | Transversal — acceso, red y calidad | Rol persistido, cabeceras, mapeo de errores y contrato de API | E2E-05, E2E-06 | `UserRoleRepositoryImplTest` (2), `UserRolePreferencesDataSourceTest` (2), `RequestHeadersInterceptorTest` (1), `NetworkErrorMapperTest` (3), `UseCasesTest` (2 de rol) | #47, #48 |
 
-**Cobertura de la planeación:** las cuatro historias tienen escenarios E2E, pruebas unitarias y criterios de aceptación asociados. Los pendientes de calidad del sprint son la corrección de #47, la resolución de #48 y la ejecución de la suite Espresso en API 21; ninguno se presenta como aprobado en este documento.
+**Cobertura de la planeación:** las cuatro historias tienen escenarios E2E, pruebas unitarias y criterios de aceptación asociados. Los pendientes de calidad del sprint son la resolución de #48 y la ejecución de la suite Espresso en API 21; ninguno se presenta como aprobado en este documento.
