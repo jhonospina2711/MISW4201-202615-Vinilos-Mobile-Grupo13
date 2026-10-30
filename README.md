@@ -4,7 +4,7 @@ Aplicación móvil Android de **Vinilos**, desarrollada en Kotlin para el proyec
 
 La aplicación permite consultar el catálogo y detalle de álbumes, así como el listado y detalle de músicos y bandas. La sección de coleccionistas y las acciones de creación se completarán en una iteración posterior.
 
-> **Estado de `sprint-1`:** HU01–HU04 implementadas en un módulo `:app`. Hay navegación inferior con tres Fragments y gesto horizontal, catálogo de álbumes con caché Room, detalles en Activities y filtros de artistas. La sección Coleccionistas es una pantalla inicial. Pasaron 46 pruebas unitarias y las 15 Espresso en API 31 con `Flow<DataResult<T>>`; también hay una ejecución previa aprobada en API 28. Siguen pendientes la validación en API 21 y el backend HTTPS de entrega. Véanse la [arquitectura](docs/ARQUITECTURA_SPRINT1.md) y los [resultados de pruebas](docs/PRUEBAS_SPRINT1.md).
+> **Estado de la iteración 1:** HU01–HU04 implementadas en un módulo `:app`. Hay navegación inferior con tres Fragments y gesto horizontal, catálogo de álbumes con caché Room, detalles en Activities y filtros de artistas. La sección Coleccionistas es una pantalla inicial. Pasaron 46 pruebas unitarias y las 15 Espresso en API 31 con `Flow<DataResult<T>>`; también hay una ejecución previa aprobada en API 28. Siguen pendientes la validación en API 21 y el backend HTTPS de entrega. Véanse la [arquitectura](docs/ARQUITECTURA_SPRINT1.md) y los [resultados de pruebas](docs/PRUEBAS_SPRINT1.md).
 
 Al abrir por primera vez, la app permite elegir Visitante o Coleccionista y guarda la selección con DataStore. Las siguientes aperturas entran directamente a Inicio. La arquitectura de ese flujo está descrita en [docs/ACCESO.md](docs/ACCESO.md).
 
@@ -58,7 +58,7 @@ No se necesita instalar Gradle ni Kotlin aparte: el proyecto usa el *wrapper* in
 En Windows usa `gradlew.bat` en lugar de `./gradlew`.
 
 El APK de depuración queda en `app/build/outputs/apk/debug/app-debug.apk`.
-El APK Release queda en `app/build/outputs/apk/release/app-release.apk`. Actualmente usa la firma Debug y la URL HTTPS publicada responde HTTP 500; no debe tratarse como APK final de entrega hasta resolver esos puntos.
+El APK Release queda en `app/build/outputs/apk/release/app-release.apk`, con R8 aplicado (2,5 MB frente a 11 MB del Debug). Usa la firma Debug y la URL HTTPS publicada por defecto; el issue [#48](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/48) registra que ese servicio no responde.
 
 ### APK listo para instalar
 
@@ -150,14 +150,14 @@ El repositorio sigue GitFlow:
 | Rama | Propósito |
 |---|---|
 | `main` | Versiones liberadas |
-| `sprint-1` | Rama de trabajo de la base y HU01–HU04 |
+| `develop` | Integración del trabajo del equipo |
 | `releases` | Preparación de la entrega de cada iteración |
 | `develop` | Integración del trabajo del equipo |
 | `feature/HUxx-descripcion` | Una funcionalidad por historia de usuario |
 
 Cada funcionalidad entra a `develop` por *pull request* aprobado por otro integrante, con **squash and merge**. Las reglas completas están en la wiki: [Flujo de trabajo en Git](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki/9.Flujo-de-trabajo-en-Git).
 
-Para la entrega de esta iteración, los cambios consolidados de `sprint-1` se proponen a `main` mediante un PR sujeto a revisión del equipo. El PR no sustituye la validación pendiente en API 21 ni la corrección del backend HTTPS.
+Para la entrega de la iteración 1, el trabajo se integra por pull requests con squash and merge a `develop`, se promueve a `releases` y de allí a `main`, donde queda etiquetado. La suite Espresso se ejecutó en API 21, API 28 y API 31; el backend publicado sigue sin responder (issue #48).
 
 ## 8. Documentación del proyecto
 
