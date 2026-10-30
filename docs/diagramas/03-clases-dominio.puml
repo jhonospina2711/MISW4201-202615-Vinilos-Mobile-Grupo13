@@ -12,14 +12,14 @@ package "domain.models" {
     +id: Long
     +name: String
     +artistNames: List<String>
-    +genre: String
-    +releaseDate: String
-    +releaseYear: String
-    +coverUrl: String
-    +recordLabel: String
-    +description: String
-    +tracks: List<Track>
-    +comments: List<AlbumComment>
+    +genre: String?
+    +releaseDate: String?
+    +releaseYear: String?
+    +coverUrl: String?
+    +recordLabel: String?
+    +description: String?
+    +tracks: List<Track>?
+    +comments: List<AlbumComment>?
   }
 
   class AlbumCatalog {
@@ -30,7 +30,7 @@ package "domain.models" {
   class AlbumComment {
     +id: Long
     +description: String
-    +rating: Int
+    +rating: Int?
   }
 
   class Track {
@@ -42,9 +42,9 @@ package "domain.models" {
   class Artist {
     +key: ArtistKey
     +name: String
-    +imageUrl: String
-    +description: String
-    +date: String
+    +imageUrl: String?
+    +description: String?
+    +date: String?
     +albums: List<Album>
     +members: List<ArtistMember>
     +awards: List<ArtistAward>
@@ -58,16 +58,18 @@ package "domain.models" {
   class ArtistMember {
     +id: Long
     +name: String
-    +imageUrl: String
+    +imageUrl: String?
   }
 
   class ArtistAward {
     +id: Long
-    +name: String
-    +date: String
+    +name: String?
+    +date: String?
   }
 
   enum ArtistType {
+    +value: String
+    +fromValue(value: String): ArtistType
     MUSICIAN
     BAND
   }
@@ -94,17 +96,21 @@ package "domain.models" {
     +kind: RequestFailureKind
   }
 
-  class "DataResult<T>" as DataResult {
-    +Loading
-    +Success(value: T)
-    +Error(reason: DataError)
-    +Cancelled
+  class "DataResult<T>" as DataResult
+  class "DataResult.Loading" as DRLoading
+  class "DataResult.Success<T>" as DRSuccess {
+    +value: T
   }
+  class "DataResult.Error" as DRError {
+    +reason: DataError
+  }
+  class "DataResult.Cancelled" as DRCancelled
 
-  interface DataError {
-    +Request(kind: RequestFailureKind)
-    +NotFound
+  interface DataError
+  class "DataError.Request" as DataErrorRequest {
+    +kind: RequestFailureKind
   }
+  class "DataError.NotFound" as DataErrorNotFound
 }
 
 package "domain.repository" {
@@ -120,7 +126,7 @@ package "domain.repository" {
 
   interface UserRoleRepository {
     +selectedRole: Flow<UserRole?>
-    +setRole(role: UserRole)
+    +suspend setRole(role: UserRole)
   }
 
   class AlbumNotFoundException
@@ -158,6 +164,12 @@ Artist "1" *-- "0..*" ArtistAward
 Artist "1" *-- "1" ArtistKey
 ArtistKey --> ArtistType
 RequestFailure --> RequestFailureKind
+DRLoading --|> DataResult
+DRSuccess --|> DataResult
+DRError --|> DataResult
+DRCancelled --|> DataResult
+DataErrorRequest ..|> DataError
+DataErrorNotFound ..|> DataError
 DataResult ..> DataError
 
 GetAlbumsUseCase --> AlbumRepository

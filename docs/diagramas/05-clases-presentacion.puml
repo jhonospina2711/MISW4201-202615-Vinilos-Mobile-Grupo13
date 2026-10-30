@@ -9,29 +9,32 @@ hide empty members
 
 package "feature.entry" {
   class EntryActivity {
-    -viewModel: EntryViewModel
-    +onCreate(Bundle)
+    +onCreate(savedInstanceState: Bundle)
+    -render(state: EntryUiState)
   }
   class EntryViewModel {
     +state: LiveData<EntryUiState>
-    +selectRole(role: UserRole)
+    +initialize(allowRoleChange: Boolean)
+    +readSavedRole()
   }
   interface EntryUiState
+  class "EntryUiState.Choosing" as EntryChoosing
+  class "EntryUiState.NavigateHome" as EntryNavigateHome
+  class "EntryUiState.SaveError" as EntrySaveError
 }
 
 package "feature.home" {
   class MainActivity {
-    -viewModel: HomeViewModel
-    -pagerAdapter: HomeSectionPagerAdapter
+    +onCreate(savedInstanceState: Bundle)
     +openAlbum(id: Long)
     +openArtist(key: ArtistKey)
   }
   class HomeViewModel {
-    +state: LiveData<HomeUiState>
-    +readRole()
+    +selectedRole: LiveData<UserRole?>
   }
   class HomeSectionPagerAdapter {
-    +getItem(position: Int): Fragment
+    +getItemCount(): Int
+    +createFragment(position: Int): Fragment
   }
   interface AlbumNavigator
   interface ArtistNavigator
@@ -39,27 +42,23 @@ package "feature.home" {
 
 package "feature.home.albums" {
   class AlbumCatalogFragment {
-    -viewModel: AlbumCatalogViewModel
-    -adapter: AlbumCardAdapter
-    +onViewCreated(View, Bundle)
+    +onViewCreated(view: View, savedInstanceState: Bundle)
   }
   class AlbumCatalogViewModel {
     +state: LiveData<AlbumCatalogUiState>
-    +load()
+    +reload()
   }
   interface AlbumCatalogUiState
 }
 
 package "feature.home.artists" {
   class ArtistsFragment {
-    -viewModel: ArtistCatalogViewModel
-    -adapter: ArtistRowAdapter
-    +onViewCreated(View, Bundle)
+    +onViewCreated(view: View, savedInstanceState: Bundle)
   }
   class ArtistCatalogViewModel {
     +state: LiveData<ArtistCatalogUiState>
-    +load()
-    +filter(filter: ArtistFilter)
+    +setFilter(value: ArtistFilter)
+    +reload()
   }
   interface ArtistCatalogUiState
   enum ArtistFilter {
@@ -70,17 +69,14 @@ package "feature.home.artists" {
 }
 
 package "feature.home.collectors" {
-  class CollectorsFragment {
-    +onViewCreated(View, Bundle)
-  }
+  class CollectorsFragment
 }
 
 package "feature.albumdetail" {
   class AlbumDetailActivity {
-    -viewModel: AlbumDetailViewModel
     -trackAdapter: DetailRowAdapter
     -commentAdapter: DetailRowAdapter
-    +onCreate(Bundle)
+    +onCreate(savedInstanceState: Bundle)
   }
   class AlbumDetailViewModel {
     +state: LiveData<AlbumDetailUiState>
@@ -91,38 +87,36 @@ package "feature.albumdetail" {
 
 package "feature.artistdetail" {
   class ArtistDetailActivity {
-    -viewModel: ArtistDetailViewModel
     -albumAdapter: AlbumCardAdapter
-    -detailAdapter: DetailRowAdapter
+    -awardAdapter: DetailRowAdapter
     -memberAdapter: ArtistRowAdapter
-    +onCreate(Bundle)
+    +onCreate(savedInstanceState: Bundle)
   }
   class ArtistDetailViewModel {
     +state: LiveData<ArtistDetailUiState>
-    +load(key: ArtistKey)
+    +load(key: ArtistKey?)
   }
   interface ArtistDetailUiState
 }
 
 package "coreui.molecules" {
   class AlbumCardAdapter {
-    +submitList(items: List<AlbumCardUiModel>)
+    +submitList(list: List<AlbumCardUiModel>)
   }
   class AlbumCardViewHolder {
-    +bind(item: AlbumCardUiModel)
+    +bind(album: AlbumCardUiModel, position: Int, onClick: (Long) -> Unit)
+    +create(parent: ViewGroup): AlbumCardViewHolder
   }
   class ArtistRowAdapter {
-    +submitList(items: List<ArtistRowUiModel>)
+    +submitList(list: List<ArtistRowUiModel>)
   }
   class "ArtistRowAdapter.Holder" as ArtistRowHolder {
-    +bind(item: ArtistRowUiModel)
+    +bind(item: ArtistRowUiModel, onClick: (ArtistKey) -> Unit)
   }
   class DetailRowAdapter {
-    +submitList(items: List<DetailRowUiModel>)
+    +submitList(list: List<DetailRowUiModel>)
   }
-  class "DetailRowAdapter.Holder" as DetailRowHolder {
-    +bind(item: DetailRowUiModel)
-  }
+  class "DetailRowAdapter.Holder" as DetailRowHolder
   class DetailToolbarView
   class RoleOptionView
   class SectionHeaderView
@@ -130,9 +124,7 @@ package "coreui.molecules" {
 
 package "coreui.organisms" {
   class ContentStateView {
-    +showLoading()
-    +showEmpty()
-    +showError(message: Int)
+    +show(titleRes: Int, bodyRes: Int?, actionRes: Int?, onAction: (() -> Unit)?)
   }
 }
 
@@ -143,7 +135,7 @@ package "coreui.atoms" {
 
 package "feature.shared" {
   class "DateTextFormatter (object)" as DateTextFormatter {
-    +format(date: String): String
+    +format(raw: String?): String?
   }
   class "RequestFailureMessage (función top-level)" as RequestFailureMessage {
     +RequestFailureKind.messageRes(): Int
@@ -155,12 +147,15 @@ EntryActivity --> RoleOptionView
 EntryViewModel ..> EntryUiState
 EntryViewModel --> SetUserRoleUseCase
 EntryViewModel --> GetUserRoleUseCase
+EntryChoosing ..|> EntryUiState
+EntryNavigateHome ..|> EntryUiState
+EntrySaveError ..|> EntryUiState
 
 MainActivity --> HomeViewModel
 MainActivity --> HomeSectionPagerAdapter
 MainActivity ..|> AlbumNavigator
 MainActivity ..|> ArtistNavigator
-HomeViewModel ..> HomeUiState
+HomeViewModel --> GetUserRoleUseCase
 HomeSectionPagerAdapter --> AlbumCatalogFragment
 HomeSectionPagerAdapter --> ArtistsFragment
 HomeSectionPagerAdapter --> CollectorsFragment
@@ -199,7 +194,6 @@ ArtistDetailViewModel --> GetArtistUseCase
 AlbumCardAdapter --> AlbumCardViewHolder
 AlbumCardAdapter ..> AlbumCardUiModel
 AlbumCardViewHolder --> SquareAlbumCover
-AlbumCardViewHolder --> ArtistAvatarView
 ArtistRowAdapter --> ArtistRowHolder
 ArtistRowAdapter ..> ArtistRowUiModel
 ArtistRowHolder --> ArtistAvatarView
@@ -211,6 +205,14 @@ note right of CollectorsFragment
   la pantalla existe como marcador
   (`fragment_pending_section`), sin
   ViewModel ni Adapter todavía.
+end note
+
+note bottom of HomeViewModel
+  `HomeViewModel` no expone un estado
+  sellado: solo publica `selectedRole`,
+  porque Home únicamente necesita el rol
+  para mostrar u ocultar las acciones del
+  coleccionista.
 end note
 
 @enduml

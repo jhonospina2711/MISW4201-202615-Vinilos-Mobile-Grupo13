@@ -14,7 +14,7 @@ participant "AlbumApiService" as API
 participant "BackVynils" as B
 
 U -> F : abre Álbumes
-F -> VM : load()
+F -> VM : reload()
 VM -> UC : invoke()
 UC -> R : getAlbums()
 
