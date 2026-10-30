@@ -1,0 +1,174 @@
+@startuml 04-clases-datos
+title Clases — paquete data (repositorios, red, persistencia y mapeo)
+skinparam shadowing false
+skinparam arrowColor #4A5568
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 10
+skinparam classAttributeIconSize 0
+hide empty members
+
+package "data.repository" {
+  class AlbumRepositoryImpl {
+    -service: AlbumApiService
+    -dao: AlbumDao
+    -gson: Gson
+    -errorMapper: NetworkErrorMapper
+    +getAlbums(): Flow<DataResult<AlbumCatalog>>
+    +getAlbum(id: Long): Flow<DataResult<Album>>
+  }
+  class ArtistRepositoryImpl {
+    -serviceAdapter: ArtistServiceAdapter
+    -errorMapper: NetworkErrorMapper
+    +getArtists(): Flow<DataResult<List<Artist>>>
+    +getArtist(key: ArtistKey): Flow<DataResult<Artist>>
+  }
+  class UserRoleRepositoryImpl {
+    -dataSource: UserRolePreferencesDataSource
+    +selectedRole: Flow<UserRole?>
+    +setRole(role: UserRole)
+  }
+}
+
+package "data.network.services" {
+  interface AlbumApiService {
+    +getAlbums(): List<AlbumDto>
+    +getAlbum(id: Long): AlbumDto
+  }
+  interface ArtistApiService {
+    +getMusicians(): List<ArtistDto>
+    +getBands(): List<ArtistDto>
+    +getMusician(id: Long): ArtistDto
+    +getBand(id: Long): ArtistDto
+    +getPerformerPrizes(): List<PrizeDto>
+  }
+}
+
+package "data.network" {
+  class ArtistServiceAdapter {
+    -service: ArtistApiService
+    +getArtists(): List<Artist>
+    +getArtist(key: ArtistKey): Artist
+  }
+  class RequestHeadersInterceptor {
+    +intercept(chain: Interceptor.Chain): Response
+  }
+}
+
+package "data.network.errors" {
+  class NetworkErrorMapper {
+    +map(error: Throwable): RequestFailureKind
+  }
+}
+
+package "data.network.models" {
+  class AlbumDto {
+    +id: Long
+    +name: String
+    +cover: String
+    +releaseDate: String
+    +description: String
+    +genre: String
+    +recordLabel: String
+    +performers: List<PerformerDto>
+    +tracks: List<TrackDto>
+    +comments: List<AlbumCommentDto>
+  }
+  class ArtistDto {
+    +id: Long
+    +name: String
+    +image: String
+    +description: String
+    +birthDate: String
+    +creationDate: String
+    +albums: List<AlbumDto>
+    +musicians: List<ArtistDto>
+    +performerPrizes: List<ArtistAwardDto>
+  }
+  class TrackDto
+  class AlbumCommentDto
+  class ArtistAwardDto
+  class PerformerDto
+  class PrizeDto
+}
+
+package "data.mappers" {
+  class "AlbumMappers (funciones top-level)" as AlbumMappers {
+    +AlbumDto.toDomain(): Album
+    +Album.toEntity(): AlbumEntity
+  }
+  class "ArtistMappers (funciones top-level)" as ArtistMappers {
+    +ArtistDto.toDomain(type: ArtistType): Artist
+  }
+}
+
+package "data.local" {
+  abstract class AlbumDao {
+    +getAll(): List<AlbumEntity>
+    +getById(id: Long): AlbumEntity
+    +upsert(album: AlbumEntity)
+    +insertAll(albums: List<AlbumEntity>)
+    +clear()
+    +replaceAll(albums: List<AlbumEntity>)
+  }
+  abstract class VinilosDatabase {
+    +albumDao(): AlbumDao
+  }
+}
+
+package "data.local.models" {
+  class AlbumEntity {
+    +id: Long
+    +position: Int
+    +inCatalog: Boolean
+    +name: String
+    +artistNamesJson: String
+    +genre: String
+    +releaseYear: String
+    +coverUrl: String
+    +recordLabel: String
+    +description: String
+  }
+}
+
+package "data.preferences" {
+  class UserRolePreferencesDataSource {
+    -dataStore: DataStore<Preferences>
+    +selectedRole: Flow<UserRole?>
+    +setRole(role: UserRole)
+  }
+}
+
+AlbumRepositoryImpl ..|> AlbumRepository
+ArtistRepositoryImpl ..|> ArtistRepository
+UserRoleRepositoryImpl ..|> UserRoleRepository
+
+AlbumRepositoryImpl --> AlbumApiService
+AlbumRepositoryImpl --> AlbumDao
+AlbumRepositoryImpl --> NetworkErrorMapper
+ArtistRepositoryImpl --> ArtistServiceAdapter
+ArtistRepositoryImpl --> NetworkErrorMapper
+UserRoleRepositoryImpl --> UserRolePreferencesDataSource
+
+ArtistServiceAdapter --> ArtistApiService
+ArtistServiceAdapter ..> ArtistMappers
+AlbumRepositoryImpl ..> AlbumMappers
+
+AlbumApiService --> AlbumDto
+ArtistApiService --> ArtistDto
+AlbumDto --> PerformerDto
+AlbumDto --> TrackDto
+AlbumDto --> AlbumCommentDto
+ArtistDto --> AlbumDto
+ArtistDto --> ArtistAwardDto
+ArtistDto --> PrizeDto
+
+VinilosDatabase --> AlbumDao
+AlbumDao --> AlbumEntity
+
+note bottom of UserRolePreferencesDataSource
+  El rol se guarda en DataStore con la clave
+  `selected_user_role`; `AlbumDao` usa Room y
+  `VinilosDatabase` VC 1 con esquema exportado.
+end note
+
+@enduml

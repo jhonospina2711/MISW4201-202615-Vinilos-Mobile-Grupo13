@@ -1,0 +1,79 @@
+@startuml 02-componentes
+title Diagrama de componentes — Vinilos Mobile (Sprint 1)
+skinparam componentStyle uml2
+skinparam shadowing false
+skinparam arrowColor #4A5568
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+left to right direction
+
+package "Presentación (feature)" {
+  component "EntryActivity" as entry
+  component "MainActivity" as main
+  component "AlbumCatalogFragment" as fragAlbums
+  component "ArtistsFragment" as fragArtists
+  component "AlbumDetailActivity" as actAlbum
+  component "ArtistDetailActivity" as actArtist
+  component "ViewModels" as vms
+}
+
+package "Dominio (domain)" {
+  component "Casos de uso" as usecases
+  interface "AlbumRepository" as IAlbumRepo
+  interface "ArtistRepository" as IArtistRepo
+  interface "UserRoleRepository" as IUserRoleRepo
+}
+
+package "Datos (data)" {
+  component "AlbumRepositoryImpl" as albumRepoImpl
+  component "ArtistRepositoryImpl" as artistRepoImpl
+  component "UserRoleRepositoryImpl" as userRoleRepoImpl
+  component "ArtistServiceAdapter" as serviceAdapter
+  interface "AlbumApiService" as IAlbumApi
+  interface "ArtistApiService" as IArtistApi
+  component "AlbumDao" as albumDao
+  component "UserRolePreferencesDataSource" as prefs
+}
+
+package "Infraestructura (di)" {
+  component "Retrofit + OkHttp" as http
+  database "Room" as room
+  component "DataStore" as dataStore
+  component "Hilt" as hilt
+}
+
+cloud "BackVynils REST" as backend
+
+entry --> vms
+fragAlbums --> vms
+fragArtists --> vms
+actAlbum --> vms
+actArtist --> vms
+
+vms --> usecases
+usecases --> IAlbumRepo
+usecases --> IArtistRepo
+
+albumRepoImpl ..|> IAlbumRepo
+artistRepoImpl ..|> IArtistRepo
+userRoleRepoImpl ..|> IUserRoleRepo
+
+albumRepoImpl --> IAlbumApi
+artistRepoImpl --> serviceAdapter
+serviceAdapter --> IArtistApi
+albumRepoImpl --> albumDao
+userRoleRepoImpl --> prefs
+
+IAlbumApi --> http
+IArtistApi --> http
+albumDao --> room
+prefs --> dataStore
+http --> backend
+
+hilt ..> albumRepoImpl : «inject»
+hilt ..> artistRepoImpl : «inject»
+hilt ..> userRoleRepoImpl : «inject»
+hilt ..> http : «provide»
+hilt ..> room : «provide»
+
+@enduml
