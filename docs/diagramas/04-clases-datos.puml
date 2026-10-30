@@ -17,7 +17,7 @@ package "data.repository" {
     +getAlbum(id: Long): Flow<DataResult<Album>>
   }
   class ArtistRepositoryImpl {
-    -serviceAdapter: ArtistServiceAdapter
+    -adapter: ArtistServiceAdapter
     -errorMapper: NetworkErrorMapper
     +getArtists(): Flow<DataResult<List<Artist>>>
     +getArtist(key: ArtistKey): Flow<DataResult<Artist>>
@@ -39,7 +39,7 @@ package "data.network.services" {
     +getBands(): List<ArtistDto>
     +getMusician(id: Long): ArtistDto
     +getBand(id: Long): ArtistDto
-    +getPerformerPrizes(): List<PrizeDto>
+    +getPerformerPrizes(): List<ArtistAwardDto>
   }
 }
 
@@ -56,7 +56,7 @@ package "data.network" {
 
 package "data.network.errors" {
   class NetworkErrorMapper {
-    +map(error: Throwable): RequestFailureKind
+    +map(cause: Throwable): RequestFailure
   }
 }
 
@@ -93,18 +93,19 @@ package "data.network.models" {
 
 package "data.mappers" {
   class "AlbumMappers (funciones top-level)" as AlbumMappers {
-    +AlbumDto.toDomain(): Album
-    +Album.toEntity(): AlbumEntity
+    +AlbumDto.toDomain(): Album?
+    +Album.toEntity(position: Int, inCatalog: Boolean, gson: Gson): AlbumEntity
+    +AlbumEntity.toDomain(gson: Gson): Album
   }
   class "ArtistMappers (funciones top-level)" as ArtistMappers {
-    +ArtistDto.toDomain(type: ArtistType): Artist
+    +ArtistDto.toDomain(type: ArtistType, awardsById: Map<Long, ArtistAwardDto>): Artist?
   }
 }
 
 package "data.local" {
   abstract class AlbumDao {
     +getAll(): List<AlbumEntity>
-    +getById(id: Long): AlbumEntity
+    +getById(id: Long): AlbumEntity?
     +upsert(album: AlbumEntity)
     +insertAll(albums: List<AlbumEntity>)
     +clear()
@@ -160,7 +161,7 @@ AlbumDto --> TrackDto
 AlbumDto --> AlbumCommentDto
 ArtistDto --> AlbumDto
 ArtistDto --> ArtistAwardDto
-ArtistDto --> PrizeDto
+ArtistAwardDto --> PrizeDto
 
 VinilosDatabase --> AlbumDao
 AlbumDao --> AlbumEntity
