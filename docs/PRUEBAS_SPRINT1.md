@@ -14,7 +14,7 @@ El objetivo es demostrar, con evidencia repetible, que las cuatro historias del 
 - HU02 — Consultar el detalle de un álbum con tracks, comentarios y acciones según el rol.
 - HU03 — Consultar el listado de artistas con filtros de músicos y bandas.
 - HU04 — Consultar el detalle de un músico o de una banda.
-- Pruebas unitarias JVM, pruebas de integración con Room real en memoria, escenarios E2E automatizados con Espresso, contrato de API contra BackVynils local y recorrido manual de aceptación.
+- Pruebas unitarias JVM, pruebas de integración con Room real en memoria, escenarios E2E automatizados con Espresso, contrato de API contra BackVynils local, recorrido manual de aceptación y verificación de consumo real de la API con datos.
 - Matriz de entornos con Android API 28, API 31, API 21 y API 33.
 - **Suite completa en Android 5.0.2 (API 21)**: los 15 escenarios Espresso se ejecutaron y aprobaron en Lollipop, además de la verificación de humo sobre el APK de entrega.
 
@@ -256,7 +256,8 @@ La evidencia principal es esta tabla. Los archivos JUnit XML se conservan como r
 | **Total unitarias** | **JVM local** | **46** | **46** | **0** | **8,24 s (suma de suites) · 2026-10-25** | [Directorio](evidencias/sprint1/unit/) |
 | **E2E Espresso** | **Android 9 / API 28** | **15** | **15** | **0** | **10,54 s · 2026-10-24** | [XML](evidencias/sprint1/espresso-api28.xml) |
 | **E2E Espresso** | **Android 12 / API 31** | **15** | **15** | **0** | **17,12 s · 2026-10-25** | [XML](evidencias/sprint1/espresso-api31.xml) |
-| Contrato de API | BackVynils local (Docker) | 4 verificaciones (HU01–HU04) | 4 | 0 | 2026-10-24 · duración no registrada | Sin archivo de salida en el repositorio |
+| Contrato de API | BackVynils local (Docker) | 4 verificaciones (HU01–HU04) | 4 | 0 | 2026-10-24 · duración no registrada | [Script](scripts/smoke_sprint1_api.py) |
+| **Consumo real de la API** | **Android 5.0.2 / API 21 + BackVynils local** | **4 pantallas** | **4** | **0** | 2026-10-30 | [Capturas y registro](evidencias/sprint1/api-real/) |
 | Aceptación manual M01–M04 | Android 12 / API 31 | 4 | 4 | 0 | Fecha no registrada | Sin registro adjunto |
 | **E2E Espresso** | **Android 5.0.2 / API 21 (arm64)** | **15** | **15** | **0** | 2026-10-30 | [XML](evidencias/sprint1/espresso-api21.xml) · [log](evidencias/sprint1/espresso-api21.txt) |
 | Compilación y arranque del APK de Release | Android 5.0.2 / API 21 (arm64) | build + 2 pantallas | 3 | 0 | 2026-10-30 | [Evidencia](evidencias/sprint1/release-api21/) |
@@ -300,7 +301,7 @@ El reporte HTML de cada corrida queda en `app/build/reports/` y los XML en `app/
 | ID | Título | Tipo | Impacto | Estado | Mitigación |
 |---|---|---|---|---|---|
 | #47 | Release se cierra al iniciar por configuración R8 | Defecto | Impedía validar la variante Release; la app se cerraba al abrir. | **Resuelto y verificado el 2026-10-30**: `assembleRelease` compila, el APK de 2,5 MB instala y abre en API 21, sin `IllegalAccessError`. Evidencia en `evidencias/sprint1/release-api21/`. | Mantener `optimization.enable = true` sin `packageScope` personalizado, que era la causa. |
-| #48 | Backend HTTPS responde 500 y bloquea la validación Release | Defecto | No se pueden validar las cuatro HU contra el servicio de entrega ni firmar el release con esa URL. | Abierto. | Validar funcionalidad contra BackVynils local con Docker; permitir sobrescribir la URL base con `-PvinilosApiBaseUrl`; no aceptar la consulta en producción hasta que el servicio responda 200. |
+| #48 | El backend de entrega no responde y bloquea la validación contra el servicio publicado | Defecto | No se pueden validar las cuatro HU contra el servicio de entrega. | Abierto. | Validar funcionalidad contra BackVynils local con Docker; permitir sobrescribir la URL base con `-PvinilosApiBaseUrl`; no aceptar la consulta en producción hasta que el servicio responda 200. |
 | Emulador API 33 inestable | La corrida en API 33 se interrumpió por desconexión del emulador | Sin impacto en la entrega | La batería válida se ejecutó en API 21, API 28 y API 31. | N/A | Repetir en API 33 si se requiere ampliar la matriz, sin contarla hasta que termine. |
 | URL base por entorno | Dependencia de `10.0.2.2`, `adb reverse` o `-PvinilosApiBaseUrl` | Riesgo | Una configuración incorrecta produce fallos de conexión que parecen defectos de la app. | Vigente. | Documentar la URL por entorno; usar `adb reverse` en dispositivo físico; verificar la URL antes de cada corrida manual. |
 
