@@ -1,0 +1,87 @@
+@startuml 01-paquetes
+title Diagrama de paquetes — Vinilos Mobile (Sprint 1)
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam arrowColor #4A5568
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+top to bottom direction
+
+package "com.example.vinilosmobile" as root {
+
+  package "coreui" as coreui {
+    package "atoms" as coreui_atoms
+    package "models" as coreui_models
+    package "molecules" as coreui_molecules
+    package "organisms" as coreui_organisms
+  }
+
+  package "domain" as domain {
+    package "models" as domain_models
+    package "repository" as domain_repository
+    package "usecase" as domain_usecase
+  }
+
+  package "data" as data {
+    package "local" as data_local {
+      package "local.models" as data_local_models
+    }
+    package "mappers" as data_mappers
+    package "network" as data_network {
+      package "network.errors" as data_network_errors
+      package "network.interceptors" as data_network_interceptors
+      package "network.models" as data_network_models
+      package "network.services" as data_network_services
+    }
+    package "preferences" as data_preferences
+    package "repository" as data_repository
+  }
+
+  package "di" as di
+
+  package "feature" as feature {
+    package "entry" as feature_entry {
+      package "entry.models" as feature_entry_models
+    }
+    package "home" as feature_home {
+      package "home.adapters" as feature_home_adapters
+      package "home.albums" as feature_home_albums {
+        package "albums.models" as feature_home_albums_models
+      }
+      package "home.artists" as feature_home_artists {
+        package "artists.models" as feature_home_artists_models
+      }
+      package "home.collectors" as feature_home_collectors
+      package "home.navigation" as feature_home_navigation
+    }
+    package "albumdetail" as feature_albumdetail {
+      package "albumdetail.models" as feature_albumdetail_models
+    }
+    package "artistdetail" as feature_artistdetail {
+      package "artistdetail.models" as feature_artistdetail_models
+    }
+    package "shared" as feature_shared
+  }
+
+}
+
+feature ..> domain : «use»
+feature ..> coreui : «use»
+data ..> domain : «use»
+coreui ..> domain : «use»
+di ..> data : «use»
+di ..> domain : «use»
+
+note right of domain
+  **domain** no depende de Android,
+  ni de data, ni de feature.
+  Verificado: 0 imports de
+  android/androidx y de data/feature.
+end note
+
+note left of data
+  **90 archivos .kt** en app/src/main
+  y **34 paquetes** en total.
+end note
+
+@enduml
