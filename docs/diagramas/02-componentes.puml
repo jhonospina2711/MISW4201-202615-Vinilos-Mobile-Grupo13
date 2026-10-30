@@ -53,6 +53,7 @@ actArtist --> vms
 vms --> usecases
 usecases --> IAlbumRepo
 usecases --> IArtistRepo
+usecases --> IUserRoleRepo
 
 albumRepoImpl ..|> IAlbumRepo
 artistRepoImpl ..|> IArtistRepo
