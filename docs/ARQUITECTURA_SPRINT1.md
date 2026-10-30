@@ -15,8 +15,12 @@ Las figuras muestran estructura: paquetes, componentes, interfaces y clases. La 
 | Clases — dominio | `03-clases-dominio.svg` | ¿Qué modelos, contratos de repositorio y casos de uso definen la regla de negocio? |
 | Clases — datos | `04-clases-datos.svg` | ¿Qué implementaciones, servicios, DTO, DAO, entidades y mapeos satisfacen esos contratos? |
 | Clases — presentación | `05-clases-presentacion.svg` | ¿Qué Activities, Fragments, ViewModels, Adapters, ViewHolders y Views componen la UI y cómo se conectan? |
+| Navegación | `06-navegacion.svg` | ¿Por dónde pasa el usuario entre pantallas y con qué rol? |
+| Secuencia — artistas | `07-secuencia-artistas.svg` | ¿Cómo se combinan músicos y bandas desde la API y cómo se refleja en la pantalla? |
+| Secuencia — catálogo | `08-secuencia-cache-catalogo.svg` | ¿Cómo funciona el patrón «caché primero, red después» en el catálogo? |
+| Secuencia — detalle | `09-secuencia-cache-detalle.svg` | ¿Qué pasa en el detalle con caché, red, 404 y sin conexión? |
 
-Las cinco figuras siguen la notación UML 2 y usan los mismos nombres que el código, sin sufijos añadidos. En los diagramas de clases, la línea con triángulo hueco indica realización de interfaz, la flecha discontinua indica dependencia, el rombo relleno indica composición y el rombo hueco indica agregación. En el diagrama de componentes, cada interfaz aparece junto al componente que la provee o la requiere.
+Las nueve figuras siguen la notación UML 2 y usan los mismos nombres que el código, sin sufijos añadidos. En los diagramas de clases, la línea con triángulo hueco indica realización de interfaz, la flecha discontinua indica dependencia, el rombo relleno indica composición y el rombo hueco indica agregación. En el diagrama de componentes, cada interfaz aparece junto al componente que la provee o la requiere.
 
 ### 1.1. Diagrama de paquetes
 
@@ -120,6 +124,8 @@ Cada clase dibujada existe en el repositorio y cada archivo Kotlin de `main` per
 
 Las tres secciones de Home se cambian con menú o deslizamiento. Los detalles viven en Activities propias y reciben el identificador, no un DTO completo. El rol persistido es la fuente de verdad: el FAB de álbum en Home y el de track en detalle solo aparecen para Coleccionista. Sus acciones son avisos de «próximamente» en este sprint.
 
+![Diagrama de navegación](diagramas/06-navegacion.svg)
+
 Las rutas son las siguientes:
 
 - Inicio → `EntryActivity`: sin rol guardado ofrece Visitante o Coleccionista; con rol guardado entra directo a `MainActivity`.
@@ -132,6 +138,8 @@ Las rutas son las siguientes:
 ## 3. Flujo de artistas y conexión
 
 La lista pide músicos y bandas en paralelo. El Repository emite la lista combinada cuando ambos endpoints responden; no muestra una lista parcial con solo músicos o bandas. El filtro Todos/Músicos/Bandas opera sobre la lista recibida, sin nuevas solicitudes. Los detalles usan el mismo flujo `Flow → collect → MutableLiveData → observe` y se consultan por tipo e ID; una consulta auxiliar a `/performerprizes` completa el nombre de premios cuando el backend no lo incluye. Si esa consulta auxiliar falla, el detalle principal sigue visible. **No se implementó modo offline de artistas**: sin red aparece estado de error y opción de reintento.
+
+![Secuencia del listado de artistas](diagramas/07-secuencia-artistas.svg)
 
 El recorrido de la pantalla es:
 
@@ -148,6 +156,8 @@ El recorrido de la pantalla es:
 
 Room usa `VinilosDatabase` versión 1, esquema exportado a `app/schemas/`, y una tabla `albums`. `AlbumEntity` guarda `id`, posición del catálogo, marca `inCatalog`, nombre, artistas como JSON, género, año, portada, sello y descripción. `AlbumDao.replaceAll` reemplaza el catálogo en una transacción; `upsert` actualiza un detalle sin añadirlo al catálogo si no estaba allí.
 
+![Secuencia del catálogo con caché](diagramas/08-secuencia-cache-catalogo.svg)
+
 El patrón de lectura es «caché primero, red después»:
 
 1. Al iniciar una consulta, el Repository lee Room y emite de inmediato `Success` con los datos guardados, si existen, marcados con `AlbumCatalog.source = CACHE` para avisar al usuario que ve datos guardados.
@@ -157,6 +167,8 @@ El patrón de lectura es «caché primero, red después»:
 5. Una cancelación independiente emite `Cancelled`: se conserva el contenido en caché o se ofrece reintentar.
 
 Un 404 de detalle termina en `NotFound` aunque se haya emitido antes una copia local.
+
+![Secuencia del detalle de álbum](diagramas/09-secuencia-cache-detalle.svg)
 
 El detalle de álbum usa el mismo flujo y puede emitir el detalle guardado antes del detalle nuevo. La caché de álbumes es **parcial**: la entidad actual no guarda tracks, comentarios ni fecha completa. Un detalle sin red puede mostrar solo los campos persistidos. DataStore es separado de Room y guarda únicamente `selected_user_role` (`visitor` o `collector`), para conservar la elección entre aperturas. Su `Flow` se recoge en los ViewModels de Entry, Home y detalle; Entry usa `first()` para decidir la navegación inicial y Home observa cambios posteriores.
 

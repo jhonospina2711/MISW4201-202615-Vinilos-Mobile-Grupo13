@@ -1,0 +1,36 @@
+@startuml 06-navegacion
+title Diagrama de navegación — Vinilos Mobile (Sprint 1)
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+skinparam activityBackgroundColor #EDF2F7
+skinparam activityBorderColor #4A5568
+
+start
+:Inicio de la app;
+if (¿Hay rol guardado en DataStore?) then (sí)
+else (no)
+  :EntryActivity;
+  :Elegir Visitante o Coleccionista;
+  :Guardar rol en DataStore;
+endif
+:MainActivity\n(ViewPager2 + menú inferior);
+fork
+  :AlbumCatalogFragment;
+  :AlbumDetailActivity\nrecibe el id del álbum;
+fork again
+  :ArtistsFragment;
+  :ArtistDetailActivity\nrecibe ArtistKey;
+fork again
+  :CollectorsFragment\n(marcador: HU05 y HU06 son del Sprint 2);
+end fork
+:Volver con el botón Atrás o la app bar;
+stop
+
+note right
+  El FAB de álbum en Home y el de track
+  en el detalle solo se muestran con rol
+  Coleccionista.
+end note
+
+@enduml

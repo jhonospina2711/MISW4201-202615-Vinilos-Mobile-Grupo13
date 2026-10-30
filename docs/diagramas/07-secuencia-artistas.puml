@@ -1,0 +1,54 @@
+@startuml 07-secuencia-artistas
+title Secuencia — listado de artistas y conexión con la API
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+
+actor "Usuario" as U
+participant "ArtistsFragment" as F
+participant "ArtistCatalogViewModel" as VM
+participant "GetArtistsUseCase" as UC
+participant "ArtistRepositoryImpl" as R
+participant "ArtistServiceAdapter" as A
+participant "ArtistApiService" as API
+participant "BackVynils" as B
+
+U -> F : abre Artistas
+F -> VM : reload()
+VM -> UC : invoke()
+UC -> R : getArtists()
+R --> VM : DataResult.Loading
+VM --> F : LiveData<ArtistCatalogUiState> = Loading
+F --> U : indicador de carga
+
+R -> A : getArtists()
+par en paralelo
+  A -> API : GET /musicians
+  API -> B : HTTP
+  B --> API : List<ArtistDto>
+else
+  A -> API : GET /bands
+  API -> B : HTTP
+  B --> API : List<ArtistDto>
+end
+A --> R : List<Artist> combinada y ordenada
+R --> VM : DataResult.Success
+VM --> F : Content (o Empty si no hay elementos)
+F --> U : filas con foto, nombre, tipo y álbumes
+
+U -> F : toca un artista
+F -> F : abre ArtistDetailActivity con ArtistKey
+
+R --> VM : DataResult.Error(DataError.Request)
+VM --> F : Error
+F --> U : mensaje y botón Reintentar
+
+note over R,VM
+  Si la solicitud se interrumpe de forma
+  independiente se emite Cancelled, que
+  también ofrece Reintentar sin cerrar la
+  pantalla. Una lista parcial (solo músicos
+  o solo bandas) no se muestra.
+end note
+
+@enduml
