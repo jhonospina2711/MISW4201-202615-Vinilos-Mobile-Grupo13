@@ -1,88 +1,344 @@
-# Estrategia y resultados de pruebas — Sprint 1
+# Estrategia de pruebas — Sprint 1
 
-Revisión: 24 de octubre de 2026. Alcance: HU01 catálogo de álbumes, HU02 detalle de álbum, HU03 listado de artistas y HU04 detalle de artista.
+Documento de estrategia, casos y resultados de prueba para las historias HU01–HU04 de Vinilos Mobile. Revisión: 30 de octubre de 2026. Rama de trabajo: `feature/feedback-semana-3`.
 
-## Estrategia
+---
 
-1. **E2E automatizadas con Espresso:** probar navegación, estados y datos visibles desde Activities/Fragments reales. Un interceptor HTTP de prueba devuelve respuestas deterministas a Retrofit; se ejecutan los mappers, Service Adapter, Repository, casos de uso y ViewModels reales. Room se crea en memoria y el rol se controla con un repositorio de prueba. Esto evita depender de Docker o de datos compartidos para la batería de regresión. Los tests viven en [`Sprint1EspressoTest.kt`](../app/src/androidTest/java/com/example/vinilosmobile/Sprint1EspressoTest.kt).
-2. **Contrato de la API real:** ejecutar [`smoke_sprint1_api.py`](../scripts/smoke_sprint1_api.py) contra BackVynils local. Hace solicitudes de solo lectura a `/albums`, `/albums/{id}`, `/musicians`, `/bands`, ambos detalles y `/performerprizes`; valida códigos 200, JSON e identificadores para las cuatro HU.
-3. **E2E manuales:** recorrer la app Debug con el backend Docker real y confirmar datos, navegación y retorno. Repetir los casos críticos en un dispositivo con Android 5.0/API 21 y otro Android posterior antes del release.
-4. **Release:** compilar, verificar firma, instalar y abrir el APK optimizado. Ejecutar las cuatro HU contra el backend HTTPS definitivo antes de publicar un APK de entrega.
-5. **Unitarias JVM:** JUnit y MockK verifican casos de uso, repositorios, adaptación de artistas, DTO, interceptor, mapeo de errores y persistencia del rol. Robolectric ejecuta `AlbumDao` contra Room en memoria para comprobar SQL, orden, `upsert` y `replaceAll`.
+## 1. Objetivo y alcance
 
-Una HU se acepta cuando pasan sus casos Espresso, los escenarios manuales acordados y la consulta al backend de entrega, sin defectos abiertos de severidad alta. Los fallos se registran como issues con etiqueta `bug`, pasos de reproducción, entorno, resultado esperado y real.
+El objetivo es demostrar, con evidencia repetible, que las cuatro historias del Sprint 1 cumplen su comportamiento funcional en las capas de presentación, dominio, datos y red, y que los estados de error, vacío y reintento son observables por el usuario.
 
-## Inventario automatizado
+**Dentro del alcance**
 
-| HU | Casos Espresso | Qué comprueban |
-|---|---:|---|
-| HU01 | 4 | Catálogo desde Retrofit, vacío, error y reintento, copia Room cuando falla la red. |
-| HU02 | 4 | Navegación con ID, tracks y comentarios, FAB de coleccionista, 404, álbum sin tracks, error y reintento. |
-| HU03 | 3 | Combinación de músicos y bandas, filtros, vacío, error y reintento. |
-| HU04 | 4 | Detalle de músico con premio y álbumes, banda con integrantes, 404, error y reintento. |
+- HU01 — Consultar el catálogo de álbumes, incluida la copia local cuando falla la red.
+- HU02 — Consultar el detalle de un álbum con tracks, comentarios y acciones según el rol.
+- HU03 — Consultar el listado de artistas con filtros de músicos y bandas.
+- HU04 — Consultar el detalle de un músico o de una banda.
+- Pruebas unitarias JVM, pruebas de integración con Room real en memoria, escenarios E2E automatizados con Espresso, contrato de API contra BackVynils local y recorrido manual de aceptación.
+- Matriz de entornos con Android API 28, API 31, API 21 y API 33.
 
-La batería usa respuestas HTTP de prueba. Por sí sola no demuestra disponibilidad del servicio publicado ni compatibilidad con API 21.
+**Fuera del alcance de este sprint**
 
-## Inventario unitario
+- Historias posteriores (coleccionistas, creación de álbumes y de tracks), que aún no están implementadas.
+- Pruebas de rendimiento, de carga, de seguridad y de accesibilidad profunda.
+- Compatibilidad declarada con Android API 21: está **pendiente de ejecución** y no se reporta como aprobada.
+- Validación contra el backend HTTPS publicado: está bloqueada por el defecto #48 y no sustituye la verificación local.
+- La ejecución en API 33 no se considera una batería válida porque el emulador se desconectó durante la corrida.
 
-| Clase de prueba | Casos | Cobertura |
-|---|---:|---|
-| `AlbumRepositoryImplTest` | 13 | Emisión inmediata de Room y posterior actualización de red, resultados sellados de carga/éxito/error/cancelación, reemplazo de caché, 404 y propagación de cancelación del ciclo de vida. |
-| `AlbumDaoTest` | 3 | Consultas SQL sobre Room real en memoria, orden y marca de catálogo, reemplazo y `upsert`. |
-| `ArtistServiceAdapterTest` | 5 | Unión de músicos/bandas, descarte de datos inválidos, endpoints de detalle, integrantes y premios. |
-| `AlbumMappersTest` y `ArtistMappersTest` | 6 | Validación y transformación de DTO, relaciones, fechas y límites de la copia Room. |
-| `RequestHeadersInterceptorTest` | 1 | Cabecera JSON y delegación única a OkHttp. |
-| `ArtistRepositoryImplTest` | 5 | Delegación, detalle por tipo/ID, timeout, 404 y cancelación. |
-| `NetworkErrorMapperTest` | 3 | Conexión, timeout, permisos, servidor y errores ya traducidos. |
-| `UserRolePreferencesDataSourceTest` y `UserRoleRepositoryImplTest` | 4 | Lectura y escritura del rol, valor desconocido y flujo de cambios. |
-| `UseCasesTest` | 6 | Los seis casos de uso delegan sin perder ID, tipo, origen o rol. |
-| **Total** | **46** | ViewModels y Views quedan cubiertos por Espresso, sin tests unitarios directos. |
+---
 
-[Resultados JUnit XML de las 46 unitarias](evidencias/sprint1/unit/). MockK sustituye colaboradores en las pruebas aisladas; los mappers se prueban con DTO reales y `AlbumDaoTest` usa Room real para verificar la base de datos.
+## 2. Estrategia de pruebas
 
-## Guiones E2E manuales
+La estrategia combina pruebas automatizadas rápidas en la JVM, pruebas de integración con dependencias reales acotadas, escenarios E2E sobre la interfaz real y una aceptación manual mínima sobre backend y dispositivo reales. Cada nivel responde a una pregunta distinta y ninguno se usa como sustituto de otro.
 
-| Caso | Pasos | Resultado esperado |
+### 2.1. Tipos, niveles y técnicas (TNT)
+
+**Niveles de prueba**
+
+| Nivel | Qué responde | Alcance en el Sprint 1 | Herramientas | Volumen |
+|---|---|---|---|---|
+| Unitario | ¿La lógica aislada hace lo que debe? | Repositorios con colaboradores simulados, casos de uso, mappers, adaptador de artistas, interceptor, mapeo de errores y preferencias de rol. | JUnit 4, MockK, corrutinas de test. | 43 pruebas en 10 archivos |
+| Integración | ¿Las piezas reales encajan entre sí? | `AlbumDao` contra Room real en memoria; módulos Hilt de test que sustituyen red, repositorios y base de datos; contrato de API contra BackVynils local. | Robolectric API 28, Room en memoria, Hilt Testing, script de contrato. | 3 pruebas de DAO más 4 verificaciones de contrato |
+| Sistema / E2E | ¿El usuario completa el flujo en la app real? | 15 escenarios sobre `MainActivity`, `AlbumDetailActivity` y `ArtistDetailActivity`, con Retrofit, repositorios, ViewModels y vistas reales. | Espresso, `ActivityScenario`, `FixtureApiInterceptor`, `VinilosTestRunner`. | 15 escenarios |
+| Aceptación | ¿El incremento sirve en el entorno de entrega? | Recorrido manual M01–M04 en API 31 con backend Docker; revisión de release. | APK Debug/Release, backend local, dispositivo o emulador. | 4 recorridos manuales |
+
+**Tipos de prueba**
+
+| Tipo | Propósito | Dónde se aplica |
 |---|---|---|
-| M01 / HU01 | Instalar Debug, abrir sin rol guardado, elegir Visitante y entrar a Álbumes. | Se muestra el número y la grilla de álbumes devueltos por `/albums`; el FAB de creación está oculto. |
-| M02 / HU02 | Tocar un álbum de M01, revisar datos, tracks y comentarios, volver al catálogo. | Se abre una Activity con el ID seleccionado; datos de `/albums/{id}` y botón Volver funcional. El FAB de track solo aparece para Coleccionista. |
-| M03 / HU03 | Abrir Artistas, alternar Todos, Músicos y Bandas. | La lista combina `/musicians` y `/bands`; cada filtro conserva solo su tipo. |
-| M04 / HU04 | Abrir un músico y una banda desde M03, revisar álbumes, premios e integrantes cuando existan, volver. | El detalle corresponde al ID y tipo seleccionados; los datos son los de la API real. |
-| M05 / errores | Desconectar o detener el backend; abrir listados y detalles, pulsar Reintentar después de restaurarlo. | Mensaje legible; HU01 muestra el catálogo guardado si lo tiene. |
-| M06 / Release | Instalar el APK Release en un dispositivo limpio, escoger rol y consultar las cuatro HU con la URL HTTPS final. | La app abre sin cierre y las cuatro consultas responden correctamente. |
+| Funcional | Verificar que cada historia entrega los datos y las acciones esperadas. | Escenarios E2E, casos de uso y repositorios. |
+| Regresión | Detectar rupturas al cambiar repositorios, mapeo o interfaz. | Suite Espresso determinista y suite unitaria en cada cambio. |
+| Contrato | Confirmar que la API real conserva rutas, códigos e identificadores que la app consume. | `scripts/smoke_sprint1_api.py` contra BackVynils local. |
+| Usabilidad básica | Confirmar que los estados vacío, error, reintento y aviso de caché son legibles y que las acciones visibles corresponden al rol. | Aserciones Espresso sobre estados y recorrido manual M01–M04. |
 
-## Ejecución y evidencia
+**Técnicas de diseño de casos**
 
-| Entorno o comando | Resultado |
+| Técnica | Aplicación concreta |
 |---|---|
-| `bash gradlew :app:testDebugUnitTest --no-configuration-cache` | **46 pruebas, 0 fallos, 0 errores, 0 omitidas.** MockK + Room en memoria con Robolectric API 28. [JUnit XML](evidencias/sprint1/unit/). |
-| Emulador Vinilos_API28, Android 9/API 28, `bash gradlew :app:connectedDebugAndroidTest --no-configuration-cache` | **15 pruebas, 0 fallos, 0 errores, 0 omitidas** antes de la actualización de repositorios a `Flow`. [JUnit XML](evidencias/sprint1/espresso-api28.xml). |
-| Emulador Huawei(AVD), Android 12/API 31, `bash gradlew :app:connectedDebugAndroidTest --no-configuration-cache` | **15 pruebas, 0 fallos, 0 errores, 0 omitidas** después de introducir `Flow<DataResult<T>>`. [JUnit XML](evidencias/sprint1/espresso-api31.xml). |
-| `python3 scripts/smoke_sprint1_api.py` contra Docker local | **4 HU aprobadas:** 4 álbumes; detalle de álbum 100 con 2 tracks; endpoints de músicos y bandas; detalles y premios. |
-| M01–M04 manuales en API 31 con Debug y Docker | **Aprobadas.** Visitante vio 4 álbumes; detalle de Buscando América con 2 tracks y 1 comentario; filtros mostraron Rubén Blades y Queen; ambos detalles cargaron y el músico mostró Grammy Award. La banda del conjunto de datos local no tiene integrantes. |
-| `bash gradlew :app:assembleRelease --no-configuration-cache` | **Compilación correcta tras introducir `DataResult`.** APK firmado para desarrollo; minSdk 21. La comprobación previa en API 31 instaló y abrió Release después de corregir R8. Una instalación limpia mostró la selección de rol y luego un error legible por el HTTP 500, sin cierre de la app. SHA-256 del APK actual: `eafa7a0e66dc0a97a7e0aec1fc050f39eef13cd24fb067434414f8921f3ce304`. |
-| API 33, Pixel_6a | Ejecución instrumentada interrumpida por desconexión del emulador; el reporte quedó parcial y **no cuenta como batería aprobada**. |
-| Android 5.0/API 21 | **Pendiente.** No hay dispositivo ni imagen API 21 instalados en este equipo; `minSdk = 21` y compilación correcta no sustituyen esta ejecución. |
-| Backend HTTPS publicado | **Bloqueado:** `GET /albums` continúa respondiendo HTTP 500. Release abre y muestra el catálogo Room guardado si existe, pero no puede validar las cuatro HU contra ese servicio. |
+| Particiones de equivalencia | Catálogo con datos frente a catálogo vacío; artista músico frente a banda; rol Visitante frente a Coleccionista; respuesta 200, 404 y 500. |
+| Valores límite | Identificadores válidos 100 y 101 frente al inexistente 999; álbum con tracks frente a álbum sin tracks; primer y último registro del orden por identificador; fecha de nacimiento, de creación y de premiación presentes o ausentes. |
+| Transición de estados | Carga → éxito, carga → vacío, carga → error → reintento → éxito; emisión de la copia Room antes de la red; cancelación del ciclo de vida sin emitir estado a una pantalla destruida. |
+| Casos de error | HTTP 404, HTTP 500, timeout, fallo de conexión, JSON o registros inválidos descartados y error ya traducido que no se vuelve a mapear. |
 
-Defectos registrados: [#47, cierre al iniciar Release por R8](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/47), corregido en `sprint-1` y pendiente de integrar al release; [#48, HTTP 500 del backend HTTPS](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/48), abierto.
+### 2.2. Distribución del esfuerzo
 
-## Comandos para repetir
+| Nivel | Esfuerzo | Sustento |
+|---|---:|---|
+| Unitario | 40 % | Es la red de seguridad más barata y de mayor volumen: 43 de las 46 pruebas unitarias se ejecutan en la JVM sin emulador. |
+| Integración | 20 % | Requiere mantener Room real, los módulos Hilt de test y el contrato con BackVynils local, pero cubre pocas piezas por corrida. |
+| Sistema / E2E | 30 % | Los 15 flujos Espresso exigen emulador, fixtures deterministas y repetición en más de una API; son la evidencia principal de comportamiento visible. |
+| Aceptación | 10 % | El recorrido manual y la revisión de release dependen de backend y dispositivo reales y se reservan para el cierre del incremento. |
+| **Total** | **100 %** | — |
+
+La distribución concentra el esfuerzo en unitarias y E2E porque son la evidencia repetible del día a día, y reserva la aceptación manual para lo que solo puede validarse con el backend y el dispositivo de entrega.
+
+### 2.3. Enfoque por capas
+
+| Capa | Qué se verifica | Pruebas asociadas |
+|---|---|---|
+| ViewModel y casos de uso | Delegación sin pérdida de identificador, tipo, origen o rol; exposición del flujo de rol persistido. Los ViewModels se ejercitan de forma indirecta desde Espresso. | `UseCasesTest`, escenarios E2E |
+| Repositorio | Emisión de caché y red, resultados sellados de carga, éxito, error y cancelación, reemplazo de caché, 404, timeout y propagación de cancelación. | `AlbumRepositoryImplTest`, `ArtistRepositoryImplTest`, `UserRoleRepositoryImplTest` |
+| Red y mapeo | Cabecera JSON, unión de músicos y bandas, descarte de registros inválidos, resolución de premios, transformación de DTO y traducción de errores. | `RequestHeadersInterceptorTest`, `NetworkErrorMapperTest`, `ArtistServiceAdapterTest`, `AlbumMappersTest`, `ArtistMappersTest` |
+| Persistencia | Consultas SQL, orden del catálogo, exclusión de filas de detalle, `replaceAll`, `upsert` y lectura/escritura del rol. | `AlbumDaoTest`, `UserRolePreferencesDataSourceTest` |
+| Interfaz | Navegación, datos visibles, estados vacío y error, reintento, aviso de caché y visibilidad de acciones por rol. | 15 escenarios E2E de `Sprint1EspressoTest` |
+
+### 2.4. Datos y fixtures
+
+- **`FixtureApiInterceptor`** intercepta OkHttp y responde por ruta con datos deterministas: dos álbumes, un músico, una banda, el detalle del álbum 100 con dos tracks y un comentario, el detalle del músico 100 con premio y el detalle de la banda 101 con integrantes. Permite forzar códigos por ruta (`responseCodes`), activar catálogos vacíos (`emptyAlbums`, `emptyArtists`), simular un álbum sin tracks (`albumWithoutTracks`) y registrar las rutas solicitadas (`requestedPaths`) para comprobar qué endpoints se consultaron.
+- **Room en memoria** se inyecta con `EspressoDatabaseModule`, de modo que cada corrida parte de una base limpia y la caché de HU01 puede probarse sin residuos entre escenarios.
+- **Módulos Hilt de test** (`EspressoNetworkModule`, `EspressoRepositoryModule`, `EspressoDatabaseModule`) sustituyen las implementaciones de producción mediante `@UninstallModules`; los repositorios, ViewModels y vistas siguen siendo los reales.
+- **`FakeUserRoleRepository`** controla el rol sin depender de DataStore y permite verificar la visibilidad de acciones para Visitante y Coleccionista.
+- **`VinilosTestRunner`** registra `HiltTestApplication` como aplicación de instrumentación.
+- En la JVM, `AlbumDaoTest` usa Room real en memoria bajo Robolectric API 28; el resto de las pruebas unitarias usa MockK para aislar colaboradores.
+
+---
+
+## 3. Entornos y matriz de dispositivos
+
+| Entorno | API | Dispositivo o emulador | Resultado | Estado |
+|---|---|---|---|---|
+| JVM local con Robolectric | 28 (configuración de Robolectric) | Host de desarrollo | 46 unitarias ejecutadas, 0 fallos | Aprobado |
+| Emulador Android 9 | 28 | `Vinilos_API28` (`emulator-5554`) | 15 E2E ejecutadas, 0 fallos | Aprobado |
+| Emulador Android 12 | 31 | `Huawei(AVD)` (`emulator-5556`) | 15 E2E ejecutadas, 0 fallos | Aprobado |
+| Emulador Android 13 | 33 | `Pixel_6a` | Ejecución interrumpida por desconexión del emulador; reporte parcial | No válido |
+| Emulador o dispositivo Android 5.0 | 21 | No disponible en el equipo | No ejecutado | Pendiente |
+| Backend local con Docker | No aplica | `127.0.0.1:3000` | 4 HU verificadas por contrato | Aprobado |
+| Backend HTTPS publicado | No aplica | Servicio de Render | `GET /albums` responde HTTP 500 | Bloqueado (#48) |
+
+La ejecución de API 28 es previa a la migración de los repositorios a `Flow<DataResult<T>>`; la de API 31 corresponde al build actual. Ambas se conservan como evidencia histórica. La ausencia de una corrida en API 21 impide afirmar compatibilidad con Android 5.0, aunque `minSdk` sea 21.
+
+---
+
+## 4. Escenarios E2E
+
+Los 15 escenarios se ejecutan sobre Activities reales con Retrofit, repositorios, ViewModels, Room en memoria y vistas reales. La red se sustituye únicamente en el límite HTTP mediante `FixtureApiInterceptor`. Todos los escenarios viven en [`Sprint1EspressoTest.kt`](../app/src/androidTest/java/com/example/vinilosmobile/Sprint1EspressoTest.kt).
+
+### 4.1. HU01 — Consultar catálogo de álbumes
+
+| ID | Escenario | Precondición | Pasos | Resultado esperado | Automatizado en |
+|---|---|---|---|---|---|
+| E2E-01 | Catálogo cargado desde Retrofit y repositorio | App instalada; `/albums` responde 200 con dos álbumes | 1. Abrir el catálogo.<br>2. Esperar la carga.<br>3. Revisar la grilla. | Se muestra «Buscando América»; la grilla contiene «A Night at the Opera»; se registra `GET /albums`. | `hu01_catalogLoadsThroughRetrofitAndRepository` |
+| E2E-02 | Catálogo vacío muestra estado vacío | `emptyAlbums = true` | 1. Abrir el catálogo.<br>2. Esperar la respuesta vacía. | Se muestra el mensaje de catálogo vacío (`catalog_empty`). | `hu01_emptyCatalogShowsEmptyState` |
+| E2E-03 | Error del servidor permite reintentar | `/albums` responde 500 | 1. Abrir el catálogo.<br>2. Esperar el error.<br>3. Restaurar la respuesta 200.<br>4. Pulsar «Reintentar». | Se muestra el error de catálogo (`catalog_error_title`) y, tras el reintento, «Buscando América». | `hu01_serverErrorCanRetry` |
+| E2E-04 | Fallo de red muestra la copia de Room | Primera apertura con 200 que llena Room; luego `/albums` responde 500 | 1. Abrir el catálogo y esperar los datos.<br>2. Forzar el fallo de red.<br>3. Reabrir el catálogo. | Aparece el aviso de caché (`cachedNotice`) y la grilla conserva «Buscando América» desde Room. | `hu01_networkFailureShowsRoomCache` |
+
+### 4.2. HU02 — Consultar detalle de un álbum
+
+| ID | Escenario | Precondición | Pasos | Resultado esperado | Automatizado en |
+|---|---|---|---|---|---|
+| E2E-05 | La tarjeta abre el detalle con tracks y comentarios | Rol Coleccionista; `/albums` y `/albums/100` responden 200 | 1. Abrir el catálogo.<br>2. Tocar «Buscando América».<br>3. Revisar tracks y comentarios.<br>4. Revisar el botón de agregar track.<br>5. Volver. | El detalle muestra el nombre, el track «Decisiones», el comentario «Gran álbum» y el FAB de track visible; se registra `GET /albums/100` y se vuelve al catálogo. | `hu02_cardOpensAlbumActivityWithTracksAndComments` |
+| E2E-06 | Álbum inexistente muestra no encontrado y Visitante no tiene acción | Rol Visitante; `/albums/999` responde 404 | 1. Abrir el detalle del álbum 999. | Se muestra el mensaje de álbum no encontrado (`album_not_found`) y el FAB de track no es visible. | `hu02_missingAlbumShowsNotFoundAndVisitorHasNoAction` |
+| E2E-07 | Álbum sin tracks muestra mensaje de vacío | `albumWithoutTracks = true` | 1. Abrir el detalle del álbum 100. | Se muestra el nombre del álbum y el mensaje de álbum sin tracks (`album_no_tracks`). | `hu02_albumWithoutTracksShowsEmptyMessage` |
+| E2E-08 | Error del detalle permite reintentar | `/albums/100` responde 500 | 1. Abrir el detalle del álbum 100.<br>2. Esperar el error.<br>3. Restaurar la respuesta 200.<br>4. Pulsar «Reintentar». | Se muestra el error de detalle (`album_detail_error`) y, tras el reintento, «Buscando América». | `hu02_serverErrorCanRetry` |
+
+### 4.3. HU03 — Consultar listado de artistas
+
+| ID | Escenario | Precondición | Pasos | Resultado esperado | Automatizado en |
+|---|---|---|---|---|---|
+| E2E-09 | El listado filtra músicos y bandas | `/musicians` y `/bands` responden 200 | 1. Abrir la app.<br>2. Entrar a Artistas.<br>3. Esperar «Queen».<br>4. Filtrar Bandas.<br>5. Filtrar Músicos. | Bandas muestra «Queen» y no «Rubén Blades»; Músicos muestra «Rubén Blades»; se registran `GET /musicians` y `GET /bands`. | `hu03_artistListFiltersMusiciansAndBands` |
+| E2E-10 | Listado vacío muestra estado vacío | `emptyArtists = true` | 1. Abrir la app.<br>2. Entrar a Artistas. | Se muestra el mensaje de artistas vacío (`artists_empty`). | `hu03_emptyArtistsShowEmptyState` |
+| E2E-11 | Error del listado permite reintentar | `/bands` responde 500 | 1. Entrar a Artistas.<br>2. Esperar el error.<br>3. Restaurar la respuesta 200.<br>4. Pulsar «Reintentar». | Se muestra el error de artistas (`artists_error`) y, tras el reintento, «Queen». | `hu03_serverErrorCanRetry` |
+
+### 4.4. HU04 — Consultar detalle de un artista
+
+| ID | Escenario | Precondición | Pasos | Resultado esperado | Automatizado en |
+|---|---|---|---|---|---|
+| E2E-12 | El detalle de músico muestra álbumes y premio | `/musicians/100` y `/performerprizes` responden 200 | 1. Entrar a Artistas.<br>2. Tocar «Rubén Blades».<br>3. Revisar fecha, álbumes y premios.<br>4. Volver. | Se muestra la etiqueta de fecha, «Buscando América» en la lista de álbumes y «Grammy Award» en premios; se registran `GET /musicians/100` y `GET /performerprizes`. | `hu04_musicianDetailDisplaysAlbumsAndPrize` |
+| E2E-13 | El detalle de banda muestra integrantes y fecha de creación | `/bands/101` responde 200; se abre con `ArtistKey(101, BAND)` | 1. Abrir el detalle de la banda 101.<br>2. Revisar integrantes y fecha. | Se muestra «Queen», «Freddie Mercury» en integrantes y la etiqueta de fecha de creación (`artist_creation_date`); se registra `GET /bands/101`. | `hu04_bandDetailDisplaysMembersAndCreationDate` |
+| E2E-14 | Artista inexistente muestra no encontrado | `/musicians/999` responde 404 | 1. Abrir el detalle del músico 999. | Se muestra el mensaje de artista no encontrado (`artist_not_found`). | `hu04_missingArtistShowsNotFound` |
+| E2E-15 | Error del detalle de artista permite reintentar | `/musicians/100` responde 500 | 1. Abrir el detalle del músico 100.<br>2. Esperar el error.<br>3. Restaurar la respuesta 200.<br>4. Pulsar «Reintentar». | Se muestra el error de detalle (`artist_detail_error`) y, tras el reintento, «Rubén Blades». | `hu04_serverErrorCanRetry` |
+
+---
+
+## 5. Casos de prueba por historia de usuario
+
+Cada tabla relaciona los escenarios E2E con las pruebas unitarias o de integración que cubren la misma regla. Las clases compartidas entre historias se listan en cada una, pero se contabilizan una sola vez en la sección 6.
+
+### 5.1. HU01 — Catálogo de álbumes
+
+Criterios de aceptación: **CA-HU01.1** el catálogo muestra los álbumes vigentes de `/albums`; **CA-HU01.2** sin red se conserva la última copia local con aviso; **CA-HU01.3** una respuesta vacía muestra estado vacío; **CA-HU01.4** un error muestra mensaje y permite reintentar.
+
+| Caso | Tipo | Qué verifica | Criterio |
+|---|---|---|---|
+| E2E-01 | Sistema / E2E | Carga del catálogo a través de Retrofit, repositorio y grilla real. | CA-HU01.1 |
+| E2E-02 | Sistema / E2E | Estado vacío cuando la API devuelve una lista sin elementos. | CA-HU01.3 |
+| E2E-03 | Sistema / E2E | Error 500 visible y reintento exitoso. | CA-HU01.4 |
+| E2E-04 | Sistema / E2E | Copia de Room visible cuando falla la red. | CA-HU01.2 |
+| `AlbumRepositoryImplTest` (13) | Unitario | Emisión de caché y red, reemplazo de Room, 404, fallo sin caché y cancelación. | CA-HU01.1, CA-HU01.2, CA-HU01.4 |
+| `AlbumDaoTest` (3) | Integración | Consulta del catálogo, exclusión de filas de detalle, orden, `replaceAll` y `upsert`. | CA-HU01.1, CA-HU01.2 |
+| `AlbumMappersTest` (3) | Unitario | DTO válido, descarte de registros inválidos y round-trip con Room. | CA-HU01.1 |
+| `UseCasesTest::getAlbumsPreservesSourceInformation` (1) | Unitario | El caso de uso conserva la información de origen del catálogo. | CA-HU01.1 |
+| `NetworkErrorMapperTest` (3) | Unitario transversal | Conexión, timeout, permisos y servidor traducidos a fallos tipados. | CA-HU01.4 |
+
+### 5.2. HU02 — Detalle de un álbum
+
+Criterios de aceptación: **CA-HU02.1** la tarjeta abre el detalle con datos, tracks y comentarios; **CA-HU02.2** un identificador inexistente muestra no encontrado; **CA-HU02.3** un álbum sin tracks muestra un mensaje explícito; **CA-HU02.4** un error permite reintentar; **CA-HU02.5** la acción de agregar track solo es visible para Coleccionista.
+
+| Caso | Tipo | Qué verifica | Criterio |
+|---|---|---|---|
+| E2E-05 | Sistema / E2E | Navegación por ID, tracks, comentarios, FAB de Coleccionista y retorno. | CA-HU02.1, CA-HU02.5 |
+| E2E-06 | Sistema / E2E | 404 de álbum y ausencia de acción para Visitante. | CA-HU02.2, CA-HU02.5 |
+| E2E-07 | Sistema / E2E | Mensaje de álbum sin tracks. | CA-HU02.3 |
+| E2E-08 | Sistema / E2E | Error 500 del detalle y reintento exitoso. | CA-HU02.4 |
+| `AlbumRepositoryImplTest` (13, compartida con HU01) | Unitario | Detalle desde red, detalle desde caché, 404 sin datos obsoletos y cancelación. | CA-HU02.1, CA-HU02.2 |
+| `AlbumMappersTest` (3, compartida con HU01) | Unitario | Detalle válido, relaciones filtradas y campos ausentes en la copia Room. | CA-HU02.1 |
+| `UseCasesTest::getAlbumPassesSelectedId` (1) | Unitario | El caso de uso entrega el ID seleccionado al repositorio. | CA-HU02.1 |
+| `UserRolePreferencesDataSourceTest` (2) y `UserRoleRepositoryImplTest` (2) | Unitario transversal | Lectura, escritura y flujo del rol que habilita el FAB. | CA-HU02.5 |
+
+### 5.3. HU03 — Listado de artistas
+
+Criterios de aceptación: **CA-HU03.1** el listado combina músicos y bandas; **CA-HU03.2** los filtros separan cada tipo; **CA-HU03.3** un listado vacío muestra estado vacío; **CA-HU03.4** un error muestra mensaje y permite reintentar.
+
+| Caso | Tipo | Qué verifica | Criterio |
+|---|---|---|---|
+| E2E-09 | Sistema / E2E | Listado combinado y filtros de Bandas y Músicos. | CA-HU03.1, CA-HU03.2 |
+| E2E-10 | Sistema / E2E | Estado vacío del listado. | CA-HU03.3 |
+| E2E-11 | Sistema / E2E | Error 500 y reintento exitoso. | CA-HU03.4 |
+| `ArtistRepositoryImplTest` (5) | Unitario | Listado desde el adaptador, detalle por tipo e ID, timeout, 404 y cancelación. | CA-HU03.1, CA-HU03.4 |
+| `ArtistServiceAdapterTest` (5) | Unitario | Unión ordenada de músicos y bandas, descarte de registros inválidos y detalle por tipo. | CA-HU03.1, CA-HU03.2 |
+| `ArtistMappersTest` (3) | Unitario | Artista inválido descartado y transformación de músico y banda. | CA-HU03.1 |
+| `UseCasesTest::getArtistsPassesCatalog` (1) | Unitario | El caso de uso entrega el catálogo de artistas. | CA-HU03.1 |
+| `RequestHeadersInterceptorTest` (1) | Unitario transversal | Cabecera JSON y una sola delegación a OkHttp. | CA-HU03.1 |
+
+### 5.4. HU04 — Detalle de un artista
+
+Criterios de aceptación: **CA-HU04.1** el detalle de músico muestra fecha, álbumes y premios; **CA-HU04.2** el detalle de banda muestra fecha de creación e integrantes; **CA-HU04.3** un identificador inexistente muestra no encontrado; **CA-HU04.4** un error permite reintentar.
+
+| Caso | Tipo | Qué verifica | Criterio |
+|---|---|---|---|
+| E2E-12 | Sistema / E2E | Detalle de músico con álbumes y premio resuelto desde el catálogo de premios. | CA-HU04.1 |
+| E2E-13 | Sistema / E2E | Detalle de banda con integrantes y fecha de creación. | CA-HU04.2 |
+| E2E-14 | Sistema / E2E | 404 de artista. | CA-HU04.3 |
+| E2E-15 | Sistema / E2E | Error 500 del detalle de artista y reintento exitoso. | CA-HU04.4 |
+| `ArtistRepositoryImplTest` (5, compartida con HU03) | Unitario | Detalle por tipo e ID, timeout, 404 y cancelación. | CA-HU04.1, CA-HU04.2, CA-HU04.3 |
+| `ArtistServiceAdapterTest` (5, compartida con HU03) | Unitario | Resolución del premio, endpoint de banda, integrantes y fallo de premios que no oculta el detalle. | CA-HU04.1, CA-HU04.2 |
+| `ArtistMappersTest` (3, compartida con HU03) | Unitario | Fecha de nacimiento, fecha de creación, álbumes y miembros válidos. | CA-HU04.1, CA-HU04.2 |
+| `UseCasesTest::getArtistPassesTypeAndId` (1) | Unitario | El caso de uso entrega tipo e ID del artista. | CA-HU04.1, CA-HU04.2 |
+| `NetworkErrorMapperTest` (3, compartida) | Unitario transversal | Timeout y error de servidor tipados para el detalle. | CA-HU04.4 |
+
+### 5.5. Mapa de cobertura unitaria
+
+| Archivo | Pruebas | Historias cubiertas |
+|---|---:|---|
+| `AlbumRepositoryImplTest` | 13 | HU01, HU02 |
+| `ArtistRepositoryImplTest` | 5 | HU03, HU04 |
+| `UserRoleRepositoryImplTest` | 2 | Transversal (acceso y acciones por rol) |
+| `UserRolePreferencesDataSourceTest` | 2 | Transversal (acceso y acciones por rol) |
+| `RequestHeadersInterceptorTest` | 1 | Transversal (red) |
+| `ArtistServiceAdapterTest` | 5 | HU03, HU04 |
+| `NetworkErrorMapperTest` | 3 | HU01, HU02, HU04 |
+| `AlbumDaoTest` | 3 | HU01 |
+| `ArtistMappersTest` | 3 | HU03, HU04 |
+| `AlbumMappersTest` | 3 | HU01, HU02 |
+| `UseCasesTest` | 6 | HU01 (1), HU02 (1), HU03 (1), HU04 (1), acceso (2) |
+| **Total** | **46** | — |
+
+---
+
+## 6. Resultados de la ejecución
+
+La evidencia principal es esta tabla. Los archivos JUnit XML se conservan como respaldo verificable de cada corrida y se enlazan en la última columna.
+
+| Conjunto | Entorno | Ejecutadas | Aprobadas | Fallidas | Duración o fecha | Evidencia |
+|---|---|---:|---:|---:|---|---|
+| `AlbumRepositoryImplTest` | JVM local | 13 | 13 | 0 | 0,47 s · 2026-10-25 | [XML](evidencias/sprint1/unit/TEST-com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest.xml) |
+| `ArtistRepositoryImplTest` | JVM local | 5 | 5 | 0 | 0,36 s · 2026-10-25 | [XML](evidencias/sprint1/unit/TEST-com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest.xml) |
+| `UserRoleRepositoryImplTest` | JVM local | 2 | 2 | 0 | 0,04 s · 2026-10-25 | [XML](evidencias/sprint1/unit/TEST-com.example.vinilosmobile.data.repository.UserRoleRepositoryImplTest.xml) |
+| `UserRolePreferencesDataSourceTest` | JVM local | 2 | 2 | 0 | 0,11 s · 2026-10-25 | [XML](evidencias/sprint1/unit/TEST-com.example.vinilosmobile.data.preferences.UserRolePreferencesDataSourceTest.xml) |
+| `RequestHeadersInterceptorTest` | JVM local | 1 | 1 | 0 | 0,15 s · 2026-10-25 | [XML](evidencias/sprint1/unit/TEST-com.example.vinilosmobile.data.network.interceptors.RequestHeadersInterceptorTest.xml) |
+| `ArtistServiceAdapterTest` | JVM local | 5 | 5 | 0 | 0,96 s · 2026-10-25 | [XML](evidencias/sprint1/unit/TEST-com.example.vinilosmobile.data.network.ArtistServiceAdapterTest.xml) |
+| `NetworkErrorMapperTest` | JVM local | 3 | 3 | 0 | 0,23 s · 2026-10-25 | [XML](evidencias/sprint1/unit/TEST-com.example.vinilosmobile.data.network.errors.NetworkErrorMapperTest.xml) |
+| `AlbumDaoTest` | JVM + Robolectric API 28 | 3 | 3 | 0 | 5,80 s · 2026-10-25 | [XML](evidencias/sprint1/unit/TEST-com.example.vinilosmobile.data.local.AlbumDaoTest.xml) |
+| `ArtistMappersTest` | JVM local | 3 | 3 | 0 | 0,003 s · 2026-10-25 | [XML](evidencias/sprint1/unit/TEST-com.example.vinilosmobile.data.mappers.ArtistMappersTest.xml) |
+| `AlbumMappersTest` | JVM local | 3 | 3 | 0 | 0,02 s · 2026-10-25 | [XML](evidencias/sprint1/unit/TEST-com.example.vinilosmobile.data.mappers.AlbumMappersTest.xml) |
+| `UseCasesTest` | JVM local | 6 | 6 | 0 | 0,11 s · 2026-10-25 | [XML](evidencias/sprint1/unit/TEST-com.example.vinilosmobile.domain.usecase.UseCasesTest.xml) |
+| **Total unitarias** | **JVM local** | **46** | **46** | **0** | **8,24 s (suma de suites) · 2026-10-25** | [Directorio](evidencias/sprint1/unit/) |
+| **E2E Espresso** | **Android 9 / API 28** | **15** | **15** | **0** | **10,54 s · 2026-10-24** | [XML](evidencias/sprint1/espresso-api28.xml) |
+| **E2E Espresso** | **Android 12 / API 31** | **15** | **15** | **0** | **17,12 s · 2026-10-25** | [XML](evidencias/sprint1/espresso-api31.xml) |
+| Contrato de API | BackVynils local (Docker) | 4 verificaciones (HU01–HU04) | 4 | 0 | 2026-10-24 · duración no registrada | Sin archivo de salida en el repositorio |
+| Aceptación manual M01–M04 | Android 12 / API 31 | 4 | 4 | 0 | Fecha no registrada | Sin registro adjunto |
+| E2E Espresso | Android 5.0 / API 21 | 0 | 0 | 0 | No ejecutada | — |
+| E2E Espresso | Android 13 / API 33 | No registrado | No registrado | No registrado | Ejecución interrumpida | Reporte parcial descartado |
+
+### 6.1. Resultado por escenario E2E
+
+| Escenario | API 28 | API 31 | Resultado |
+|---|---|---|---|
+| E2E-01 Catálogo desde Retrofit y repositorio | Aprobado | Aprobado | Cumple |
+| E2E-02 Catálogo vacío | Aprobado | Aprobado | Cumple |
+| E2E-03 Error de catálogo con reintento | Aprobado | Aprobado | Cumple |
+| E2E-04 Copia de Room ante fallo de red | Aprobado | Aprobado | Cumple |
+| E2E-05 Detalle de álbum con tracks y comentarios | Aprobado | Aprobado | Cumple |
+| E2E-06 Álbum inexistente y Visitante sin acción | Aprobado | Aprobado | Cumple |
+| E2E-07 Álbum sin tracks | Aprobado | Aprobado | Cumple |
+| E2E-08 Error de detalle de álbum con reintento | Aprobado | Aprobado | Cumple |
+| E2E-09 Filtros de músicos y bandas | Aprobado | Aprobado | Cumple |
+| E2E-10 Listado de artistas vacío | Aprobado | Aprobado | Cumple |
+| E2E-11 Error de artistas con reintento | Aprobado | Aprobado | Cumple |
+| E2E-12 Detalle de músico con álbumes y premio | Aprobado | Aprobado | Cumple |
+| E2E-13 Detalle de banda con integrantes y fecha | Aprobado | Aprobado | Cumple |
+| E2E-14 Artista inexistente | Aprobado | Aprobado | Cumple |
+| E2E-15 Error de detalle de artista con reintento | Aprobado | Aprobado | Cumple |
+
+### 6.2. Reproducción
 
 ```bash
-bash gradlew :app:connectedDebugAndroidTest --no-configuration-cache
 bash gradlew :app:testDebugUnitTest --no-configuration-cache
+bash gradlew :app:connectedDebugAndroidTest --no-configuration-cache
 python3 scripts/smoke_sprint1_api.py http://127.0.0.1:3000/
-bash gradlew :app:assembleRelease --no-configuration-cache
 ```
 
-Antes de probar API 21, iniciar solo ese emulador y comprobar `adb shell getprop ro.build.version.sdk`; debe devolver `21`. Entonces ejecutar el comando Espresso anterior y repetir M01–M06. Si hay varios dispositivos conectados, usar `ANDROID_SERIAL=<serial>` para seleccionar el API 21.
+El reporte HTML de cada corrida queda en `app/build/reports/` y los XML en `app/build/test-results/`. Las copias versionadas en `docs/evidencias/sprint1/` son el respaldo de las cifras de esta sección.
 
-El script de API asume datos semilla con al menos un álbum, músico y banda. El emulador usa `10.0.2.2` para conectarse al Docker del computador; un dispositivo físico requiere otra URL alcanzable o `adb reverse`.
+---
 
-## Pendientes de calidad
+## 7. Defectos y riesgos
 
-- Ejecutar M01–M06 y la batería Espresso en Android API 21, con un dispositivo físico o imagen compatible disponible para el equipo.
-- Reparar o sustituir el backend HTTPS y repetir M06 sin depender de Room.
-- Configurar una firma Release del equipo antes del APK final. La variante actual usa la clave Debug para facilitar la instalación de desarrollo.
-- Integrar la corrección del issue #47 y cerrar ese defecto tras verificar el release final; resolver el issue #48 antes de aceptar la consulta en producción.
+| ID | Título | Tipo | Impacto | Estado | Mitigación |
+|---|---|---|---|---|---|
+| #47 | Release se cierra al iniciar por configuración R8 | Defecto | Impide validar la variante Release y una instalación limpia de entrega; la app puede cerrarse al abrir. | Abierto; corrección integrada en `sprint-1`, pendiente de llevar al release final. | Verificar `assembleRelease`, instalación limpia y apertura; no usar el APK Release como entrega hasta cerrar el issue. Mantener Debug para la aceptación funcional. |
+| #48 | Backend HTTPS responde 500 y bloquea la validación Release | Defecto | No se pueden validar las cuatro HU contra el servicio de entrega ni firmar el release con esa URL. | Abierto. | Validar funcionalidad contra BackVynils local con Docker; permitir sobrescribir la URL base con `-PvinilosApiBaseUrl`; no aceptar la consulta en producción hasta que el servicio responda 200. |
+| API 21 pendiente | Sin ejecución en Android 5.0 | Riesgo | `minSdk = 21` está declarado, pero no hay evidencia de que la app funcione en Lollipop. | Pendiente; no hay imagen ni dispositivo disponible. | Instalar una imagen o dispositivo API 21, ejecutar la suite Espresso y el recorrido M01–M04; no declarar compatibilidad hasta obtener la evidencia. |
+| URL base por entorno | Dependencia de `10.0.2.2`, `adb reverse` o `-PvinilosApiBaseUrl` | Riesgo | Una configuración incorrecta produce fallos de conexión que parecen defectos de la app. | Vigente. | Documentar la URL por entorno; usar `adb reverse` en dispositivo físico; verificar la URL antes de cada corrida manual. |
+
+---
+
+## 8. Criterios de entrada y salida
+
+### 8.1. Criterios de entrada
+
+- El proyecto compila y las dependencias de Gradle están resueltas.
+- Existe un backend disponible (BackVynils local con Docker) o, para la suite automatizada, los fixtures HTTP están configurados.
+- Hay un emulador o dispositivo con la API objetivo conectado y visible en `adb devices`.
+- El APK Debug está instalado y la base de datos de prueba parte limpia.
+- Los datos semilla incluyen al menos un álbum, un músico y una banda.
+- Los defectos conocidos están registrados como issues con etiqueta `bug`.
+
+### 8.2. Criterios de salida
+
+Una historia se considera aceptada cuando:
+
+1. Todas sus pruebas unitarias pasan (46 de 46 en el sprint).
+2. Todos sus escenarios E2E pasan en la API objetivo (15 de 15 por corrida).
+3. El contrato de API responde correctamente para sus endpoints contra BackVynils local (4 de 4 verificaciones).
+4. El recorrido manual asociado (M01–M04) está aprobado en el entorno de aceptación.
+5. No tiene defectos abiertos de severidad alta sin mitigación documentada.
+6. La evidencia XML de la corrida está archivada en `docs/evidencias/sprint1/`.
+
+El sprint se considera cerrado cuando, además, la variante Release abre sin cierre (#47 resuelto), el backend HTTPS responde correctamente (#48 resuelto) y la suite se ejecutó en API 21 con evidencia registrada. Mientras esos tres puntos sigan abiertos, el cierre es parcial y así debe reportarse.
+
+---
+
+## 9. Trazabilidad con la planeación
+
+El tablero de GitHub Projects no expone en el repositorio identificadores de tarea estables; por eso la columna «Tarea» usa el nombre de la unidad de trabajo del Sprint 1 y la columna de issues distingue los defectos registrados de los que no tienen número. Los únicos issues con identificador verificable en el repositorio son #47 y #48.
+
+| HU | Tarea de planeación | Escenarios E2E | Pruebas unitarias | Issue(s) de GitHub |
+|---|---|---|---|---|
+| HU01 — Consultar catálogo de álbumes | Catálogo de álbumes con caché Room | E2E-01 a E2E-04 | `AlbumRepositoryImplTest` (13), `AlbumDaoTest` (3), `AlbumMappersTest` (3), `UseCasesTest::getAlbumsPreservesSourceInformation` (1), `NetworkErrorMapperTest` (3) | Implementación: no registrado. Defectos relacionados: #47 (Release), #48 (backend) |
+| HU02 — Consultar detalle de un álbum | Detalle de álbum con tracks, comentarios y acciones por rol | E2E-05 a E2E-08 | `AlbumRepositoryImplTest` (13), `AlbumMappersTest` (3), `UseCasesTest::getAlbumPassesSelectedId` (1), pruebas de rol (4) | Implementación: no registrado. Defectos relacionados: #47, #48 |
+| HU03 — Consultar listado de artistas | Listado de artistas con filtros de músicos y bandas | E2E-09 a E2E-11 | `ArtistRepositoryImplTest` (5), `ArtistServiceAdapterTest` (5), `ArtistMappersTest` (3), `UseCasesTest::getArtistsPassesCatalog` (1), `RequestHeadersInterceptorTest` (1) | Implementación: no registrado. Defectos relacionados: #47, #48 |
+| HU04 — Consultar detalle de un artista | Detalle de músico y banda con premios e integrantes | E2E-12 a E2E-15 | `ArtistRepositoryImplTest` (5), `ArtistServiceAdapterTest` (5), `ArtistMappersTest` (3), `UseCasesTest::getArtistPassesTypeAndId` (1), `NetworkErrorMapperTest` (3) | Implementación: no registrado. Defectos relacionados: #47, #48 |
+| Transversal — acceso, red y calidad | Rol persistido, cabeceras, mapeo de errores y contrato de API | E2E-05, E2E-06 | `UserRoleRepositoryImplTest` (2), `UserRolePreferencesDataSourceTest` (2), `RequestHeadersInterceptorTest` (1), `NetworkErrorMapperTest` (3), `UseCasesTest` (2 de rol) | #47, #48 |
+
+**Cobertura de la planeación:** las cuatro historias tienen escenarios E2E, pruebas unitarias y criterios de aceptación asociados. Los pendientes de calidad del sprint son la ejecución en API 21, la corrección de #47 y la resolución de #48; ninguno se presenta como aprobado en este documento.

@@ -1,0 +1,176 @@
+@startuml 03-clases-dominio
+title Clases — paquete domain (modelos, contratos y casos de uso)
+skinparam shadowing false
+skinparam arrowColor #4A5568
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 10
+skinparam classAttributeIconSize 0
+hide empty members
+
+package "domain.models" {
+  class Album {
+    +id: Long
+    +name: String
+    +artistNames: List<String>
+    +genre: String
+    +releaseDate: String
+    +releaseYear: String
+    +coverUrl: String
+    +recordLabel: String
+    +description: String
+    +tracks: List<Track>
+    +comments: List<AlbumComment>
+  }
+
+  class AlbumCatalog {
+    +albums: List<Album>
+    +source: AlbumSource
+  }
+
+  class AlbumComment {
+    +id: Long
+    +description: String
+    +rating: Int
+  }
+
+  class Track {
+    +id: Long
+    +name: String
+    +duration: String
+  }
+
+  class Artist {
+    +key: ArtistKey
+    +name: String
+    +imageUrl: String
+    +description: String
+    +date: String
+    +albums: List<Album>
+    +members: List<ArtistMember>
+    +awards: List<ArtistAward>
+  }
+
+  class ArtistKey {
+    +id: Long
+    +type: ArtistType
+  }
+
+  class ArtistMember {
+    +id: Long
+    +name: String
+    +imageUrl: String
+  }
+
+  class ArtistAward {
+    +id: Long
+    +name: String
+    +date: String
+  }
+
+  enum ArtistType {
+    MUSICIAN
+    BAND
+  }
+
+  enum AlbumSource {
+    REMOTE
+    CACHE
+  }
+
+  enum UserRole {
+    VISITOR
+    COLLECTOR
+  }
+
+  enum RequestFailureKind {
+    NO_CONNECTION
+    TIMEOUT
+    UNAUTHORIZED
+    SERVER
+    UNKNOWN
+  }
+
+  class RequestFailure {
+    +kind: RequestFailureKind
+  }
+
+  class "DataResult<T>" as DataResult {
+    +Loading
+    +Success(value: T)
+    +Error(reason: DataError)
+    +Cancelled
+  }
+
+  interface DataError {
+    +Request(kind: RequestFailureKind)
+    +NotFound
+  }
+}
+
+package "domain.repository" {
+  interface AlbumRepository {
+    +getAlbums(): Flow<DataResult<AlbumCatalog>>
+    +getAlbum(id: Long): Flow<DataResult<Album>>
+  }
+
+  interface ArtistRepository {
+    +getArtists(): Flow<DataResult<List<Artist>>>
+    +getArtist(key: ArtistKey): Flow<DataResult<Artist>>
+  }
+
+  interface UserRoleRepository {
+    +selectedRole: Flow<UserRole?>
+    +setRole(role: UserRole)
+  }
+
+  class AlbumNotFoundException
+  class ArtistNotFoundException
+}
+
+package "domain.usecase" {
+  class GetAlbumsUseCase {
+    +invoke(): Flow<DataResult<AlbumCatalog>>
+  }
+  class GetAlbumUseCase {
+    +invoke(id: Long): Flow<DataResult<Album>>
+  }
+  class GetArtistsUseCase {
+    +invoke(): Flow<DataResult<List<Artist>>>
+  }
+  class GetArtistUseCase {
+    +invoke(key: ArtistKey): Flow<DataResult<Artist>>
+  }
+  class GetUserRoleUseCase {
+    +invoke(): Flow<UserRole?>
+  }
+  class SetUserRoleUseCase {
+    +invoke(role: UserRole)
+  }
+}
+
+Album "1" *-- "0..*" Track
+Album "1" *-- "0..*" AlbumComment
+AlbumCatalog "1" o-- "0..*" Album
+AlbumCatalog --> AlbumSource
+Artist "1" *-- "0..*" Album
+Artist "1" *-- "0..*" ArtistMember
+Artist "1" *-- "0..*" ArtistAward
+Artist "1" *-- "1" ArtistKey
+ArtistKey --> ArtistType
+RequestFailure --> RequestFailureKind
+DataResult ..> DataError
+
+GetAlbumsUseCase --> AlbumRepository
+GetAlbumUseCase --> AlbumRepository
+GetArtistsUseCase --> ArtistRepository
+GetArtistUseCase --> ArtistRepository
+GetUserRoleUseCase --> UserRoleRepository
+SetUserRoleUseCase --> UserRoleRepository
+
+note bottom of DataResult
+  La cadena de emisiones y el significado
+  de cada estado se explican en el texto de
+  la sección, no dentro del diagrama.
+end note
+
+@enduml

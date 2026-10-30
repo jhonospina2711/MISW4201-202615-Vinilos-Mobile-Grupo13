@@ -1,0 +1,216 @@
+@startuml 05-clases-presentacion
+title Clases — paquete feature y coreui (Activities, Fragments, ViewModels, Adapters y vistas)
+skinparam shadowing false
+skinparam arrowColor #4A5568
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 10
+skinparam classAttributeIconSize 0
+hide empty members
+
+package "feature.entry" {
+  class EntryActivity {
+    -viewModel: EntryViewModel
+    +onCreate(Bundle)
+  }
+  class EntryViewModel {
+    +state: LiveData<EntryUiState>
+    +selectRole(role: UserRole)
+  }
+  interface EntryUiState
+}
+
+package "feature.home" {
+  class MainActivity {
+    -viewModel: HomeViewModel
+    -pagerAdapter: HomeSectionPagerAdapter
+    +openAlbum(id: Long)
+    +openArtist(key: ArtistKey)
+  }
+  class HomeViewModel {
+    +state: LiveData<HomeUiState>
+    +readRole()
+  }
+  class HomeSectionPagerAdapter {
+    +getItem(position: Int): Fragment
+  }
+  interface AlbumNavigator
+  interface ArtistNavigator
+}
+
+package "feature.home.albums" {
+  class AlbumCatalogFragment {
+    -viewModel: AlbumCatalogViewModel
+    -adapter: AlbumCardAdapter
+    +onViewCreated(View, Bundle)
+  }
+  class AlbumCatalogViewModel {
+    +state: LiveData<AlbumCatalogUiState>
+    +load()
+  }
+  interface AlbumCatalogUiState
+}
+
+package "feature.home.artists" {
+  class ArtistsFragment {
+    -viewModel: ArtistCatalogViewModel
+    -adapter: ArtistRowAdapter
+    +onViewCreated(View, Bundle)
+  }
+  class ArtistCatalogViewModel {
+    +state: LiveData<ArtistCatalogUiState>
+    +load()
+    +filter(filter: ArtistFilter)
+  }
+  interface ArtistCatalogUiState
+  enum ArtistFilter {
+    ALL
+    MUSICIANS
+    BANDS
+  }
+}
+
+package "feature.home.collectors" {
+  class CollectorsFragment {
+    +onViewCreated(View, Bundle)
+  }
+}
+
+package "feature.albumdetail" {
+  class AlbumDetailActivity {
+    -viewModel: AlbumDetailViewModel
+    -trackAdapter: DetailRowAdapter
+    -commentAdapter: DetailRowAdapter
+    +onCreate(Bundle)
+  }
+  class AlbumDetailViewModel {
+    +state: LiveData<AlbumDetailUiState>
+    +load(id: Long)
+  }
+  interface AlbumDetailUiState
+}
+
+package "feature.artistdetail" {
+  class ArtistDetailActivity {
+    -viewModel: ArtistDetailViewModel
+    -albumAdapter: AlbumCardAdapter
+    -detailAdapter: DetailRowAdapter
+    -memberAdapter: ArtistRowAdapter
+    +onCreate(Bundle)
+  }
+  class ArtistDetailViewModel {
+    +state: LiveData<ArtistDetailUiState>
+    +load(key: ArtistKey)
+  }
+  interface ArtistDetailUiState
+}
+
+package "coreui.molecules" {
+  class AlbumCardAdapter {
+    +submitList(items: List<AlbumCardUiModel>)
+  }
+  class AlbumCardViewHolder {
+    +bind(item: AlbumCardUiModel)
+  }
+  class ArtistRowAdapter {
+    +submitList(items: List<ArtistRowUiModel>)
+  }
+  class "ArtistRowAdapter.Holder" as ArtistRowHolder {
+    +bind(item: ArtistRowUiModel)
+  }
+  class DetailRowAdapter {
+    +submitList(items: List<DetailRowUiModel>)
+  }
+  class "DetailRowAdapter.Holder" as DetailRowHolder {
+    +bind(item: DetailRowUiModel)
+  }
+  class DetailToolbarView
+  class RoleOptionView
+  class SectionHeaderView
+}
+
+package "coreui.organisms" {
+  class ContentStateView {
+    +showLoading()
+    +showEmpty()
+    +showError(message: Int)
+  }
+}
+
+package "coreui.atoms" {
+  class ArtistAvatarView
+  class SquareAlbumCover
+}
+
+package "feature.shared" {
+  class "DateTextFormatter (object)" as DateTextFormatter {
+    +format(date: String): String
+  }
+  class "RequestFailureMessage (función top-level)" as RequestFailureMessage {
+    +RequestFailureKind.messageRes(): Int
+  }
+}
+
+EntryActivity --> EntryViewModel
+EntryActivity --> RoleOptionView
+EntryViewModel ..> EntryUiState
+EntryViewModel --> SetUserRoleUseCase
+EntryViewModel --> GetUserRoleUseCase
+
+MainActivity --> HomeViewModel
+MainActivity --> HomeSectionPagerAdapter
+MainActivity ..|> AlbumNavigator
+MainActivity ..|> ArtistNavigator
+HomeViewModel ..> HomeUiState
+HomeSectionPagerAdapter --> AlbumCatalogFragment
+HomeSectionPagerAdapter --> ArtistsFragment
+HomeSectionPagerAdapter --> CollectorsFragment
+
+AlbumCatalogFragment --> AlbumCatalogViewModel
+AlbumCatalogFragment --> AlbumCardAdapter
+AlbumCatalogFragment --> ContentStateView
+AlbumCatalogFragment ..> AlbumNavigator
+AlbumCatalogViewModel ..> AlbumCatalogUiState
+AlbumCatalogViewModel --> GetAlbumsUseCase
+
+ArtistsFragment --> ArtistCatalogViewModel
+ArtistsFragment --> ArtistRowAdapter
+ArtistsFragment --> ContentStateView
+ArtistsFragment ..> ArtistNavigator
+ArtistCatalogViewModel ..> ArtistCatalogUiState
+ArtistCatalogViewModel --> GetArtistsUseCase
+ArtistCatalogViewModel ..> ArtistFilter
+
+AlbumDetailActivity --> AlbumDetailViewModel
+AlbumDetailActivity --> DetailRowAdapter
+AlbumDetailActivity --> DetailToolbarView
+AlbumDetailActivity --> SectionHeaderView
+AlbumDetailActivity --> ContentStateView
+AlbumDetailViewModel ..> AlbumDetailUiState
+AlbumDetailViewModel --> GetAlbumUseCase
+
+ArtistDetailActivity --> ArtistDetailViewModel
+ArtistDetailActivity --> AlbumCardAdapter
+ArtistDetailActivity --> DetailRowAdapter
+ArtistDetailActivity --> ArtistRowAdapter
+ArtistDetailActivity --> ContentStateView
+ArtistDetailViewModel ..> ArtistDetailUiState
+ArtistDetailViewModel --> GetArtistUseCase
+
+AlbumCardAdapter --> AlbumCardViewHolder
+AlbumCardAdapter ..> AlbumCardUiModel
+AlbumCardViewHolder --> SquareAlbumCover
+AlbumCardViewHolder --> ArtistAvatarView
+ArtistRowAdapter --> ArtistRowHolder
+ArtistRowAdapter ..> ArtistRowUiModel
+ArtistRowHolder --> ArtistAvatarView
+DetailRowAdapter --> DetailRowHolder
+DetailRowAdapter ..> DetailRowUiModel
+
+note right of CollectorsFragment
+  HU05 y HU06 son del Sprint 2:
+  la pantalla existe como marcador
+  (`fragment_pending_section`), sin
+  ViewModel ni Adapter todavía.
+end note
+
+@enduml
