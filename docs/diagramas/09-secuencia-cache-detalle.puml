@@ -1,0 +1,55 @@
+@startuml 09-secuencia-cache-detalle
+title Secuencia — detalle de un álbum: caché, red, 404 y sin conexión
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+
+actor "Usuario" as U
+participant "AlbumDetailActivity" as D
+participant "AlbumDetailViewModel" as VM
+participant "GetAlbumUseCase" as UC
+participant "AlbumRepositoryImpl" as R
+database "AlbumDao (Room)" as DB
+participant "AlbumApiService" as API
+participant "BackVynils" as B
+
+U -> D : toca una tarjeta del catálogo
+D -> VM : load(id)
+VM -> UC : invoke(id)
+UC -> R : getAlbum(id)
+
+R -> DB : getById(id)
+DB --> R : AlbumEntity o null
+opt hay copia local
+  R --> VM : DataResult.Success(Album) desde caché
+  VM --> D : Content parcial
+  D --> U : detalle con los campos persistidos
+end
+
+R -> API : GET /albums/{id}
+API -> B : HTTP
+alt HTTP 200
+  B --> API : AlbumDto
+  API --> R : AlbumDto
+  R -> DB : upsert(album)
+  R --> VM : DataResult.Success(Album) desde red
+  VM --> D : Content completo
+  D --> U : detalle con tracks y comentarios
+else HTTP 404
+  R --> VM : DataResult.Error(DataError.NotFound)
+  VM --> D : NotFound
+  D --> U : "No encontramos este álbum"
+else fallo de red
+  R --> VM : DataResult.Error(DataError.Request)
+  VM --> D : se conserva el contenido en caché
+  D --> U : detalle con caché, o error y Reintentar
+end
+
+note over R,DB
+  La caché es parcial: AlbumEntity no guarda
+  tracks, comentarios ni fecha completa.
+  upsert no añade el detalle al catálogo si
+  el álbum no estaba en él.
+end note
+
+@enduml

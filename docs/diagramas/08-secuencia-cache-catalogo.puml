@@ -1,0 +1,48 @@
+@startuml 08-secuencia-cache-catalogo
+title Secuencia — catálogo de álbumes: caché primero, red después
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+
+actor "Usuario" as U
+participant "AlbumCatalogFragment" as F
+participant "AlbumCatalogViewModel" as VM
+participant "GetAlbumsUseCase" as UC
+participant "AlbumRepositoryImpl" as R
+database "AlbumDao (Room)" as DB
+participant "AlbumApiService" as API
+participant "BackVynils" as B
+
+U -> F : abre Álbumes
+F -> VM : load()
+VM -> UC : invoke()
+UC -> R : getAlbums()
+
+R -> DB : getAll()
+DB --> R : List<AlbumEntity>
+R --> VM : DataResult.Success(AlbumCatalog, source = CACHE)
+VM --> F : Content con datos guardados
+F --> U : catálogo marcado como datos en caché
+
+R -> API : GET /albums
+API -> B : HTTP
+alt respuesta 200
+  B --> API : List<AlbumDto>
+  API --> R : List<AlbumDto>
+  R -> R : DTO a dominio
+  R -> DB : replaceAll(...)
+  R --> VM : DataResult.Success(AlbumCatalog, source = REMOTE)
+  VM --> F : Content con datos de red
+  F --> U : catálogo actualizado
+else fallo de red o HTTP de error
+  R --> VM : DataResult.Error(DataError.Request)
+  VM --> F : se conserva el contenido en caché
+  F --> U : datos guardados, o error y Reintentar si no había caché
+end
+
+note over R,DB
+  AlbumDao.replaceAll reemplaza el catálogo
+  en una transacción.
+end note
+
+@enduml
