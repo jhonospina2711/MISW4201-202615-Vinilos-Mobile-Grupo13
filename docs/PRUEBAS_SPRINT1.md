@@ -16,12 +16,13 @@ El objetivo es demostrar, con evidencia repetible, que las cuatro historias del 
 - HU04 — Consultar el detalle de un músico o de una banda.
 - Pruebas unitarias JVM, pruebas de integración con Room real en memoria, escenarios E2E automatizados con Espresso, contrato de API contra BackVynils local y recorrido manual de aceptación.
 - Matriz de entornos con Android API 28, API 31, API 21 y API 33.
+- **Verificación de humo en Android 5.0.2 (API 21)**: instalación, arranque, navegación y estados de error, con capturas en `evidencias/sprint1/api21/`.
 
 **Fuera del alcance de este sprint**
 
 - Historias posteriores (coleccionistas, creación de álbumes y de tracks), que aún no están implementadas.
 - Pruebas de rendimiento, de carga, de seguridad y de accesibilidad profunda.
-- Compatibilidad declarada con Android API 21: está **pendiente de ejecución** y no se reporta como aprobada.
+- La **suite Espresso** en API 21: la verificación en Lollipop se hizo de forma manual; la batería automatizada se ejecutó en API 28 y API 31.
 - Validación contra el backend HTTPS publicado: está bloqueada por el defecto #48 y no sustituye la verificación local.
 - La ejecución en API 33 no se considera una batería válida porque el emulador se desconectó durante la corrida.
 
@@ -105,7 +106,7 @@ La distribución concentra el esfuerzo en unitarias y E2E porque son la evidenci
 | Backend local con Docker | No aplica | `127.0.0.1:3000` | 4 HU verificadas por contrato | Aprobado |
 | Backend HTTPS publicado | No aplica | Servicio de Render | `GET /albums` responde HTTP 500 | Bloqueado (#48) |
 
-La ejecución de API 28 es previa a la migración de los repositorios a `Flow<DataResult<T>>`; la de API 31 corresponde al build actual. Ambas se conservan como evidencia histórica. La ausencia de una corrida en API 21 impide afirmar compatibilidad con Android 5.0, aunque `minSdk` sea 21.
+La ejecución de API 28 es previa a la migración de los repositorios a `Flow<DataResult<T>>`; la de API 31 corresponde al build actual. Ambas se conservan como evidencia histórica. En API 21 se realizó una verificación de humo sobre el APK de entrega: la app se instala, abre `EntryActivity`, navega a `MainActivity` y renderiza los estados de error de Álbumes y Artistas sin cerrarse. El detalle está en la sección 6 y las capturas en `evidencias/sprint1/api21/`.
 
 ---
 
@@ -257,7 +258,7 @@ La evidencia principal es esta tabla. Los archivos JUnit XML se conservan como r
 | **E2E Espresso** | **Android 12 / API 31** | **15** | **15** | **0** | **17,12 s · 2026-10-25** | [XML](evidencias/sprint1/espresso-api31.xml) |
 | Contrato de API | BackVynils local (Docker) | 4 verificaciones (HU01–HU04) | 4 | 0 | 2026-10-24 · duración no registrada | Sin archivo de salida en el repositorio |
 | Aceptación manual M01–M04 | Android 12 / API 31 | 4 | 4 | 0 | Fecha no registrada | Sin registro adjunto |
-| E2E Espresso | Android 5.0 / API 21 | 0 | 0 | 0 | No ejecutada | — |
+| Humo manual sobre el APK de entrega | Android 5.0.2 / API 21 (arm64) | 2 pantallas + 2 pestañas | 4 | 0 | 2026-10-30 | [Capturas](evidencias/sprint1/api21/) |
 | E2E Espresso | Android 13 / API 33 | No registrado | No registrado | No registrado | Ejecución interrumpida | Reporte parcial descartado |
 
 ### 6.1. Resultado por escenario E2E
@@ -298,7 +299,7 @@ El reporte HTML de cada corrida queda en `app/build/reports/` y los XML en `app/
 |---|---|---|---|---|---|
 | #47 | Release se cierra al iniciar por configuración R8 | Defecto | Impide validar la variante Release y una instalación limpia de entrega; la app puede cerrarse al abrir. | Abierto; corrección integrada en `sprint-1`, pendiente de llevar al release final. | Verificar `assembleRelease`, instalación limpia y apertura; no usar el APK Release como entrega hasta cerrar el issue. Mantener Debug para la aceptación funcional. |
 | #48 | Backend HTTPS responde 500 y bloquea la validación Release | Defecto | No se pueden validar las cuatro HU contra el servicio de entrega ni firmar el release con esa URL. | Abierto. | Validar funcionalidad contra BackVynils local con Docker; permitir sobrescribir la URL base con `-PvinilosApiBaseUrl`; no aceptar la consulta en producción hasta que el servicio responda 200. |
-| API 21 pendiente | Sin ejecución en Android 5.0 | Riesgo | `minSdk = 21` está declarado, pero no hay evidencia de que la app funcione en Lollipop. | Pendiente; no hay imagen ni dispositivo disponible. | Instalar una imagen o dispositivo API 21, ejecutar la suite Espresso y el recorrido M01–M04; no declarar compatibilidad hasta obtener la evidencia. |
+| API 21 sin suite automatizada | Humo manual en Lollipop; Espresso solo en API 28 y API 31 | Riesgo residual | La app funciona en Android 5.0.2, pero los 15 escenarios automatizados no se ejecutaron allí. | Verificado el 2026-10-30 con el APK de entrega. | Ejecutar `connectedDebugAndroidTest` en API 21 antes del cierre de la iteración. |
 | URL base por entorno | Dependencia de `10.0.2.2`, `adb reverse` o `-PvinilosApiBaseUrl` | Riesgo | Una configuración incorrecta produce fallos de conexión que parecen defectos de la app. | Vigente. | Documentar la URL por entorno; usar `adb reverse` en dispositivo físico; verificar la URL antes de cada corrida manual. |
 
 ---
@@ -325,7 +326,7 @@ Una historia se considera aceptada cuando:
 5. No tiene defectos abiertos de severidad alta sin mitigación documentada.
 6. La evidencia XML de la corrida está archivada en `docs/evidencias/sprint1/`.
 
-El sprint se considera cerrado cuando, además, la variante Release abre sin cierre (#47 resuelto), el backend HTTPS responde correctamente (#48 resuelto) y la suite se ejecutó en API 21 con evidencia registrada. Mientras esos tres puntos sigan abiertos, el cierre es parcial y así debe reportarse.
+El sprint se considera cerrado cuando, además, la variante Release abre sin cierre (#47 resuelto), el backend HTTPS responde correctamente (#48 resuelto) y la suite Espresso se ejecutó en API 21. La verificación de humo en Lollipop ya está hecha; quedan #47 y #48, así que el cierre es parcial y así debe reportarse.
 
 ---
 
@@ -341,4 +342,4 @@ El tablero de GitHub Projects no expone en el repositorio identificadores de tar
 | HU04 — Consultar detalle de un artista | Detalle de músico y banda con premios e integrantes | E2E-12 a E2E-15 | `ArtistRepositoryImplTest` (5), `ArtistServiceAdapterTest` (5), `ArtistMappersTest` (3), `UseCasesTest::getArtistPassesTypeAndId` (1), `NetworkErrorMapperTest` (3) | Implementación: no registrado. Defectos relacionados: #47, #48 |
 | Transversal — acceso, red y calidad | Rol persistido, cabeceras, mapeo de errores y contrato de API | E2E-05, E2E-06 | `UserRoleRepositoryImplTest` (2), `UserRolePreferencesDataSourceTest` (2), `RequestHeadersInterceptorTest` (1), `NetworkErrorMapperTest` (3), `UseCasesTest` (2 de rol) | #47, #48 |
 
-**Cobertura de la planeación:** las cuatro historias tienen escenarios E2E, pruebas unitarias y criterios de aceptación asociados. Los pendientes de calidad del sprint son la ejecución en API 21, la corrección de #47 y la resolución de #48; ninguno se presenta como aprobado en este documento.
+**Cobertura de la planeación:** las cuatro historias tienen escenarios E2E, pruebas unitarias y criterios de aceptación asociados. Los pendientes de calidad del sprint son la corrección de #47, la resolución de #48 y la ejecución de la suite Espresso en API 21; ninguno se presenta como aprobado en este documento.
