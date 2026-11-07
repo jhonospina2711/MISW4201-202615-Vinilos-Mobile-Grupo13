@@ -1,5 +1,5 @@
 @startuml 06-navegacion
-title Diagrama de navegación — Vinilos Mobile (Sprint 1)
+title Diagrama de navegación — Vinilos Mobile (Sprint 2)
 skinparam shadowing false
 skinparam defaultFontName Helvetica
 skinparam defaultFontSize 11
@@ -17,7 +17,16 @@ endif
 :MainActivity\n(ViewPager2 + menú inferior);
 fork
   :AlbumCatalogFragment;
-  :AlbumDetailActivity\nrecibe el id del álbum;
+  if (¿Toca Nuevo álbum?\n(solo Coleccionista)) then (sí)
+    :CreateAlbumActivity\nentra desde abajo;
+    if (¿Guarda un álbum válido?) then (sí)
+      :Vuelve al catálogo con el álbum\nde primero y un snackbar;
+    else (cancela)
+      :Vuelve al catálogo sin cambios;
+    endif
+  else (no)
+    :AlbumDetailActivity\nrecibe el id del álbum;
+  endif
 fork again
   :ArtistsFragment;
   :ArtistDetailActivity\nrecibe ArtistKey;
@@ -28,9 +37,9 @@ end fork
 stop
 
 note right
-  El FAB de álbum en Home y el de track
-  en el detalle solo se muestran con rol
-  Coleccionista.
+  El FAB Nuevo álbum solo se muestra en la
+  pestaña Álbumes y el de track en el detalle;
+  ambos solo con rol Coleccionista.
 end note
 
 @enduml

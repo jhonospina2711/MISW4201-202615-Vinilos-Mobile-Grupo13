@@ -1,0 +1,62 @@
+@startuml 10-secuencia-crear-album
+title Secuencia: crear un álbum (HU07)
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+
+actor "Coleccionista" as U
+participant "MainActivity" as M
+participant "AlbumCatalogFragment" as F
+participant "CreateAlbumActivity" as A
+participant "CreateAlbumViewModel" as VM
+participant "CreateAlbumUseCase" as UC
+participant "AlbumValidator" as V
+participant "AlbumRepositoryImpl" as R
+participant "AlbumApiService" as API
+database "AlbumDao (Room)" as DB
+participant "BackVynils" as B
+
+U -> M : toca Nuevo álbum
+M -> A : launch(CreateAlbumContract)
+U -> A : llena el formulario y toca Guardar álbum
+A -> VM : save(AlbumForm)
+VM -> VM : toNewAlbum()\nfecha dd/MM/yyyy a yyyy-MM-dd
+VM -> UC : invoke(NewAlbum)
+UC -> V : validate(NewAlbum)
+
+alt hay campos con error
+  V --> UC : Map<AlbumField, AlbumFieldError>
+  UC --> VM : CreateAlbumResult.Invalid
+  VM --> A : CreateAlbumUiState.Invalid
+  A --> U : campos en rojo con su mensaje
+else datos válidos
+  V --> UC : sin errores
+  UC -> R : createAlbum(NewAlbum)
+  R -> API : POST /albums (NewAlbumDto)
+  API -> B : HTTP
+  alt respuesta 200
+    B --> API : AlbumDto
+    API --> R : AlbumDto
+    R -> DB : firstCatalogPosition()
+    R -> DB : upsert(AlbumEntity, posición - 1)
+    R --> UC : Album
+    UC --> VM : CreateAlbumResult.Created
+    VM --> A : CreateAlbumUiState.Saved
+    A --> M : RESULT_OK (CreatedAlbum)
+    M -> F : setFragmentResult(ALBUM_CREATED, id)
+    F -> F : AlbumCatalogViewModel.onAlbumCreated(id)
+    M --> U : snackbar de confirmación
+    F --> U : catálogo con el álbum de primero
+  else fallo de red o HTTP de error
+    R --> UC : RequestFailure(kind)
+    UC --> VM : CreateAlbumResult.Failed
+    VM --> A : CreateAlbumUiState.Failed
+    A --> U : mensaje de error; se conserva lo escrito
+  end
+end
+
+note over R,DB
+  createAlbum corre en el dispatcher de IO.
+end note
+
+@enduml

@@ -28,6 +28,8 @@ package "feature.home" {
     +onCreate(savedInstanceState: Bundle)
     +openAlbum(id: Long)
     +openArtist(key: ArtistKey)
+    -updateAddAlbumButton()
+    -onAlbumCreated(album: CreatedAlbum)
   }
   class HomeViewModel {
     +selectedRole: LiveData<UserRole?>
@@ -42,11 +44,14 @@ package "feature.home" {
 
 package "feature.home.albums" {
   class AlbumCatalogFragment {
+    +ALBUM_CREATED: String
+    +ALBUM_ID: String
     +onViewCreated(view: View, savedInstanceState: Bundle)
   }
   class AlbumCatalogViewModel {
     +state: LiveData<AlbumCatalogUiState>
     +reload()
+    +onAlbumCreated(id: Long)
   }
   interface AlbumCatalogUiState
 }
@@ -70,6 +75,55 @@ package "feature.home.artists" {
 
 package "feature.home.collectors" {
   class CollectorsFragment
+}
+
+package "feature.albumcreate" {
+  class CreateAlbumActivity {
+    -fieldLayouts: Map<AlbumField, TextInputLayout>
+    +onCreate(savedInstanceState: Bundle)
+    -render(state: CreateAlbumUiState)
+    -showDatePicker()
+  }
+  class CreateAlbumViewModel {
+    +state: LiveData<CreateAlbumUiState>
+    +save(form: AlbumForm)
+  }
+  class CreateAlbumContract {
+    +createIntent(context: Context, input: Unit): Intent
+    +parseResult(resultCode: Int, intent: Intent?): CreatedAlbum?
+  }
+  class CreatedAlbum {
+    +id: Long
+    +name: String
+  }
+  class "AlbumFieldErrorMessage (función top-level)" as AlbumFieldErrorMessage {
+    +AlbumFieldError.messageRes(): Int
+  }
+}
+
+package "feature.albumcreate.models" {
+  class AlbumForm {
+    +name: String
+    +coverUrl: String
+    +releaseDate: String
+    +genre: String
+    +recordLabel: String
+    +description: String
+    +toNewAlbum(): NewAlbum
+  }
+  interface CreateAlbumUiState
+  class "CreateAlbumUiState.Editing" as CAEditing
+  class "CreateAlbumUiState.Saving" as CASaving
+  class "CreateAlbumUiState.Invalid" as CAInvalid {
+    +errors: Map<AlbumField, AlbumFieldError>
+  }
+  class "CreateAlbumUiState.Failed" as CAFailed {
+    +kind: RequestFailureKind
+  }
+  class "CreateAlbumUiState.Saved" as CASaved {
+    +albumId: Long
+    +albumName: String
+  }
 }
 
 package "feature.albumdetail" {
@@ -136,6 +190,9 @@ package "coreui.atoms" {
 package "feature.shared" {
   class "DateTextFormatter (object)" as DateTextFormatter {
     +format(raw: String?): String?
+    +inputToIso(text: String): String?
+    +inputFromUtcMillis(millis: Long): String
+    +utcMillisFromInput(text: String): Long?
   }
   class "RequestFailureMessage (función top-level)" as RequestFailureMessage {
     +RequestFailureKind.messageRes(): Int
@@ -190,6 +247,24 @@ ArtistDetailActivity --> ArtistRowAdapter
 ArtistDetailActivity --> ContentStateView
 ArtistDetailViewModel ..> ArtistDetailUiState
 ArtistDetailViewModel --> GetArtistUseCase
+
+MainActivity --> CreateAlbumContract
+CreateAlbumContract ..> CreateAlbumActivity
+CreateAlbumContract ..> CreatedAlbum
+CreateAlbumActivity --> CreateAlbumViewModel
+CreateAlbumActivity ..> AlbumFieldErrorMessage
+CreateAlbumActivity ..> RequestFailureMessage
+CreateAlbumActivity ..> DateTextFormatter
+CreateAlbumViewModel --> CreateAlbumUseCase
+CreateAlbumViewModel ..> AlbumForm
+CreateAlbumViewModel ..> CreateAlbumUiState
+AlbumForm ..> DateTextFormatter
+CAEditing ..|> CreateAlbumUiState
+CASaving ..|> CreateAlbumUiState
+CAInvalid ..|> CreateAlbumUiState
+CAFailed ..|> CreateAlbumUiState
+CASaved ..|> CreateAlbumUiState
+MainActivity ..> AlbumCatalogFragment : «fragment result»
 
 AlbumCardAdapter --> AlbumCardViewHolder
 AlbumCardAdapter ..> AlbumCardUiModel
