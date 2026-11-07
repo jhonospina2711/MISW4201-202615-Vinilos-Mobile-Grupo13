@@ -12,6 +12,9 @@ abstract class AlbumDao {
     @Query("SELECT * FROM albums WHERE inCatalog = 1 ORDER BY position ASC")
     abstract suspend fun getAll(): List<AlbumEntity>
 
+    @Query("SELECT MIN(position) FROM albums WHERE inCatalog = 1")
+    abstract suspend fun firstCatalogPosition(): Int?
+
     @Query("SELECT * FROM albums WHERE id = :id LIMIT 1")
     abstract suspend fun getById(id: Long): AlbumEntity?
 
