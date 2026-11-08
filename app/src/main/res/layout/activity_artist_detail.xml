@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/vinilos_background"
     android:orientation="vertical">
     <com.example.vinilosmobile.coreui.molecules.DetailToolbarView
         android:id="@+id/detailToolbar"
@@ -53,6 +52,7 @@
                     tools:text="Músico" />
                 <LinearLayout
                     android:layout_width="match_parent"
+                    android:baselineAligned="false"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/vinilos_space_md"
                     android:orientation="horizontal">
