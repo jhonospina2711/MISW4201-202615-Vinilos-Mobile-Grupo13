@@ -64,12 +64,21 @@ El APK Release queda en `app/build/outputs/apk/release/app-release.apk`, con R8 
 
 El APK de la entrega del Sprint 1 está versionado en el repositorio y no requiere compilar:
 
-**[`releases/sprint-1/vinilos-sprint1.apk`](releases/sprint-1/vinilos-sprint1.apk)** — 11 MB, `minSdk` 21 (Android 5.0 Lollipop).
+**Sprint 2** — cinco historias implementadas (HU01 a HU04 y HU07):
+
+| Archivo | Cuándo usarlo |
+|---|---|
+| [`releases/sprint-2/vinilos-sprint2-release.apk`](releases/sprint-2/vinilos-sprint2-release.apk) — 2,7 MB | Celular físico con Android 7 o superior; apunta al backend publicado |
+| [`releases/sprint-2/vinilos-sprint2-debug.apk`](releases/sprint-2/vinilos-sprint2-debug.apk) — 12 MB | Emulador Android 5.0 con BackVynils local |
+
+La diferencia se explica en [`releases/sprint-2/LEEME.md`](releases/sprint-2/LEEME.md): el certificado del backend publicado no lo valida Android 5.0.
+
+**Sprint 1** — [`releases/sprint-1/vinilos-sprint1.apk`](releases/sprint-1/vinilos-sprint1.apk), 11 MB, con HU01 a HU04.
 
 Instalación directa:
 
 ```bash
-adb install releases/sprint-1/vinilos-sprint1.apk
+adb install releases/sprint-2/vinilos-sprint2-release.apk
 ```
 
 El SHA-256, las advertencias de firma y los defectos conocidos están en [`releases/sprint-1/LEEME.md`](releases/sprint-1/LEEME.md).
