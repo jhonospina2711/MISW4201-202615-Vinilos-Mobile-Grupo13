@@ -24,6 +24,7 @@ class AlbumCatalogFragment : Fragment() {
     private val binding get() = requireNotNull(_binding)
     private val viewModel: AlbumCatalogViewModel by viewModels()
     private val albumAdapter = AlbumCardAdapter { id -> (requireActivity() as AlbumNavigator).openAlbum(id) }
+    private var scrollToTopOnNextList = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAlbumCatalogBinding.inflate(inflater, container, false)
@@ -35,6 +36,10 @@ class AlbumCatalogFragment : Fragment() {
         binding.albumGrid.adapter = albumAdapter
         binding.cachedRetry.setOnClickListener { viewModel.reload() }
         viewModel.state.observe(viewLifecycleOwner, ::render)
+        parentFragmentManager.setFragmentResultListener(ALBUM_CREATED, viewLifecycleOwner) { _, result ->
+            scrollToTopOnNextList = true
+            viewModel.onAlbumCreated(result.getLong(ALBUM_ID))
+        }
     }
 
     private fun render(state: AlbumCatalogUiState) {
@@ -47,7 +52,12 @@ class AlbumCatalogFragment : Fragment() {
         when (state) {
             is AlbumCatalogUiState.Content -> {
                 binding.albumCount.text = getString(R.string.album_count, state.albums.size)
-                albumAdapter.submitList(state.albums.map { it.toCardUiModel(requireContext()) })
+                albumAdapter.submitList(state.albums.map { it.toCardUiModel(requireContext()) }) {
+                    if (scrollToTopOnNextList) {
+                        scrollToTopOnNextList = false
+                        _binding?.albumGrid?.scrollToPosition(0)
+                    }
+                }
             }
             AlbumCatalogUiState.Empty -> {
                 binding.catalogMessage.show(R.string.catalog_empty)
@@ -71,5 +81,10 @@ class AlbumCatalogFragment : Fragment() {
         binding.albumGrid.adapter = null
         _binding = null
         super.onDestroyView()
+    }
+
+    companion object {
+        const val ALBUM_CREATED = "album_created"
+        const val ALBUM_ID = "album_id"
     }
 }

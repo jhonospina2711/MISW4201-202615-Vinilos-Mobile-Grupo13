@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vinilosmobile.domain.usecase.GetAlbumsUseCase
+import com.example.vinilosmobile.domain.models.Album
 import com.example.vinilosmobile.domain.models.DataResult
 import com.example.vinilosmobile.domain.models.DataError
 import com.example.vinilosmobile.domain.models.RequestFailure
@@ -21,6 +22,7 @@ class AlbumCatalogViewModel @Inject constructor(private val getAlbums: GetAlbums
     private val _state = MutableLiveData<AlbumCatalogUiState>(AlbumCatalogUiState.Loading)
     val state: LiveData<AlbumCatalogUiState> = _state
     private var activeRequest = false
+    private var createdAlbumId: Long? = null
 
     init { reload() }
 
@@ -35,7 +37,7 @@ class AlbumCatalogViewModel @Inject constructor(private val getAlbums: GetAlbums
                         is DataResult.Success -> {
                             val catalog = result.value
                             _state.value = if (catalog.albums.isEmpty()) AlbumCatalogUiState.Empty
-                            else AlbumCatalogUiState.Content(catalog.albums, catalog.source)
+                            else AlbumCatalogUiState.Content(catalog.albums.withCreatedFirst(), catalog.source)
                         }
                         is DataResult.Error -> {
                             if (_state.value !is AlbumCatalogUiState.Content) {
@@ -62,4 +64,14 @@ class AlbumCatalogViewModel @Inject constructor(private val getAlbums: GetAlbums
         }
     }
 
+    fun onAlbumCreated(id: Long) {
+        createdAlbumId = id
+        reload()
+    }
+
+    // GET /albums has no fixed order, so the new album could land anywhere; C-HU07e shows it first.
+    private fun List<Album>.withCreatedFirst(): List<Album> {
+        val created = createdAlbumId?.let { id -> firstOrNull { it.id == id } } ?: return this
+        return listOf(created) + filterNot { it.id == created.id }
+    }
 }

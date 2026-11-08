@@ -1,5 +1,5 @@
 @startuml 01-paquetes
-title Diagrama de paquetes — Vinilos Mobile (Sprint 1)
+title Diagrama de paquetes — Vinilos Mobile (Sprint 2)
 skinparam packageStyle rectangle
 skinparam shadowing false
 skinparam arrowColor #4A5568
@@ -20,6 +20,7 @@ package "com.example.vinilosmobile" as root {
     package "models" as domain_models
     package "repository" as domain_repository
     package "usecase" as domain_usecase
+    package "validation" as domain_validation
   }
 
   package "data" as data {
@@ -54,6 +55,9 @@ package "com.example.vinilosmobile" as root {
       package "home.collectors" as feature_home_collectors
       package "home.navigation" as feature_home_navigation
     }
+    package "albumcreate" as feature_albumcreate {
+      package "albumcreate.models" as feature_albumcreate_models
+    }
     package "albumdetail" as feature_albumdetail {
       package "albumdetail.models" as feature_albumdetail_models
     }
@@ -80,8 +84,8 @@ note right of domain
 end note
 
 note left of data
-  **90 archivos .kt** en app/src/main
-  y **34 paquetes** en total.
+  **104 archivos .kt** en app/src/main
+  y **37 paquetes** en total.
 end note
 
 @enduml

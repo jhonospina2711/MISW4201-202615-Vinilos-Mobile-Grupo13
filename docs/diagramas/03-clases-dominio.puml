@@ -96,6 +96,47 @@ package "domain.models" {
     +kind: RequestFailureKind
   }
 
+  class NewAlbum {
+    +name: String
+    +coverUrl: String
+    +releaseDate: String
+    +genre: String
+    +recordLabel: String
+    +description: String
+  }
+
+  class "AlbumOptions (object)" as AlbumOptions {
+    +GENRES: List<String>
+    +RECORD_LABELS: List<String>
+  }
+
+  enum AlbumField {
+    NAME
+    COVER_URL
+    RELEASE_DATE
+    GENRE
+    RECORD_LABEL
+    DESCRIPTION
+  }
+
+  enum AlbumFieldError {
+    REQUIRED
+    INVALID_URL
+    INVALID_DATE
+    INVALID_OPTION
+  }
+
+  interface CreateAlbumResult
+  class "CreateAlbumResult.Invalid" as CARInvalid {
+    +errors: Map<AlbumField, AlbumFieldError>
+  }
+  class "CreateAlbumResult.Created" as CARCreated {
+    +album: Album
+  }
+  class "CreateAlbumResult.Failed" as CARFailed {
+    +kind: RequestFailureKind
+  }
+
   class "DataResult<T>" as DataResult
   class "DataResult.Loading" as DRLoading
   class "DataResult.Success<T>" as DRSuccess {
@@ -117,6 +158,7 @@ package "domain.repository" {
   interface AlbumRepository {
     +getAlbums(): Flow<DataResult<AlbumCatalog>>
     +getAlbum(id: Long): Flow<DataResult<Album>>
+    +suspend createAlbum(album: NewAlbum): Album
   }
 
   interface ArtistRepository {
@@ -152,6 +194,15 @@ package "domain.usecase" {
   class SetUserRoleUseCase {
     +invoke(role: UserRole)
   }
+  class CreateAlbumUseCase {
+    +suspend invoke(album: NewAlbum): CreateAlbumResult
+  }
+}
+
+package "domain.validation" {
+  class AlbumValidator {
+    +validate(album: NewAlbum): Map<AlbumField, AlbumFieldError>
+  }
 }
 
 Album "1" *-- "0..*" Track
@@ -178,6 +229,18 @@ GetArtistsUseCase --> ArtistRepository
 GetArtistUseCase --> ArtistRepository
 GetUserRoleUseCase --> UserRoleRepository
 SetUserRoleUseCase --> UserRoleRepository
+CreateAlbumUseCase --> AlbumRepository
+CreateAlbumUseCase --> AlbumValidator
+CreateAlbumUseCase ..> CreateAlbumResult
+AlbumValidator ..> NewAlbum
+AlbumValidator ..> AlbumOptions
+AlbumValidator ..> AlbumField
+AlbumValidator ..> AlbumFieldError
+CARInvalid ..|> CreateAlbumResult
+CARCreated ..|> CreateAlbumResult
+CARFailed ..|> CreateAlbumResult
+CARCreated --> Album
+AlbumRepository ..> NewAlbum
 
 note bottom of DataResult
   La cadena de emisiones y el significado

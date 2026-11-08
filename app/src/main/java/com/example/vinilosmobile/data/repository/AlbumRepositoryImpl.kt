@@ -2,23 +2,30 @@ package com.example.vinilosmobile.data.repository
 
 import com.example.vinilosmobile.data.local.AlbumDao
 import com.example.vinilosmobile.data.mappers.toDomain
+import com.example.vinilosmobile.data.mappers.toDto
 import com.example.vinilosmobile.data.mappers.toEntity
 import com.example.vinilosmobile.data.network.errors.NetworkErrorMapper
 import com.example.vinilosmobile.data.network.services.AlbumApiService
+import com.example.vinilosmobile.di.IoDispatcher
 import com.example.vinilosmobile.domain.models.Album
 import com.example.vinilosmobile.domain.models.AlbumCatalog
 import com.example.vinilosmobile.domain.models.AlbumSource
 import com.example.vinilosmobile.domain.models.DataError
 import com.example.vinilosmobile.domain.models.DataResult
+import com.example.vinilosmobile.domain.models.NewAlbum
+import com.example.vinilosmobile.domain.models.RequestFailure
+import com.example.vinilosmobile.domain.models.RequestFailureKind
 import com.example.vinilosmobile.domain.repository.AlbumNotFoundException
 import com.example.vinilosmobile.domain.repository.AlbumRepository
 import com.google.gson.Gson
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
 class AlbumRepositoryImpl @Inject constructor(
@@ -26,6 +33,7 @@ class AlbumRepositoryImpl @Inject constructor(
     private val dao: AlbumDao,
     private val gson: Gson,
     private val errorMapper: NetworkErrorMapper,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : AlbumRepository {
     override fun getAlbums(): Flow<DataResult<AlbumCatalog>> = flow {
         emit(DataResult.Loading)
@@ -102,5 +110,28 @@ class AlbumRepositoryImpl @Inject constructor(
             // A failed cache write must not hide a successfully fetched album.
         }
         emit(DataResult.Success(album))
+    }
+
+    override suspend fun createAlbum(album: NewAlbum): Album = withContext(ioDispatcher) {
+        val response = try {
+            service.createAlbum(album.toDto())
+        } catch (exception: CancellationException) {
+            throw exception
+        } catch (exception: Exception) {
+            throw errorMapper.map(exception)
+        }
+        val created = response.toDomain()
+            ?: throw RequestFailure(RequestFailureKind.UNKNOWN, IllegalStateException("Album without id or name"))
+        // The API answers without relations; an empty list is accurate for a brand new album.
+        val newAlbum = created.copy(tracks = created.tracks ?: emptyList(), comments = created.comments ?: emptyList())
+        try {
+            val position = (dao.firstCatalogPosition() ?: 0) - 1
+            dao.upsert(newAlbum.toEntity(position, true, gson))
+        } catch (exception: CancellationException) {
+            throw exception
+        } catch (_: Exception) {
+            // The album already exists in the API; the next catalog refresh will cache it.
+        }
+        newAlbum
     }
 }

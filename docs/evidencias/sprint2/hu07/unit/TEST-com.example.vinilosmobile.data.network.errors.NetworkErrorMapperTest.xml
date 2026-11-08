@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.vinilosmobile.data.network.errors.NetworkErrorMapperTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-07T01:51:24.170Z" hostname="Nicolays-MacBook-Pro.local" time="0.084">
+  <properties/>
+  <testcase name="keepsAlreadyMappedFailure" classname="com.example.vinilosmobile.data.network.errors.NetworkErrorMapperTest" time="0.062"/>
+  <testcase name="mapsConnectionAndTimeoutSeparately" classname="com.example.vinilosmobile.data.network.errors.NetworkErrorMapperTest" time="0.0"/>
+  <testcase name="mapsUnauthorizedAndServerResponses" classname="com.example.vinilosmobile.data.network.errors.NetworkErrorMapperTest" time="0.022"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
