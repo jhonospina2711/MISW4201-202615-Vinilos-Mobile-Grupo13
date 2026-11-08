@@ -2,10 +2,11 @@ package com.example.vinilosmobile.feature.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -14,13 +15,17 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.vinilosmobile.R
 import com.example.vinilosmobile.databinding.ActivityMainBinding
 import com.example.vinilosmobile.domain.models.UserRole
+import com.example.vinilosmobile.feature.albumcreate.CreateAlbumContract
+import com.example.vinilosmobile.feature.albumcreate.CreatedAlbum
 import com.example.vinilosmobile.feature.albumdetail.AlbumDetailActivity
 import com.example.vinilosmobile.feature.entry.EntryActivity
 import com.example.vinilosmobile.feature.home.adapters.HomeSectionPagerAdapter
+import com.example.vinilosmobile.feature.home.albums.AlbumCatalogFragment
 import com.example.vinilosmobile.feature.home.navigation.AlbumNavigator
 import com.example.vinilosmobile.feature.home.navigation.ArtistNavigator
 import com.example.vinilosmobile.feature.artistdetail.ArtistDetailActivity
 import com.example.vinilosmobile.domain.models.ArtistKey
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.abs
 
@@ -29,6 +34,9 @@ class MainActivity : AppCompatActivity(), AlbumNavigator, ArtistNavigator {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: HomeViewModel by viewModels()
+    private val createAlbum = registerForActivityResult(CreateAlbumContract()) { album ->
+        album?.let(::onAlbumCreated)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +52,7 @@ class MainActivity : AppCompatActivity(), AlbumNavigator, ArtistNavigator {
                 startActivity(Intent(this, EntryActivity::class.java))
                 finish()
             } else {
-                binding.addAlbumFab.isVisible = role == UserRole.COLLECTOR
+                updateAddAlbumButton()
             }
         }
         binding.changeRoleButton.setOnClickListener {
@@ -54,7 +62,7 @@ class MainActivity : AppCompatActivity(), AlbumNavigator, ArtistNavigator {
             )
         }
         binding.addAlbumFab.setOnClickListener {
-            Toast.makeText(this, R.string.add_album_coming_soon, Toast.LENGTH_SHORT).show()
+            createAlbum.launch(Unit, ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_bottom, R.anim.hold))
         }
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -75,6 +83,7 @@ class MainActivity : AppCompatActivity(), AlbumNavigator, ArtistNavigator {
                     else -> R.id.nav_collectors
                 }
                 binding.bottomNavigation.menu.findItem(itemId).isChecked = true
+                updateAddAlbumButton()
             }
         })
         binding.bottomNavigation.setOnItemSelectedListener { item ->
@@ -88,6 +97,22 @@ class MainActivity : AppCompatActivity(), AlbumNavigator, ArtistNavigator {
             true
         }
 
+    }
+
+    // Albums can only be created from the catalog tab, as in C-HU01.
+    private fun updateAddAlbumButton() {
+        binding.addAlbumFab.isVisible = viewModel.selectedRole.value == UserRole.COLLECTOR &&
+            binding.sectionPager.currentItem == 0
+    }
+
+    private fun onAlbumCreated(album: CreatedAlbum) {
+        supportFragmentManager.setFragmentResult(
+            AlbumCatalogFragment.ALBUM_CREATED,
+            bundleOf(AlbumCatalogFragment.ALBUM_ID to album.id),
+        )
+        Snackbar.make(binding.root, getString(R.string.album_created, album.name), Snackbar.LENGTH_LONG)
+            .setAnchorView(binding.addAlbumFab)
+            .show()
     }
 
     override fun openAlbum(id: Long) {

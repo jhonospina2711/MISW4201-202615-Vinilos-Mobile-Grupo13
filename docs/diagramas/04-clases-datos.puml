@@ -13,8 +13,10 @@ package "data.repository" {
     -dao: AlbumDao
     -gson: Gson
     -errorMapper: NetworkErrorMapper
+    -ioDispatcher: CoroutineDispatcher
     +getAlbums(): Flow<DataResult<AlbumCatalog>>
     +getAlbum(id: Long): Flow<DataResult<Album>>
+    +createAlbum(album: NewAlbum): Album
   }
   class ArtistRepositoryImpl {
     -adapter: ArtistServiceAdapter
@@ -33,6 +35,7 @@ package "data.network.services" {
   interface AlbumApiService {
     +getAlbums(): List<AlbumDto>
     +getAlbum(id: Long): AlbumDto
+    +createAlbum(album: NewAlbumDto): AlbumDto
   }
   interface ArtistApiService {
     +getMusicians(): List<ArtistDto>
@@ -84,6 +87,14 @@ package "data.network.models" {
     +musicians: List<ArtistDto>
     +performerPrizes: List<ArtistAwardDto>
   }
+  class NewAlbumDto {
+    +name: String
+    +cover: String
+    +releaseDate: String
+    +description: String
+    +genre: String
+    +recordLabel: String
+  }
   class TrackDto
   class AlbumCommentDto
   class ArtistAwardDto
@@ -96,6 +107,7 @@ package "data.mappers" {
     +AlbumDto.toDomain(): Album?
     +Album.toEntity(position: Int, inCatalog: Boolean, gson: Gson): AlbumEntity
     +AlbumEntity.toDomain(gson: Gson): Album
+    +NewAlbum.toDto(): NewAlbumDto
   }
   class "ArtistMappers (funciones top-level)" as ArtistMappers {
     +ArtistDto.toDomain(type: ArtistType, awardsById: Map<Long, ArtistAwardDto>): Artist?
@@ -105,6 +117,7 @@ package "data.mappers" {
 package "data.local" {
   abstract class AlbumDao {
     +getAll(): List<AlbumEntity>
+    +firstCatalogPosition(): Int?
     +getById(id: Long): AlbumEntity?
     +upsert(album: AlbumEntity)
     +insertAll(albums: List<AlbumEntity>)
@@ -155,6 +168,7 @@ ArtistServiceAdapter ..> ArtistMappers
 AlbumRepositoryImpl ..> AlbumMappers
 
 AlbumApiService --> AlbumDto
+AlbumApiService ..> NewAlbumDto
 ArtistApiService --> ArtistDto
 AlbumDto --> PerformerDto
 AlbumDto --> TrackDto
@@ -165,6 +179,13 @@ ArtistAwardDto --> PrizeDto
 
 VinilosDatabase --> AlbumDao
 AlbumDao --> AlbumEntity
+
+note bottom of AlbumRepositoryImpl
+  `createAlbum` corre en el dispatcher de IO
+  (`@IoDispatcher`, provisto por `DispatchersModule`)
+  y guarda el álbum nuevo en Room antes de la
+  primera posición del catálogo.
+end note
 
 note bottom of UserRolePreferencesDataSource
   El rol se guarda en DataStore con la clave

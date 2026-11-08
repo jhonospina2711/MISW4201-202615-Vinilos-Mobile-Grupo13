@@ -2,8 +2,10 @@ package com.example.vinilosmobile.data.mappers
 
 import com.example.vinilosmobile.data.local.models.AlbumEntity
 import com.example.vinilosmobile.data.network.models.AlbumDto
+import com.example.vinilosmobile.data.network.models.NewAlbumDto
 import com.example.vinilosmobile.domain.models.Album
 import com.example.vinilosmobile.domain.models.AlbumComment
+import com.example.vinilosmobile.domain.models.NewAlbum
 import com.example.vinilosmobile.domain.models.Track
 import com.google.gson.Gson
 
@@ -56,4 +58,13 @@ fun AlbumEntity.toDomain(gson: Gson): Album = Album(
     coverUrl = coverUrl,
     recordLabel = recordLabel,
     description = description,
+)
+
+fun NewAlbum.toDto(): NewAlbumDto = NewAlbumDto(
+    name = name.trim(),
+    cover = coverUrl.trim(),
+    releaseDate = releaseDate.trim(),
+    description = description.trim(),
+    genre = genre.trim(),
+    recordLabel = recordLabel.trim(),
 )

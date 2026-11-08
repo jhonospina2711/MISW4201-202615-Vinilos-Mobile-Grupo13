@@ -37,6 +37,11 @@
             android:name=".feature.artistdetail.ArtistDetailActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".feature.albumcreate.CreateAlbumActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>

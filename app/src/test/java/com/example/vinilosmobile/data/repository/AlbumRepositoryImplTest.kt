@@ -4,6 +4,7 @@ import com.example.vinilosmobile.data.local.AlbumDao
 import com.example.vinilosmobile.data.mappers.toEntity
 import com.example.vinilosmobile.data.network.errors.NetworkErrorMapper
 import com.example.vinilosmobile.data.network.models.AlbumDto
+import com.example.vinilosmobile.data.network.models.NewAlbumDto
 import com.example.vinilosmobile.data.network.models.PerformerDto
 import com.example.vinilosmobile.data.network.services.AlbumApiService
 import com.example.vinilosmobile.domain.models.Album
@@ -11,6 +12,8 @@ import com.example.vinilosmobile.domain.models.AlbumSource
 import com.example.vinilosmobile.domain.models.AlbumCatalog
 import com.example.vinilosmobile.domain.models.DataError
 import com.example.vinilosmobile.domain.models.DataResult
+import com.example.vinilosmobile.domain.models.NewAlbum
+import com.example.vinilosmobile.domain.models.RequestFailure
 import com.example.vinilosmobile.domain.models.RequestFailureKind
 import com.google.gson.Gson
 import io.mockk.coEvery
@@ -19,6 +22,7 @@ import io.mockk.mockk
 import java.net.ConnectException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.onEach
@@ -27,6 +31,7 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import retrofit2.HttpException
@@ -39,7 +44,7 @@ class AlbumRepositoryImplTest {
     private lateinit var repository: AlbumRepositoryImpl
 
     @Before fun setUp() {
-        repository = AlbumRepositoryImpl(service, dao, gson, NetworkErrorMapper())
+        repository = AlbumRepositoryImpl(service, dao, gson, NetworkErrorMapper(), Dispatchers.Unconfined)
     }
 
     @Test fun remoteCatalogReplacesRoomAndReportsRemoteSource() = runBlocking {
@@ -224,6 +229,59 @@ class AlbumRepositoryImplTest {
 
         assertEquals(listOf("Guardado", "Actualizado"), emissions.map { it.name })
     }
+
+    @Test fun createdAlbumIsSentTrimmedAndCachedFirstInCatalog() = runBlocking {
+        val sent = NewAlbumDto("Siembra", "https://example.com/s.jpg", "1978-08-01", "Salsa", "Salsa", "Fania Records")
+        coEvery { service.createAlbum(sent) } returns dto(120, "Siembra")
+        coEvery { dao.firstCatalogPosition() } returns 0
+        coEvery { dao.upsert(any()) } returns Unit
+
+        val created = repository.createAlbum(newAlbum.copy(name = " Siembra ", genre = "Salsa "))
+
+        assertEquals(120L, created.id)
+        assertEquals(emptyList<Any>(), created.tracks)
+        assertEquals(emptyList<Any>(), created.comments)
+        coVerify(exactly = 1) { dao.upsert(match { it.id == 120L && it.position == -1 && it.inCatalog }) }
+    }
+
+    @Test fun createAlbumOnEmptyCacheUsesPositionBeforeZero() = runBlocking {
+        coEvery { service.createAlbum(any()) } returns dto(120, "Siembra")
+        coEvery { dao.firstCatalogPosition() } returns null
+        coEvery { dao.upsert(any()) } returns Unit
+
+        repository.createAlbum(newAlbum)
+
+        coVerify(exactly = 1) { dao.upsert(match { it.position == -1 }) }
+    }
+
+    @Test fun serverErrorWhileCreatingBecomesRequestFailure() = runBlocking {
+        coEvery { service.createAlbum(any()) } throws
+            HttpException(Response.error<AlbumDto>(500, "{}".toResponseBody()))
+
+        try {
+            repository.createAlbum(newAlbum)
+            fail("Se esperaba RequestFailure")
+        } catch (failure: RequestFailure) {
+            assertEquals(RequestFailureKind.SERVER, failure.kind)
+        }
+        coVerify(exactly = 0) { dao.upsert(any()) }
+    }
+
+    @Test fun cacheErrorDoesNotHideACreatedAlbum() = runBlocking {
+        coEvery { service.createAlbum(any()) } returns dto(120, "Siembra")
+        coEvery { dao.firstCatalogPosition() } throws IllegalStateException("disk full")
+
+        assertEquals(120L, repository.createAlbum(newAlbum).id)
+    }
+
+    private val newAlbum = NewAlbum(
+        name = "Siembra",
+        coverUrl = "https://example.com/s.jpg",
+        releaseDate = "1978-08-01",
+        genre = "Salsa",
+        recordLabel = "Fania Records",
+        description = "Salsa",
+    )
 
     private fun dto(id: Long, name: String) = AlbumDto(
         id = id,
