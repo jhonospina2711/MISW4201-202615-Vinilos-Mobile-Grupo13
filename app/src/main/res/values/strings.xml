@@ -76,6 +76,7 @@
     <string name="create_album_failed">No pudimos guardar el álbum. %1$s</string>
     <string name="create_album_failed_unknown">No pudimos guardar el álbum. Intenta de nuevo.</string>
     <string name="album_name">Nombre del álbum</string>
+    <string name="album_cover_description">Portada del álbum</string>
     <string name="album_cover_url">URL de la carátula</string>
     <string name="album_cover_helper">Enlace a la imagen de la portada</string>
     <string name="album_release_date_helper">DD/MM/AAAA</string>

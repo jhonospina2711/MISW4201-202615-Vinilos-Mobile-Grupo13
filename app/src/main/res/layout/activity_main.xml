@@ -5,7 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/vinilos_background"
     tools:context=".feature.home.MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,7 +31,7 @@
             android:contentDescription="@string/change_access_type"
             android:padding="12dp"
             android:src="@drawable/ic_switch_role"
-            android:tint="@color/vinilos_on_surface_variant"
+            app:tint="@color/vinilos_on_surface_variant"
             android:translationZ="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

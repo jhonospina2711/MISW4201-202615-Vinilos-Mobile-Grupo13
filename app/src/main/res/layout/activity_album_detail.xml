@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/vinilos_background">
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -43,6 +43,7 @@
                         app:cardElevation="0dp">
                         <ImageView
                             android:id="@+id/detailCover"
+                            android:contentDescription="@string/album_cover_description"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="centerInside"
@@ -90,6 +91,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
+                        android:baselineAligned="false"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/vinilos_space_md"
                         android:orientation="horizontal">
