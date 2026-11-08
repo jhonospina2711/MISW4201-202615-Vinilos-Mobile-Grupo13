@@ -61,6 +61,14 @@ class AlbumDaoTest {
         assertEquals(1, dao.getAll().size)
     }
 
+    @Test fun firstCatalogPositionIgnoresDetailOnlyRows() = runBlocking {
+        assertNull(dao.firstCatalogPosition())
+
+        dao.insertAll(listOf(entity(1, 3, true), entity(2, -2, false), entity(3, 1, true)))
+
+        assertEquals(1, dao.firstCatalogPosition())
+    }
+
     private fun entity(id: Long, position: Int, inCatalog: Boolean) = AlbumEntity(
         id = id,
         position = position,

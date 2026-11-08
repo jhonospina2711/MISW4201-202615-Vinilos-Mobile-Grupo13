@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="22" failures="0" errors="0" skipped="0" time="0.000" timestamp="2026-11-07T01:58:28" hostname="localhost">
+  <testsuite name="com.example.vinilosmobile.CreateAlbumEspressoTest" tests="7" failures="0" errors="0" skipped="0" time="23.796" timestamp="2026-11-07T01:58:28" hostname="localhost">
+    <properties>
+      <property name="device" value="emulator-5554" />
+    </properties>
+    <testcase name="hu07_serverErrorKeepsTheTypedData" classname="com.example.vinilosmobile.CreateAlbumEspressoTest" time="5.258" />
+    <testcase name="hu07_newAlbumButtonOnlyShowsInCatalog" classname="com.example.vinilosmobile.CreateAlbumEspressoTest" time="2.217" />
+    <testcase name="hu07_visitorCannotCreateAlbums" classname="com.example.vinilosmobile.CreateAlbumEspressoTest" time="1.185" />
+    <testcase name="hu07_emptyFormMarksEveryFieldAsRequired" classname="com.example.vinilosmobile.CreateAlbumEspressoTest" time="2.146" />
+    <testcase name="hu07_createdAlbumAppearsFirstAndOpensItsDetail" classname="com.example.vinilosmobile.CreateAlbumEspressoTest" time="5.603" />
+    <testcase name="hu07_invalidCoverAndDateAreNotSent" classname="com.example.vinilosmobile.CreateAlbumEspressoTest" time="4.434" />
+    <testcase name="hu07_cancelGoesBackWithoutSaving" classname="com.example.vinilosmobile.CreateAlbumEspressoTest" time="2.953" />
+  </testsuite>
+  <testsuite name="com.example.vinilosmobile.Sprint1EspressoTest" tests="15" failures="0" errors="0" skipped="0" time="17.872" timestamp="2026-11-07T01:58:28" hostname="localhost">
+    <properties>
+      <property name="device" value="emulator-5554" />
+    </properties>
+    <testcase name="hu02_albumWithoutTracksShowsEmptyMessage" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="1.414" />
+    <testcase name="hu01_catalogLoadsThroughRetrofitAndRepository" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="0.884" />
+    <testcase name="hu01_networkFailureShowsRoomCache" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="2.194" />
+    <testcase name="hu01_serverErrorCanRetry" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="1.493" />
+    <testcase name="hu02_missingAlbumShowsNotFoundAndVisitorHasNoAction" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="1.237" />
+    <testcase name="hu02_serverErrorCanRetry" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="1.636" />
+    <testcase name="hu03_serverErrorCanRetry" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="1.946" />
+    <testcase name="hu04_bandDetailDisplaysMembersAndCreationDate" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="0.795" />
+    <testcase name="hu04_serverErrorCanRetry" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="0.814" />
+    <testcase name="hu02_cardOpensAlbumActivityWithTracksAndComments" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="1.404" />
+    <testcase name="hu03_artistListFiltersMusiciansAndBands" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="1.464" />
+    <testcase name="hu03_emptyArtistsShowEmptyState" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="0.692" />
+    <testcase name="hu04_missingArtistShowsNotFound" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="0.333" />
+    <testcase name="hu01_emptyCatalogShowsEmptyState" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="0.381" />
+    <testcase name="hu04_musicianDetailDisplaysAlbumsAndPrize" classname="com.example.vinilosmobile.Sprint1EspressoTest" time="1.185" />
+  </testsuite>
+</testsuites>

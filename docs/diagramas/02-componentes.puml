@@ -1,5 +1,5 @@
 @startuml 02-componentes
-title Diagrama de componentes — Vinilos Mobile (Sprint 1)
+title Diagrama de componentes — Vinilos Mobile (Sprint 2)
 skinparam componentStyle uml2
 skinparam shadowing false
 skinparam arrowColor #4A5568
@@ -13,12 +13,14 @@ package "Presentación (feature)" {
   component "AlbumCatalogFragment" as fragAlbums
   component "ArtistsFragment" as fragArtists
   component "AlbumDetailActivity" as actAlbum
+  component "CreateAlbumActivity" as actCreate
   component "ArtistDetailActivity" as actArtist
   component "ViewModels" as vms
 }
 
 package "Dominio (domain)" {
   component "Casos de uso" as usecases
+  component "AlbumValidator" as validator
   interface "AlbumRepository" as IAlbumRepo
   interface "ArtistRepository" as IArtistRepo
   interface "UserRoleRepository" as IUserRoleRepo
@@ -48,12 +50,15 @@ entry --> vms
 fragAlbums --> vms
 fragArtists --> vms
 actAlbum --> vms
+actCreate --> vms
+main --> actCreate : «result»
 actArtist --> vms
 
 vms --> usecases
 usecases --> IAlbumRepo
 usecases --> IArtistRepo
 usecases --> IUserRoleRepo
+usecases --> validator
 
 albumRepoImpl ..|> IAlbumRepo
 artistRepoImpl ..|> IArtistRepo
