@@ -84,11 +84,30 @@ Se recomienda repetir cada medición tres veces y reportar la mediana, porque el
 | Vistas instanciadas | Idem | 122 |
 | Cuadros y *jank* | Idem | **No disponibles**: el emulador renderiza por software (`swiftshader`), así que `gfxinfo` no reporta estadísticas de cuadros |
 
-### Limitación abierta
+### Mediciones en dispositivos físicos
 
-La rúbrica pide perfilar en **al menos tres dispositivos físicos diferentes**. Hasta ahora las mediciones se hicieron en un **emulador**, que no cuenta como dispositivo físico y además no reporta estadísticas de cuadros por el render por software.
+Las mediciones anteriores son de un emulador. Para cumplir el requisito de **tres dispositivos físicos** se usó **Firebase Test Lab**, que ejecuta sobre hardware real. Se corrieron dos matrices sobre los mismos tres equipos:
 
-Falta, por tanto, la tabla con marca, modelo, versión de Android y RAM de tres celulares, y las mismas métricas medidas en cada uno. El método y las métricas ya están definidos; lo que falta es ejecutarlo en hardware real.
+1. **Robo**: la app de Release explora sus pantallas contra el backend publicado.
+2. **Instrumentación**: la suite Espresso completa (HU01–HU04 y HU07, 22 escenarios).
+
+| Dispositivo | Fabricante | Android | API | RAM | Arranque a Home | Suite E2E |
+|---|---|---|---:|---:|---:|---|
+| Galaxy A10 | Samsung | 10 | 29 | 2 GB | **3 010 ms** | **22/22** |
+| moto g play (2021) | Motorola | 11 | 30 | 3 GB | **2 910 ms** | **22/22** |
+| Pixel 7 | Google | 13 | 33 | 8 GB | **424 ms** | **22/22** |
+
+El arranque se tomó del registro del sistema de cada dispositivo (`ActivityTaskManager: Displayed …MainActivity: +N ms`). La RAM es la de la ficha del fabricante.
+
+**Lectura de fragmentación:** el mismo APK, con el mismo código, tarda **7,1 veces más** en abrir el catálogo en el Galaxy A10 que en el Pixel 7. La app no falla en ninguno de los tres: la diferencia se explica por CPU y RAM del equipo, no por el código.
+
+Una corrida adicional de Robo sobre el Galaxy A10 terminó en *Inconclusive* por un fallo de infraestructura de Test Lab (`Infrastructure failure`), no por la app: ese mismo equipo ya había aprobado los 22 escenarios en la corrida de instrumentación.
+
+Evidencia en `docs/evidencias/sprint2/desempeno/fisicos/`: el resultado de instrumentación de cada dispositivo, con el veredicto `OK (22 tests)`.
+
+**Lo que no se pudo medir:** Test Lab no exporta la memoria por dispositivo a un archivo; esa métrica solo se ve en la consola de Firebase. Las cifras de PSS de la tabla anterior son del emulador. Para completar el consumo de memoria por dispositivo haría falta conectar cada celular por USB y correr `dumpsys meminfo`.
+
+**Cobertura de versiones:** el dispositivo físico más antiguo que ofrece Test Lab es Android 8.1. La verificación en Android 5.0 se hizo con el emulador y está documentada en el Sprint 1.
 
 ## 5. Cómo reproducir
 
