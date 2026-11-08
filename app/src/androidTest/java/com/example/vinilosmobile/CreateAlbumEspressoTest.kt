@@ -4,9 +4,11 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
@@ -33,6 +35,7 @@ import kotlinx.coroutines.runBlocking
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.not
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -128,7 +131,9 @@ class CreateAlbumEspressoTest {
             onView(withId(R.id.saveButton)).perform(click())
 
             val message = context.getString(R.string.create_album_failed, context.getString(R.string.request_server))
-            waitFor(allOf(withId(R.id.formMessage), withText(message)))
+            // El aviso queda al final del formulario: en pantallas pequeñas hay que desplazarse.
+            val formMessage = allOf(withId(R.id.formMessage), withText(message))
+            eventually { onView(formMessage).perform(scrollTo()).check(matches(isDisplayed())) }
             onView(withId(R.id.nameInput)).check(matches(withText("Siembra")))
             onView(withId(R.id.saveButton)).check(matches(isEnabled()))
         }
@@ -161,9 +166,13 @@ class CreateAlbumEspressoTest {
         onView(withId(R.id.descriptionInput)).perform(replaceText("Willie Colón y Rubén Blades, 1978"))
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun choose(fieldId: Int, option: String) {
-        onView(withId(fieldId)).perform(click())
-        eventually { onView(withText(option)).inRoot(isPlatformPopup()).perform(click()) }
+        // En API 21 el campo puede quedar fuera de la ventana y el desplegable es un AdapterView,
+        // asi que se busca el item con onData en vez de con onView.
+        onView(withId(fieldId)).perform(scrollTo(), click())
+        val item = equalTo(option) as Matcher<Any>
+        eventually { onData(item).inRoot(isPlatformPopup()).perform(click()) }
     }
 
     private fun waitFor(matcher: Matcher<View>) = eventually { onView(matcher).check(matches(isDisplayed())) }
