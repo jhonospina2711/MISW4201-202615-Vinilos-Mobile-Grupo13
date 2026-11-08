@@ -16,6 +16,5 @@
         <item name="android:colorBackground">@color/vinilos_background</item>
         <item name="android:statusBarColor">@color/vinilos_background</item>
         <item name="android:navigationBarColor">@color/vinilos_background</item>
-        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>
