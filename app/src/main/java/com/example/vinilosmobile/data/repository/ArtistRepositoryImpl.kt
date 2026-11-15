@@ -2,6 +2,7 @@ package com.example.vinilosmobile.data.repository
 
 import com.example.vinilosmobile.data.network.ArtistServiceAdapter
 import com.example.vinilosmobile.data.network.errors.NetworkErrorMapper
+import com.example.vinilosmobile.di.IoDispatcher
 import com.example.vinilosmobile.domain.models.Artist
 import com.example.vinilosmobile.domain.models.ArtistKey
 import com.example.vinilosmobile.domain.models.DataError
@@ -10,15 +11,19 @@ import com.example.vinilosmobile.domain.repository.ArtistNotFoundException
 import com.example.vinilosmobile.domain.repository.ArtistRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.isActive
 import retrofit2.HttpException
 
 class ArtistRepositoryImpl @Inject constructor(
     private val adapter: ArtistServiceAdapter,
     private val errorMapper: NetworkErrorMapper,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ArtistRepository {
     override fun getArtists(): Flow<DataResult<List<Artist>>> = flow {
         emit(DataResult.Loading)
@@ -33,7 +38,7 @@ class ArtistRepositoryImpl @Inject constructor(
             return@flow
         }
         emit(DataResult.Success(artists))
-    }
+    }.flowOn(ioDispatcher)
 
     override fun getArtist(key: ArtistKey): Flow<DataResult<Artist>> = flow {
         emit(DataResult.Loading)
@@ -56,5 +61,5 @@ class ArtistRepositoryImpl @Inject constructor(
             return@flow
         }
         emit(DataResult.Success(artist))
-    }
+    }.flowOn(ioDispatcher)
 }
