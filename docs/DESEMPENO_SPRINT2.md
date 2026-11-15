@@ -40,13 +40,13 @@ La regla es que el hilo principal no haga entrada/salida ni espere. En el códig
 |---|---|
 | Todas las consultas corren en `viewModelScope`, nunca en el hilo principal | `EntryViewModel`, `HomeViewModel`, `AlbumCatalogViewModel`, `ArtistCatalogViewModel`, `AlbumDetailViewModel`, `ArtistDetailViewModel`, `CreateAlbumViewModel` |
 | El despachador de E/S se inyecta, no se instancia | `di/DispatchersModule.kt` expone `@IoDispatcher CoroutineDispatcher = Dispatchers.IO` |
-| La red y la base de datos se ejecutan en el despachador de E/S | `AlbumRepositoryImpl.createAlbum` y las consultas usan `withContext(ioDispatcher)` |
-| La validación del formulario es pura y no bloquea: no hay E/S dentro de `AlbumValidator` | `domain/validation/AlbumValidator.kt` |
+| La red y la base de datos se ejecutan en el despachador de E/S, nunca en el hilo del colector | `AlbumRepositoryImpl` y `ArtistRepositoryImpl` aplican `flowOn(ioDispatcher)` a sus `Flow`; `createAlbum` y `setRole` usan `withContext(ioDispatcher)`; `ArtistServiceAdapter` cambia de contexto con `withContext(ioDispatcher)` |
+| La validación del formulario es pura y no bloquea: no hay E/S dentro de `AlbumValidator`, y el uso de `SimpleDateFormat`, `Regex` y `URI` se ejecuta en `withContext(ioDispatcher)` desde `CreateAlbumUseCase` | `domain/validation/AlbumValidator.kt`, `domain/usecase/CreateAlbumUseCase.kt` |
 | El estado de guardado evita envíos duplicados mientras hay una petición en curso | `CreateAlbumViewModel.save` retorna si el estado es `Saving` |
 | Las imágenes se cargan con Glide, que hace el trabajo fuera del hilo principal y con caché propia | `AlbumCardViewHolder`, `ArtistAvatarView`, `AlbumDetailActivity` |
 | Las pantallas observan con el ciclo de vida correcto | `viewLifecycleOwner` en Fragments y `lifecycleScope`; 4 usos verificados |
 
-No hay llamadas de red ni consultas a Room en el hilo principal: el repositorio siempre pasa por `withContext(ioDispatcher)`.
+No hay llamadas de red ni consultas a Room en el hilo principal. Los cuatro métodos de repositorio basados en `Flow` (`getAlbums`, `getAlbum`, `getArtists`, `getArtist`) usan `flowOn(ioDispatcher)` —no `withContext`—, porque el cambio de contexto se declara una sola vez y cubre todo el cuerpo del `Flow`, incluido el parseo con Gson, las escrituras a Room y el `sortedBy` del catálogo de artistas. Los métodos `suspend` que no devuelven un `Flow` (`createAlbum`, `setRole`) usan `withContext(ioDispatcher)`, `ArtistServiceAdapter` cambia de contexto explícitamente para sus llamadas de red y la validación del formulario también sale del hilo principal.
 
 ## 3. Buenas prácticas de consumo de memoria
 
@@ -108,6 +108,34 @@ Evidencia en `docs/evidencias/sprint2/desempeno/fisicos/`: el resultado de instr
 **Lo que no se pudo medir:** Test Lab no exporta la memoria por dispositivo a un archivo; esa métrica solo se ve en la consola de Firebase. Las cifras de PSS de la tabla anterior son del emulador. Para completar el consumo de memoria por dispositivo haría falta conectar cada celular por USB y correr `dumpsys meminfo`.
 
 **Cobertura de versiones:** el dispositivo físico más antiguo que ofrece Test Lab es Android 8.1. La verificación en Android 5.0 se hizo con el emulador y está documentada en el Sprint 1.
+
+### Gráficas del perfilamiento
+
+Cuatro mediciones que resumen el efecto del trabajo de desempeño. Cada una va con su lectura.
+
+#### Arranque por dispositivo físico
+
+![Tiempo de arranque por dispositivo](evidencias/sprint2/desempeno/graficas/01-arranque-por-dispositivo.svg)
+
+La misma app, con el mismo APK, abre el catálogo en **3 010 ms** en el Galaxy A10 y en **424 ms** en el Pixel 7: una diferencia de **7,1 veces**. No es un problema de código —los tres equipos ejecutan exactamente las mismas 22 pruebas sin fallar— sino de hardware. Es la evidencia directa de la fragmentación que motiva la iteración: la app funciona en toda la gama, pero el usuario de gama baja espera siete veces más.
+
+#### Reporte de Lint antes y después
+
+![Lint antes y después](evidencias/sprint2/desempeno/graficas/02-lint-antes-despues.svg)
+
+Los **6 errores** desaparecieron y las advertencias bajaron de **47 a 34**. Los errores no eran cosméticos: uno era `NewApi`, un atributo que exige API 23 sobre un `minSdk` de 21 —es decir, un fallo real en Android 5.0— y cinco eran `UseAppTint`, que hacía que el tinte de los iconos se ignorara en versiones antiguas. Las 34 advertencias restantes son de dependencias con versión más nueva, que se dejaron fuera para no arriesgar el toolchain en el cierre del sprint.
+
+#### Tamaño del APK
+
+![Tamaño del APK antes y después](evidencias/sprint2/desempeno/graficas/03-tamano-apk.svg)
+
+El APK de Debug bajó de **12 MB a 11 MB** al retirar `vinilotornamesa.png`, un recurso de **2,0 MB** que no se referenciaba en ningún layout ni en el código. Es el efecto más tangible de las micro-optimizaciones sobre el usuario: menos descarga y menos espacio ocupado por la instalación.
+
+#### Composición de la memoria
+
+![Consumo de memoria](evidencias/sprint2/desempeno/graficas/04-memoria.svg)
+
+Con la app en el catálogo, el PSS total es de **36,4 MB**, y **25,8 MB** son heap nativo, dominado por las imágenes de las carátulas. Eso explica por qué Glide se configura con el tamaño de la vista y caché acotada: es la palanca con más efecto sobre el consumo. El heap de Dalvik, donde viven los objetos de la app, se queda en 10,3 MB.
 
 ## 5. Cómo reproducir
 

@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -64,7 +65,7 @@ class AlbumRepositoryImpl @Inject constructor(
             // Fresh remote data is still usable when the local cache cannot be updated.
         }
         emit(DataResult.Success(AlbumCatalog(albums, AlbumSource.REMOTE)))
-    }
+    }.flowOn(ioDispatcher)
 
     override fun getAlbum(id: Long): Flow<DataResult<Album>> = flow {
         emit(DataResult.Loading)
@@ -110,7 +111,7 @@ class AlbumRepositoryImpl @Inject constructor(
             // A failed cache write must not hide a successfully fetched album.
         }
         emit(DataResult.Success(album))
-    }
+    }.flowOn(ioDispatcher)
 
     override suspend fun createAlbum(album: NewAlbum): Album = withContext(ioDispatcher) {
         val response = try {
