@@ -62,10 +62,10 @@ La app reduce trabajo de la interfaz con Retrofit/Room en dispatcher IO, `Recycl
 
 | Producto | Estado actual |
 |---|---|
-| Unitarias, integración y Espresso con fixtures | 80/80 JVM; 32/32 Espresso en API 33 y 32/32 en API 37, resultados guardados. Repetir Espresso tras cualquier cambio funcional posterior. |
-| Matriz API 21, intermedio y reciente | API 33 y API 37 aprobadas; falta repetir la versión actual en API 21 |
+| Unitarias, integración y Espresso con fixtures | 80/80 JVM; 32/32 Espresso en API 28, API 33 y API 37, resultados guardados. Repetir Espresso tras cualquier cambio funcional posterior. |
+| Matriz API 21, intermedio y reciente | API 28, API 33 y API 37 aprobadas; falta API 21 |
 | API local y recorrido físico | HU01–HU08 verificados en Samsung API 37; [bitácora y capturas](evidencias/sprint3/api-local-sm-s948b.md) |
-| Accesibilidad con Accessibility Scanner | Instalado y servicio activado en Samsung; pendiente el análisis y capturas de resultados |
-| Exploración sistemática y aleatoria | Guion definido; falta bitácora de ejecución |
-| Perfilamiento de HU01–HU08 en tres físicos | Pendiente de dispositivos y mediciones |
-| Reporte de defectos | [Issue #107](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/107) documenta la lista de tracks recortada; corrección y regresión en PR #105 |
+| Accesibilidad con Accessibility Scanner | [Reporte](ACCESIBILIDAD_SPRINT3.md) y capturas antes/después; quedan estados alternos, fuente ampliada y revisión manual con TalkBack |
+| Exploración sistemática y aleatoria | [Recorrido local y Monkey](EXPLORACION_SPRINT3.md); la sesión aleatoria salió al launcher y requiere mayor cobertura |
+| Perfilamiento de HU01–HU08 en tres físicos | [PSS puntual por historia](PERFILAMIENTO_SPRINT3.md) en un Samsung; faltan dos físicos y mediciones repetidas de CPU, latencia y frames |
+| Reporte de defectos | [Issue #107](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/107) documenta la lista de tracks recortada; [issue #108](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/108) los hallazgos del Scanner; correcciones y regresión en PR #105 |
