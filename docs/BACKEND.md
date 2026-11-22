@@ -22,6 +22,12 @@ Para consultar estado y logs, usar `docker compose -f docs/backvynils-compose.lo
 
 El 24 de octubre de 2026, esta copia local respondió HTTP `200` en `GET /albums` con cuatro álbumes iniciales.
 
+El 21 de noviembre de 2026 se volvió a levantar con Docker Desktop y se comprobó `GET /albums`, `GET /collectors`, `GET /collectors/100`, `GET /collectors/100/albums` y el alta y lectura de un track en `/albums/100/tracks`. El [reporte con resultados y capturas en un Samsung API 37](evidencias/sprint3/api-local-sm-s948b.md) documenta la prueba end-to-end con la API local. La URL pública seguía agotando el tiempo de espera; para probar datos reales se usó la variante Debug compilada con la URL local.
+
 La variante Debug usa `http://10.0.2.2:3000/` por defecto. `10.0.2.2` apunta al computador desde el emulador; `localhost` dentro de Android apunta al propio dispositivo y produce `ConnectException`. Para otra URL, compilar con `bash gradlew :app:assembleDebug -PvinilosApiBaseUrl=https://servidor/`. En un dispositivo físico conectado por USB, ejecutar `adb reverse tcp:3000 tcp:3000` y compilar con `-PvinilosApiBaseUrl=http://127.0.0.1:3000/`. El puerto de Docker solo escucha en el equipo local. El tráfico HTTP local está permitido solo en Debug mediante `app/src/debug/AndroidManifest.xml`.
 
 En este equipo, el primer `docker compose` se quedó esperando al gestor de credenciales de Docker Desktop. Para descargar las imágenes públicas se usó una configuración temporal de Docker sin `credsStore`; no se modificó la configuración ni las credenciales normales del usuario.
+
+Si Docker Desktop está cerrado, abrirlo y esperar a que `docker info` responda antes de ejecutar Compose. El puente `adb reverse` se pierde al desconectar el USB: repetirlo antes de abrir la app. Confirmar el valor de `-PvinilosApiBaseUrl` en el APK compilado; la URL de emulador `10.0.2.2` no funciona en un teléfono físico.
+
+La [documentación de Docker Desktop para Mac](https://docs.docker.com/desktop/setup/install/mac-install/) indica cómo iniciarlo; la [guía de Compose](https://docs.docker.com/compose/gettingstarted/) explica `up --build` y la persistencia de volúmenes. La [referencia de puertos](https://docs.docker.com/engine/network/port-publishing/) confirma que publicar en `127.0.0.1` limita el acceso al equipo anfitrión. La conexión del teléfono se hace por el puente USB de ADB.

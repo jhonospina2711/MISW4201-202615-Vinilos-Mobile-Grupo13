@@ -2,6 +2,7 @@ package com.example.vinilosmobile
 
 import com.example.vinilosmobile.data.network.services.AlbumApiService
 import com.example.vinilosmobile.data.network.services.ArtistApiService
+import com.example.vinilosmobile.data.network.services.CollectorApiService
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -29,4 +30,5 @@ object EspressoNetworkModule {
 
     @Provides fun albums(retrofit: Retrofit): AlbumApiService = retrofit.create(AlbumApiService::class.java)
     @Provides fun artists(retrofit: Retrofit): ArtistApiService = retrofit.create(ArtistApiService::class.java)
+    @Provides fun collectors(retrofit: Retrofit): CollectorApiService = retrofit.create(CollectorApiService::class.java)
 }

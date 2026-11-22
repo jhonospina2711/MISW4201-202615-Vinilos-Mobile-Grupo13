@@ -1,0 +1,3 @@
+PASS HU05 GET /collectors (2 registros)
+PASS HU06 GET /collectors/100 y /albums (1 álbumes)
+PASS HU08 GET /albums/100/tracks (4 tracks)

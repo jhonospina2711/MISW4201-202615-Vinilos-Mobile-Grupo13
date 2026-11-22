@@ -23,6 +23,8 @@ import com.example.vinilosmobile.feature.home.adapters.HomeSectionPagerAdapter
 import com.example.vinilosmobile.feature.home.albums.AlbumCatalogFragment
 import com.example.vinilosmobile.feature.home.navigation.AlbumNavigator
 import com.example.vinilosmobile.feature.home.navigation.ArtistNavigator
+import com.example.vinilosmobile.feature.home.navigation.CollectorNavigator
+import com.example.vinilosmobile.feature.collectordetail.CollectorDetailActivity
 import com.example.vinilosmobile.feature.artistdetail.ArtistDetailActivity
 import com.example.vinilosmobile.domain.models.ArtistKey
 import com.google.android.material.snackbar.Snackbar
@@ -30,7 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.abs
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), AlbumNavigator, ArtistNavigator {
+class MainActivity : AppCompatActivity(), AlbumNavigator, ArtistNavigator, CollectorNavigator {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: HomeViewModel by viewModels()
@@ -121,5 +123,9 @@ class MainActivity : AppCompatActivity(), AlbumNavigator, ArtistNavigator {
 
     override fun openArtist(key: ArtistKey) {
         startActivity(ArtistDetailActivity.intent(this, key))
+    }
+
+    override fun openCollector(id: Long) {
+        startActivity(CollectorDetailActivity.intent(this, id))
     }
 }

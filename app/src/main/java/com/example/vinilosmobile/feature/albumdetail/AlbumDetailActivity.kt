@@ -3,7 +3,6 @@ package com.example.vinilosmobile.feature.albumdetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +21,8 @@ import com.example.vinilosmobile.domain.models.UserRole
 import com.example.vinilosmobile.feature.albumdetail.models.AlbumDetailUiState
 import com.example.vinilosmobile.feature.shared.DateTextFormatter
 import com.example.vinilosmobile.feature.shared.messageRes
+import com.example.vinilosmobile.feature.trackcreate.AddTrackBottomSheet
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -54,10 +55,21 @@ class AlbumDetailActivity : AppCompatActivity() {
         binding.commentList.adapter = commentAdapter
         binding.commentList.isNestedScrollingEnabled = false
         binding.addTrackFab.setOnClickListener {
-            Toast.makeText(this, R.string.add_track_coming_soon, Toast.LENGTH_SHORT).show()
+            val album = (viewModel.state.value as? AlbumDetailUiState.Content)?.album ?: return@setOnClickListener
+            if (supportFragmentManager.findFragmentByTag(AddTrackBottomSheet.TAG) == null) {
+                AddTrackBottomSheet.newInstance(album.id, album.name)
+                    .show(supportFragmentManager, AddTrackBottomSheet.TAG)
+            }
+        }
+        supportFragmentManager.setFragmentResultListener(AddTrackBottomSheet.RESULT_KEY, this) { _, result ->
+            AddTrackBottomSheet.trackFromResult(result)?.let { track ->
+                viewModel.trackAdded(track)
+                Snackbar.make(binding.root, getString(R.string.track_created, track.name), Snackbar.LENGTH_LONG).show()
+            }
         }
         viewModel.selectedRole.observe(this) { role ->
-            binding.addTrackFab.isVisible = role == UserRole.COLLECTOR
+            binding.addTrackFab.isVisible = role == UserRole.COLLECTOR &&
+                viewModel.state.value is AlbumDetailUiState.Content
         }
         viewModel.state.observe(this, ::render)
         viewModel.load(albumId)
@@ -68,6 +80,8 @@ class AlbumDetailActivity : AppCompatActivity() {
         binding.detailContent.isVisible = state is AlbumDetailUiState.Content
         binding.detailMessage.isVisible = state == AlbumDetailUiState.NotFound ||
             state is AlbumDetailUiState.Error || state == AlbumDetailUiState.Cancelled
+        binding.addTrackFab.isVisible = state is AlbumDetailUiState.Content &&
+            viewModel.selectedRole.value == UserRole.COLLECTOR
         when (state) {
             is AlbumDetailUiState.Content -> showAlbum(state.album)
             AlbumDetailUiState.NotFound -> binding.detailMessage.show(
@@ -108,7 +122,9 @@ class AlbumDetailActivity : AppCompatActivity() {
         binding.tracksHeader.show(R.string.album_tracks, tracks.size)
         trackAdapter.submitList(tracks.mapIndexed { index, track ->
             DetailRowUiModel(track.id, (index + 1).toString(), track.name, trailing = track.duration)
-        })
+        }) {
+            binding.trackList.requestLayout()
+        }
         binding.tracksEmpty.isVisible = tracks.isEmpty()
         binding.tracksEmpty.setText(
             if (album.tracks == null) R.string.related_data_unavailable else R.string.album_no_tracks,
