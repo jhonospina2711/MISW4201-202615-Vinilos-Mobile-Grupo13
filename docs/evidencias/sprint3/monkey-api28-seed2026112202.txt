@@ -1,0 +1,283 @@
+  bash arg: -p
+  bash arg: com.example.vinilosmobile
+  bash arg: -s
+  bash arg: 2026112202
+  bash arg: --throttle
+  bash arg: 120
+  bash arg: --pct-touch
+  bash arg: 80
+  bash arg: --pct-motion
+  bash arg: 20
+  bash arg: --pct-syskeys
+  bash arg: 0
+  bash arg: --pct-appswitch
+  bash arg: 0
+  bash arg: --pct-nav
+  bash arg: 0
+  bash arg: --pct-majornav
+  bash arg: 0
+  bash arg: -v
+  bash arg: 300
+:Monkey: seed=2026112202 count=300
+:AllowPackage: com.example.vinilosmobile
+:IncludeCategory: android.intent.category.LAUNCHER
+:IncludeCategory: android.intent.category.MONKEY
+// Event percentages:
+//   0: 80.0%
+//   1: 20.0%
+//   2: 0.0%
+//   3: 0.0%
+//   4: -0.0%
+//   5: -0.0%
+//   6: -0.0%
+//   7: -0.0%
+//   8: -0.0%
+//   9: -0.0%
+//   10: 0.0%
+//   11: 0.0%
+:Switch: #Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;launchFlags=0x10200000;component=com.example.vinilosmobile/.feature.entry.EntryActivity;end
+    // Allowing start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.example.vinilosmobile/.feature.entry.EntryActivity } in package com.example.vinilosmobile
+:Sending Touch (ACTION_DOWN): 0:(450.0,821.0)
+:Sending Touch (ACTION_UP): 0:(447.98822,816.8827)
+:Sending Touch (ACTION_DOWN): 0:(809.0,225.0)
+:Sending Touch (ACTION_UP): 0:(797.31177,238.03853)
+:Sending Touch (ACTION_DOWN): 0:(288.0,852.0)
+:Sending Touch (ACTION_UP): 0:(273.44043,855.5065)
+:Sending Touch (ACTION_DOWN): 0:(364.0,631.0)
+:Sending Touch (ACTION_UP): 0:(362.96106,619.9162)
+:Sending Touch (ACTION_DOWN): 0:(335.0,778.0)
+:Sending Touch (ACTION_UP): 0:(375.16953,776.0153)
+:Sending Touch (ACTION_DOWN): 0:(56.0,1647.0)
+:Sending Touch (ACTION_UP): 0:(52.104183,1647.5543)
+    // Allowing start of Intent { cmp=com.example.vinilosmobile/.feature.home.MainActivity } in package com.example.vinilosmobile
+    // activityResuming(com.example.vinilosmobile)
+:Sending Touch (ACTION_DOWN): 0:(679.0,987.0)
+:Sending Touch (ACTION_UP): 0:(673.27496,985.3231)
+:Sending Touch (ACTION_DOWN): 0:(392.0,899.0)
+:Sending Touch (ACTION_UP): 0:(375.55307,901.2065)
+:Sending Touch (ACTION_DOWN): 0:(64.0,45.0)
+:Sending Touch (ACTION_UP): 0:(68.16787,48.69101)
+:Sending Touch (ACTION_DOWN): 0:(103.0,723.0)
+:Sending Touch (ACTION_UP): 0:(100.42962,728.81287)
+:Sending Touch (ACTION_DOWN): 0:(1059.0,93.0)
+:Sending Touch (ACTION_UP): 0:(1042.2701,86.08966)
+:Sending Touch (ACTION_DOWN): 0:(911.0,248.0)
+:Sending Touch (ACTION_UP): 0:(918.6787,240.62334)
+:Sending Touch (ACTION_DOWN): 0:(885.0,518.0)
+:Sending Touch (ACTION_UP): 0:(887.1589,510.58618)
+:Sending Touch (ACTION_DOWN): 0:(96.0,647.0)
+:Sending Touch (ACTION_UP): 0:(100.90829,637.3606)
+:Sending Touch (ACTION_DOWN): 0:(97.0,277.0)
+:Sending Touch (ACTION_UP): 0:(96.56463,286.80878)
+:Sending Touch (ACTION_DOWN): 0:(738.0,598.0)
+:Sending Touch (ACTION_UP): 0:(739.38135,599.1453)
+    // Rejecting start of Intent { cmp=com.google.android.setupwizard/.predeferred.PreDeferredSetupWizardActivity } in package com.google.android.setupwizard
+:Sending Touch (ACTION_DOWN): 0:(541.0,1332.0)
+:Sending Touch (ACTION_UP): 0:(552.2768,1330.6158)
+:Sending Touch (ACTION_DOWN): 0:(547.0,693.0)
+:Sending Touch (ACTION_UP): 0:(539.49084,690.5602)
+:Sending Touch (ACTION_DOWN): 0:(453.0,1180.0)
+:Sending Touch (ACTION_UP): 0:(453.70593,1180.091)
+:Sending Touch (ACTION_DOWN): 0:(70.0,1148.0)
+:Sending Touch (ACTION_UP): 0:(72.719215,1148.9392)
+:Sending Touch (ACTION_DOWN): 0:(790.0,1664.0)
+:Sending Touch (ACTION_UP): 0:(802.5513,1666.4137)
+:Sending Touch (ACTION_DOWN): 0:(996.0,1717.0)
+:Sending Touch (ACTION_UP): 0:(1005.78143,1725.1989)
+:Sending Touch (ACTION_DOWN): 0:(35.0,257.0)
+:Sending Touch (ACTION_UP): 0:(34.979023,260.20163)
+:Sending Touch (ACTION_DOWN): 0:(441.0,942.0)
+:Sending Touch (ACTION_UP): 0:(457.34412,953.1715)
+:Sending Touch (ACTION_DOWN): 0:(323.0,1413.0)
+:Sending Touch (ACTION_UP): 0:(314.66095,1414.7926)
+:Sending Touch (ACTION_DOWN): 0:(795.0,522.0)
+:Sending Touch (ACTION_UP): 0:(777.01733,530.3788)
+:Sending Touch (ACTION_DOWN): 0:(79.0,502.0)
+:Sending Touch (ACTION_UP): 0:(76.53714,501.397)
+:Sending Touch (ACTION_DOWN): 0:(275.0,50.0)
+:Sending Touch (ACTION_UP): 0:(274.19153,57.151855)
+:Sending Touch (ACTION_DOWN): 0:(327.0,189.0)
+:Sending Touch (ACTION_UP): 0:(329.7658,189.40164)
+:Sending Touch (ACTION_DOWN): 0:(297.0,525.0)
+:Sending Touch (ACTION_UP): 0:(308.96225,522.01746)
+:Sending Touch (ACTION_DOWN): 0:(280.0,36.0)
+:Sending Touch (ACTION_UP): 0:(244.01207,120.95594)
+:Sending Touch (ACTION_DOWN): 0:(719.0,977.0)
+:Sending Touch (ACTION_UP): 0:(720.825,973.45)
+:Sending Touch (ACTION_DOWN): 0:(4.0,1719.0)
+:Sending Touch (ACTION_UP): 0:(4.3226676,1727.2644)
+:Sending Touch (ACTION_DOWN): 0:(747.0,1421.0)
+:Sending Touch (ACTION_UP): 0:(767.1077,1419.8925)
+:Sending Touch (ACTION_DOWN): 0:(265.0,373.0)
+:Sending Touch (ACTION_UP): 0:(282.80106,377.2584)
+:Sending Touch (ACTION_DOWN): 0:(57.0,1284.0)
+:Sending Touch (ACTION_UP): 0:(49.33348,1304.869)
+:Sending Touch (ACTION_DOWN): 0:(223.0,222.0)
+:Sending Touch (ACTION_UP): 0:(212.4954,225.28918)
+:Sending Touch (ACTION_DOWN): 0:(991.0,290.0)
+:Sending Touch (ACTION_UP): 0:(984.7736,282.64792)
+:Sending Touch (ACTION_DOWN): 0:(141.0,779.0)
+:Sending Touch (ACTION_UP): 0:(125.89671,776.60895)
+    // Rejecting start of Intent { act=android.settings.ALL_APPS_NOTIFICATION_SETTINGS cmp=com.android.settings/.Settings$NotificationAppListActivity } in package com.android.settings
+:Sending Touch (ACTION_DOWN): 0:(469.0,325.0)
+:Sending Touch (ACTION_UP): 0:(473.88858,323.9351)
+:Sending Touch (ACTION_DOWN): 0:(502.0,249.0)
+:Sending Touch (ACTION_UP): 0:(504.93204,249.16917)
+:Sending Touch (ACTION_DOWN): 0:(498.0,1265.0)
+    //[calendar_time:2026-11-22 10:17:10.242  system_uptime:2295868]
+    // Sending event #100
+:Sending Touch (ACTION_UP): 0:(499.1046,1269.2728)
+:Sending Touch (ACTION_DOWN): 0:(300.0,351.0)
+:Sending Touch (ACTION_UP): 0:(257.76385,283.98703)
+:Sending Touch (ACTION_DOWN): 0:(400.0,1044.0)
+:Sending Touch (ACTION_UP): 0:(383.49115,1044.4714)
+:Sending Touch (ACTION_DOWN): 0:(571.0,278.0)
+:Sending Touch (ACTION_UP): 0:(577.3642,269.86093)
+:Sending Touch (ACTION_DOWN): 0:(1003.0,718.0)
+:Sending Touch (ACTION_UP): 0:(1008.5862,717.20624)
+:Sending Touch (ACTION_DOWN): 0:(922.0,1721.0)
+:Sending Touch (ACTION_UP): 0:(841.70404,1786.7115)
+:Sending Touch (ACTION_DOWN): 0:(815.0,1556.0)
+:Sending Touch (ACTION_UP): 0:(823.3569,1562.0295)
+:Sending Touch (ACTION_DOWN): 0:(528.0,548.0)
+:Sending Touch (ACTION_UP): 0:(521.798,538.16156)
+:Sending Touch (ACTION_DOWN): 0:(845.0,316.0)
+:Sending Touch (ACTION_UP): 0:(820.7305,313.25565)
+:Sending Touch (ACTION_DOWN): 0:(792.0,578.0)
+:Sending Touch (ACTION_UP): 0:(792.7416,569.0171)
+    // Rejecting start of Intent { cmp=com.google.android.setupwizard/.predeferred.PreDeferredSetupWizardActivity } in package com.google.android.setupwizard
+:Sending Touch (ACTION_DOWN): 0:(10.0,1331.0)
+:Sending Touch (ACTION_UP): 0:(7.3375072,1324.5834)
+:Sending Touch (ACTION_DOWN): 0:(288.0,493.0)
+:Sending Touch (ACTION_UP): 0:(291.89832,506.88727)
+:Sending Touch (ACTION_DOWN): 0:(354.0,768.0)
+:Sending Touch (ACTION_UP): 0:(371.70682,767.94385)
+:Sending Touch (ACTION_DOWN): 0:(961.0,140.0)
+:Sending Touch (ACTION_UP): 0:(962.06714,132.79955)
+:Sending Touch (ACTION_DOWN): 0:(429.0,82.0)
+:Sending Touch (ACTION_UP): 0:(425.40878,92.19335)
+:Sending Touch (ACTION_DOWN): 0:(1038.0,17.0)
+:Sending Touch (ACTION_UP): 0:(1038.8843,14.047015)
+:Sending Touch (ACTION_DOWN): 0:(559.0,1663.0)
+:Sending Touch (ACTION_UP): 0:(558.75275,1647.8762)
+:Sending Touch (ACTION_DOWN): 0:(646.0,606.0)
+:Sending Touch (ACTION_UP): 0:(652.0484,588.6991)
+:Sending Touch (ACTION_DOWN): 0:(806.0,1468.0)
+:Sending Touch (ACTION_UP): 0:(806.84314,1467.9492)
+:Sending Touch (ACTION_DOWN): 0:(89.0,1649.0)
+:Sending Touch (ACTION_UP): 0:(0.98599815,1711.056)
+:Sending Touch (ACTION_DOWN): 0:(583.0,138.0)
+:Sending Touch (ACTION_UP): 0:(583.37,128.63774)
+:Sending Touch (ACTION_DOWN): 0:(628.0,53.0)
+:Sending Touch (ACTION_UP): 0:(672.26135,5.128231)
+:Sending Touch (ACTION_DOWN): 0:(741.0,1079.0)
+:Sending Touch (ACTION_UP): 0:(753.5098,1074.6616)
+:Sending Touch (ACTION_DOWN): 0:(251.0,208.0)
+:Sending Touch (ACTION_UP): 0:(244.80838,210.66086)
+:Sending Touch (ACTION_DOWN): 0:(74.0,672.0)
+:Sending Touch (ACTION_UP): 0:(79.031334,671.22864)
+    // Rejecting start of Intent { cmp=com.google.android.setupwizard/.predeferred.PreDeferredSetupWizardActivity } in package com.google.android.setupwizard
+:Sending Touch (ACTION_DOWN): 0:(24.0,748.0)
+:Sending Touch (ACTION_UP): 0:(3.478691,746.96655)
+:Sending Touch (ACTION_DOWN): 0:(971.0,1190.0)
+:Sending Touch (ACTION_UP): 0:(971.5411,1200.6876)
+:Sending Touch (ACTION_DOWN): 0:(656.0,346.0)
+:Sending Touch (ACTION_UP): 0:(655.5796,334.54266)
+:Sending Touch (ACTION_DOWN): 0:(675.0,708.0)
+:Sending Touch (ACTION_UP): 0:(669.9658,710.7835)
+    // Rejecting start of Intent { cmp=com.google.android.setupwizard/.predeferred.PreDeferredSetupWizardActivity } in package com.google.android.setupwizard
+:Sending Touch (ACTION_DOWN): 0:(130.0,1539.0)
+:Sending Touch (ACTION_UP): 0:(128.13914,1542.5768)
+:Sending Touch (ACTION_DOWN): 0:(900.0,69.0)
+:Sending Touch (ACTION_UP): 0:(906.6611,76.17637)
+:Sending Touch (ACTION_DOWN): 0:(89.0,279.0)
+:Sending Touch (ACTION_UP): 0:(87.7161,265.0765)
+:Sending Touch (ACTION_DOWN): 0:(269.0,1175.0)
+:Sending Touch (ACTION_UP): 0:(269.31445,1171.75)
+:Sending Touch (ACTION_DOWN): 0:(367.0,1619.0)
+:Sending Touch (ACTION_UP): 0:(363.95032,1597.1334)
+:Sending Touch (ACTION_DOWN): 0:(58.0,121.0)
+    //[calendar_time:2026-11-22 10:17:14.576  system_uptime:2300202]
+    // Sending event #200
+:Sending Touch (ACTION_UP): 0:(4.0070314,48.33273)
+:Sending Touch (ACTION_DOWN): 0:(994.0,458.0)
+:Sending Touch (ACTION_UP): 0:(1002.5676,458.22745)
+:Sending Touch (ACTION_DOWN): 0:(709.0,1035.0)
+:Sending Touch (ACTION_UP): 0:(708.6631,1038.2965)
+:Sending Touch (ACTION_DOWN): 0:(571.0,488.0)
+:Sending Touch (ACTION_UP): 0:(571.25665,490.55795)
+:Sending Touch (ACTION_DOWN): 0:(568.0,613.0)
+:Sending Touch (ACTION_UP): 0:(573.4839,612.4423)
+:Sending Touch (ACTION_DOWN): 0:(574.0,1616.0)
+:Sending Touch (ACTION_UP): 0:(555.6986,1629.8848)
+:Sending Touch (ACTION_DOWN): 0:(256.0,665.0)
+:Sending Touch (ACTION_UP): 0:(284.78723,628.36774)
+:Sending Touch (ACTION_DOWN): 0:(998.0,547.0)
+:Sending Touch (ACTION_UP): 0:(1005.0717,542.0631)
+    // Rejecting start of Intent { cmp=com.google.android.setupwizard/.predeferred.PreDeferredSetupWizardActivity } in package com.google.android.setupwizard
+:Sending Touch (ACTION_DOWN): 0:(874.0,1633.0)
+:Sending Touch (ACTION_UP): 0:(881.61053,1650.1431)
+:Sending Touch (ACTION_DOWN): 0:(441.0,538.0)
+:Sending Touch (ACTION_UP): 0:(457.09476,544.88153)
+:Sending Touch (ACTION_DOWN): 0:(976.0,916.0)
+:Sending Touch (ACTION_UP): 0:(969.3661,920.3169)
+:Sending Touch (ACTION_DOWN): 0:(130.0,657.0)
+:Sending Touch (ACTION_UP): 0:(130.63539,653.0619)
+:Sending Touch (ACTION_DOWN): 0:(176.0,448.0)
+:Sending Touch (ACTION_UP): 0:(173.6683,463.9412)
+:Sending Touch (ACTION_DOWN): 0:(700.0,988.0)
+:Sending Touch (ACTION_UP): 0:(693.5579,999.82477)
+:Sending Touch (ACTION_DOWN): 0:(411.0,285.0)
+:Sending Touch (ACTION_UP): 0:(401.3866,309.84717)
+:Sending Touch (ACTION_DOWN): 0:(799.0,93.0)
+:Sending Touch (ACTION_UP): 0:(814.04895,96.55004)
+:Sending Touch (ACTION_DOWN): 0:(974.0,1012.0)
+:Sending Touch (ACTION_UP): 0:(977.4559,1026.6619)
+    // Rejecting start of Intent { cmp=com.google.android.setupwizard/.predeferred.PreDeferredSetupWizardActivity } in package com.google.android.setupwizard
+:Sending Touch (ACTION_DOWN): 0:(586.0,56.0)
+:Sending Touch (ACTION_UP): 0:(585.2732,50.90152)
+:Sending Touch (ACTION_DOWN): 0:(866.0,43.0)
+:Sending Touch (ACTION_UP): 0:(860.07745,50.232433)
+:Sending Touch (ACTION_DOWN): 0:(1034.0,1780.0)
+:Sending Touch (ACTION_UP): 0:(988.3724,1794.0)
+:Sending Touch (ACTION_DOWN): 0:(566.0,1049.0)
+:Sending Touch (ACTION_UP): 0:(566.20703,1072.7351)
+:Sending Touch (ACTION_DOWN): 0:(1017.0,323.0)
+:Sending Touch (ACTION_UP): 0:(1015.1072,316.47052)
+:Sending Touch (ACTION_DOWN): 0:(256.0,1376.0)
+:Sending Touch (ACTION_UP): 0:(242.06573,1385.6388)
+:Sending Touch (ACTION_DOWN): 0:(656.0,879.0)
+:Sending Touch (ACTION_UP): 0:(677.36084,970.44073)
+:Sending Touch (ACTION_DOWN): 0:(977.0,816.0)
+:Sending Touch (ACTION_UP): 0:(978.48706,819.2493)
+:Sending Touch (ACTION_DOWN): 0:(367.0,1336.0)
+:Sending Touch (ACTION_UP): 0:(318.72586,1369.2555)
+:Sending Touch (ACTION_DOWN): 0:(112.0,575.0)
+:Sending Touch (ACTION_UP): 0:(109.99334,576.5194)
+    // Rejecting start of Intent { cmp=com.google.android.setupwizard/.predeferred.PreDeferredSetupWizardActivity } in package com.google.android.setupwizard
+:Sending Touch (ACTION_DOWN): 0:(853.0,589.0)
+:Sending Touch (ACTION_UP): 0:(854.516,591.0414)
+:Sending Touch (ACTION_DOWN): 0:(148.0,863.0)
+:Sending Touch (ACTION_UP): 0:(156.37064,871.0225)
+:Sending Touch (ACTION_DOWN): 0:(834.0,872.0)
+:Sending Touch (ACTION_UP): 0:(840.8778,860.9071)
+:Sending Touch (ACTION_DOWN): 0:(231.0,214.0)
+:Sending Touch (ACTION_UP): 0:(238.67027,194.99628)
+:Sending Touch (ACTION_DOWN): 0:(578.0,81.0)
+:Sending Touch (ACTION_UP): 0:(586.0921,98.733826)
+:Sending Touch (ACTION_DOWN): 0:(423.0,220.0)
+:Sending Touch (ACTION_UP): 0:(446.40488,213.16849)
+:Sending Touch (ACTION_DOWN): 0:(1074.0,458.0)
+:Sending Touch (ACTION_UP): 0:(1019.5307,472.97235)
+:Sending Touch (ACTION_DOWN): 0:(279.0,148.0)
+:Sending Touch (ACTION_UP): 0:(284.3697,149.4377)
+:Sending Touch (ACTION_DOWN): 0:(674.0,1234.0)
+:Sending Touch (ACTION_UP): 0:(673.16486,1220.8217)
+:Sending Touch (ACTION_DOWN): 0:(717.0,1043.0)
+:Sending Touch (ACTION_UP): 0:(704.8047,1048.666)
+:Sending Touch (ACTION_DOWN): 0:(632.0,1353.0)
+Events injected: 300
+:Sending rotation degree=0, persist=false
+:Dropped: keys=0 pointers=0 trackballs=0 flips=0 rotations=0
+## Network stats: elapsed time=14299ms (0ms mobile, 0ms wifi, 14299ms not connected)
+// Monkey finished

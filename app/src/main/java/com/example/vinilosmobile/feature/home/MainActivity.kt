@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(), AlbumNavigator, ArtistNavigator, Colle
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: HomeViewModel by viewModels()
+    private var albumCreationAvailable = true
     private val createAlbum = registerForActivityResult(CreateAlbumContract()) { album ->
         album?.let(::onAlbumCreated)
     }
@@ -104,7 +105,12 @@ class MainActivity : AppCompatActivity(), AlbumNavigator, ArtistNavigator, Colle
     // Albums can only be created from the catalog tab, as in C-HU01.
     private fun updateAddAlbumButton() {
         binding.addAlbumFab.isVisible = viewModel.selectedRole.value == UserRole.COLLECTOR &&
-            binding.sectionPager.currentItem == 0
+            binding.sectionPager.currentItem == 0 && albumCreationAvailable
+    }
+
+    override fun setAlbumCreationAvailable(available: Boolean) {
+        albumCreationAvailable = available
+        updateAddAlbumButton()
     }
 
     private fun onAlbumCreated(album: CreatedAlbum) {
