@@ -21,7 +21,7 @@ El [recorrido con BackVynils local y un Samsung SM-S948B (API 37)](evidencias/sp
 | HU07 crear álbum | restricción visitante, validación, éxito y actualización, error, cancelar | `CreateAlbumUseCaseTest`, `AlbumValidatorTest`, `AlbumRepositoryImplTest` |
 | HU08 agregar track | restricción visitante, validación, éxito y actualización, error/reintento, cancelar | `CreateTrackUseCaseTest`, `TrackValidatorTest`, `AlbumRepositoryImplTest` |
 
-Los scripts son [`Sprint1EspressoTest.kt`](../app/src/androidTest/java/com/example/vinilosmobile/Sprint1EspressoTest.kt), [`CreateAlbumEspressoTest.kt`](../app/src/androidTest/java/com/example/vinilosmobile/CreateAlbumEspressoTest.kt) y [`FinalSprintEspressoTest.kt`](../app/src/androidTest/java/com/example/vinilosmobile/FinalSprintEspressoTest.kt). La fixture HTTP está en [`FixtureApiInterceptor.kt`](../app/src/androidTest/java/com/example/vinilosmobile/FixtureApiInterceptor.kt). Pasaron **80/80 pruebas JVM** y **32/32 escenarios Espresso** en Pixel 6a emulado (API 33), emulador Android 9 (API 28) y Samsung SM-S948B físico (API 37). Después de los últimos cambios de accesibilidad se repitieron los 32 escenarios en [API 28](evidencias/sprint3/espresso-api28-final-accessibility-emulator.txt) y [API 37](evidencias/sprint3/espresso-api37-final-accessibility-sm-s948b.txt). Respaldos JVM: [`evidencias/sprint3/unit/`](evidencias/sprint3/unit/); [API 33](evidencias/sprint3/espresso-api33-final.xml.txt). En API 37, Espresso 3.7.0 corrigió la incompatibilidad de inyección de eventos de la versión anterior; para dos botones de HU07 se invoca el `performClick` de la vista en esa API tras verificar manualmente el toque físico. Android Lint terminó con **0 errores y 26 advertencias**; [XML](evidencias/sprint3/lint-debug.xml).
+Los scripts son [`Sprint1EspressoTest.kt`](../app/src/androidTest/java/com/example/vinilosmobile/Sprint1EspressoTest.kt), [`CreateAlbumEspressoTest.kt`](../app/src/androidTest/java/com/example/vinilosmobile/CreateAlbumEspressoTest.kt) y [`FinalSprintEspressoTest.kt`](../app/src/androidTest/java/com/example/vinilosmobile/FinalSprintEspressoTest.kt). La fixture HTTP está en [`FixtureApiInterceptor.kt`](../app/src/androidTest/java/com/example/vinilosmobile/FixtureApiInterceptor.kt). Pasaron **80/80 pruebas JVM** y **32/32 escenarios Espresso** en Android 5.0.2 emulado (API 21), Pixel 6a emulado (API 33), emulador Android 9 (API 28) y Samsung SM-S948B físico (API 37). Después de los últimos cambios de accesibilidad se repitieron los 32 escenarios en [API 28](evidencias/sprint3/espresso-api28-final-accessibility-emulator.txt) y [API 37](evidencias/sprint3/espresso-api37-final-accessibility-sm-s948b.txt). Respaldos JVM: [`evidencias/sprint3/unit/`](evidencias/sprint3/unit/); [API 33](evidencias/sprint3/espresso-api33-final.xml.txt). En API 37, Espresso 3.7.0 corrigió la incompatibilidad de inyección de eventos de la versión anterior; para dos botones de HU07 se invoca el `performClick` de la vista en esa API tras verificar manualmente el toque físico. Android Lint terminó con **0 errores y 26 advertencias**; [XML](evidencias/sprint3/lint-debug.xml).
 
 ## Ejecución reproducible
 
@@ -31,7 +31,7 @@ Los scripts son [`Sprint1EspressoTest.kt`](../app/src/androidTest/java/com/examp
 ./gradlew :app:lintDebug --no-configuration-cache
 ```
 
-Para la matriz de Android queda pendiente ejecutar en API 21 (Android L), porque el SDK local solo tiene imágenes desde API 28. Registrar modelo, API, fecha, número de pruebas, fallas, captura o XML. Un resultado en API 28 no demuestra compatibilidad con L.
+La matriz se completó con **Android 5.0.2 (API 21)**: los 32 escenarios Espresso pasaron sobre el emulador `vinilos-ui` con la app instalada desde el APK de Debug. Evidencia en [espresso-api21-sprint3.txt](evidencias/sprint3/espresso-api21-sprint3.txt), con el veredicto `OK (32 tests)`. Con eso la app queda verificada en API 21, 28, 33 y 37, que cubre desde Lollipop hasta la versión más reciente probada.
 
 ## Pruebas de reconocimiento y exploración
 
@@ -44,7 +44,7 @@ La exploración sistemática recorre cada historia con esta matriz, registrando 
 | Formularios HU07/HU08 | campos vacíos, caracteres largos, espacios, duración `7:21`/`7:99`, doble toque, cancelar, giro | Validación, una sola creación y estado posterior |
 | Tamaño y configuración | API 21+, pantalla pequeña, letra grande, modo oscuro si aplica | Sin texto cortado, controles operables |
 
-Se ejecutaron dos sesiones Monkey en API 28 (200 y 300 eventos, semillas registradas); no se registraron crash ni ANR. La primera salió al launcher y la segunda abrió los ajustes rápidos y desconectó la red, por lo que la cobertura es limitada. Véanse la [bitácora de exploración y las evidencias](EXPLORACION_SPRINT3.md). También se registró un recorrido sistemático de HU01–HU08 con API local en el Samsung.
+Se ejecutaron tres sesiones Monkey. Las dos primeras, en API 28 (200 y 300 eventos), salieron al launcher y a los ajustes rápidos, así que su cobertura fue limitada. La tercera se acotó al paquete con `-p com.example.vinilosmobile --pct-syskeys 0` y **600 eventos** sobre API 21 con BackVynils local levantado: recorrió **cinco actividades** —entrada, catálogo, detalle de álbum, detalle de artista y detalle de coleccionista— sin crashes ni ANR. Evidencia en [exploracion-aleatoria-api21-600-eventos.txt](evidencias/sprint3/exploracion-aleatoria-api21-600-eventos.txt). Véanse la [bitácora de exploración y las evidencias](EXPLORACION_SPRINT3.md). También se registró un recorrido sistemático de HU01–HU08 con API local en el Samsung.
 
 Los defectos reproducibles se registran como issues `bug` con versión/commit, dispositivo/API, pasos, esperado, obtenido y evidencia. Un fix se cierra al repetir el escenario fallido y la regresión.
 
@@ -63,7 +63,7 @@ La app reduce trabajo de la interfaz con Retrofit/Room en dispatcher IO, `Recycl
 | Producto | Estado actual |
 |---|---|
 | Unitarias, integración y Espresso con fixtures | 80/80 JVM; 32/32 Espresso en API 28, API 33 y API 37, resultados guardados. Repetir Espresso tras cualquier cambio funcional posterior. |
-| Matriz API 21, intermedio y reciente | API 28, API 33 y API 37 aprobadas; falta API 21 |
+| Matriz API 21, intermedio y reciente | API 21, API 28, API 33 y API 37 aprobadas |
 | API local y recorrido físico | HU01–HU08 verificados en Samsung API 37; [bitácora y capturas](evidencias/sprint3/api-local-sm-s948b.md) |
 | Accesibilidad con Accessibility Scanner | [Reporte](ACCESIBILIDAD_SPRINT3.md) y capturas antes/después; quedan estados alternos, fuente ampliada y revisión manual con TalkBack |
 | Exploración sistemática y aleatoria | [Recorrido local y dos sesiones Monkey](EXPLORACION_SPRINT3.md); las sesiones tocaron áreas del sistema y requieren mayor cobertura dentro de la app |

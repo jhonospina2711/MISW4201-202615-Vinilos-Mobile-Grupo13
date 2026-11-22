@@ -1,0 +1,172 @@
+:Monkey: seed=1796009268120 count=600
+:AllowPackage: com.example.vinilosmobile
+:IncludeCategory: android.intent.category.LAUNCHER
+:IncludeCategory: android.intent.category.MONKEY
+// Event percentages:
+//   0: 14.84375%
+//   1: 9.895833%
+//   2: 1.9791666%
+//   3: 14.84375%
+//   4: -0.0%
+//   5: 24.739582%
+//   6: 14.84375%
+//   7: -0.0%
+//   8: 5.0%
+//   9: 0.9895833%
+//   10: 12.864583%
+:Switch: #Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;launchFlags=0x10200000;component=com.example.vinilosmobile/.feature.entry.EntryActivity;end
+    // Allowing start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.example.vinilosmobile/.feature.entry.EntryActivity } in package com.example.vinilosmobile
+:Sending Flip keyboardOpen=false
+Got IOException performing flipjava.io.IOException: write failed: EINVAL (Invalid argument)
+    // Injection Failed
+:Sending Touch (ACTION_DOWN): 0:(790.0,1658.0)
+:Sending Touch (ACTION_UP): 0:(789.20465,1642.273)
+    // Allowing start of Intent { cmp=com.example.vinilosmobile/.feature.home.MainActivity } in package com.example.vinilosmobile
+    // activityResuming(com.example.vinilosmobile)
+:Sending Touch (ACTION_DOWN): 0:(636.0,234.0)
+:Sending Touch (ACTION_UP): 0:(592.8809,204.30156)
+    // Allowing start of Intent { cmp=com.example.vinilosmobile/.feature.artistdetail.ArtistDetailActivity } in package com.example.vinilosmobile
+    // activityResuming(com.example.vinilosmobile)
+:Sending Touch (ACTION_DOWN): 0:(791.0,1480.0)
+:Sending Touch (ACTION_UP): 0:(782.4706,1488.0299)
+:Sending Trackball (ACTION_MOVE): 0:(0.0,2.0)
+:Switch: #Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;launchFlags=0x10200000;component=com.example.vinilosmobile/.feature.entry.EntryActivity;end
+    // Allowing start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.example.vinilosmobile/.feature.entry.EntryActivity } in package com.example.vinilosmobile
+:Sending Trackball (ACTION_MOVE): 0:(1.0,-5.0)
+:Sending Trackball (ACTION_UP): 0:(0.0,0.0)
+:Sending Touch (ACTION_DOWN): 0:(739.0,1375.0)
+:Sending Touch (ACTION_UP): 0:(750.45294,1378.8188)
+:Sending Touch (ACTION_DOWN): 0:(504.0,866.0)
+:Sending Touch (ACTION_UP): 0:(516.99384,899.12775)
+:Sending Touch (ACTION_DOWN): 0:(1013.0,251.0)
+:Sending Touch (ACTION_UP): 0:(997.9499,221.92569)
+    //[calendar_time:2026-11-22 13:55:30.802  system_uptime:62193]
+    // Sending event #100
+:Sending Touch (ACTION_DOWN): 0:(839.0,836.0)
+:Sending Touch (ACTION_UP): 0:(822.84393,835.38306)
+    // Allowing start of Intent { cmp=com.example.vinilosmobile/.feature.collectordetail.CollectorDetailActivity } in package com.example.vinilosmobile
+    // activityResuming(com.example.vinilosmobile)
+:Sending Touch (ACTION_DOWN): 0:(25.0,1451.0)
+:Sending Touch (ACTION_UP): 0:(41.963512,1440.0231)
+:Sending Touch (ACTION_DOWN): 0:(627.0,1651.0)
+:Sending Touch (ACTION_UP): 0:(627.1499,1662.377)
+:Sending Trackball (ACTION_MOVE): 0:(0.0,-3.0)
+:Sending Trackball (ACTION_MOVE): 0:(3.0,1.0)
+:Sending Trackball (ACTION_MOVE): 0:(-1.0,1.0)
+:Sending Touch (ACTION_DOWN): 0:(100.0,150.0)
+:Sending Touch (ACTION_UP): 0:(101.50301,142.18489)
+:Sending Touch (ACTION_DOWN): 0:(5.0,1647.0)
+:Sending Touch (ACTION_UP): 0:(34.15808,1627.1311)
+:Sending Touch (ACTION_DOWN): 0:(432.0,1275.0)
+:Sending Touch (ACTION_UP): 0:(409.9535,1295.329)
+    // Allowing start of Intent { cmp=com.example.vinilosmobile/.feature.albumdetail.AlbumDetailActivity } in package com.example.vinilosmobile
+:Sending Touch (ACTION_DOWN): 0:(673.0,450.0)
+:Sending Touch (ACTION_UP): 0:(766.40875,464.9839)
+:Sending Touch (ACTION_DOWN): 0:(863.0,345.0)
+:Sending Touch (ACTION_UP): 0:(883.51416,353.17484)
+:Sending Touch (ACTION_DOWN): 0:(571.0,1459.0)
+:Sending Touch (ACTION_UP): 0:(580.9534,1457.7733)
+:Sending Trackball (ACTION_MOVE): 0:(2.0,0.0)
+    //[calendar_time:2026-11-22 13:55:35.306  system_uptime:66695]
+    // Sending event #200
+:Sending Touch (ACTION_DOWN): 0:(502.0,1522.0)
+:Sending Touch (ACTION_UP): 0:(498.83276,1515.5162)
+:Sending Trackball (ACTION_MOVE): 0:(0.0,-4.0)
+:Sending Touch (ACTION_DOWN): 0:(238.0,505.0)
+:Sending Touch (ACTION_UP): 0:(233.55899,499.86356)
+:Sending Touch (ACTION_DOWN): 0:(813.0,8.0)
+:Sending Touch (ACTION_UP): 0:(787.06384,34.13525)
+:Sending Trackball (ACTION_MOVE): 0:(-4.0,0.0)
+:Sending Touch (ACTION_DOWN): 0:(697.0,998.0)
+:Sending Touch (ACTION_UP): 0:(672.1152,988.6921)
+:Sending Touch (ACTION_DOWN): 0:(613.0,1425.0)
+:Sending Touch (ACTION_UP): 0:(633.25977,1476.9446)
+:Sending Trackball (ACTION_MOVE): 0:(4.0,-5.0)
+:Sending Trackball (ACTION_UP): 0:(0.0,0.0)
+    // activityResuming(com.example.vinilosmobile)
+    // Allowing start of Intent { cmp=com.example.vinilosmobile/.feature.artistdetail.ArtistDetailActivity } in package com.example.vinilosmobile
+:Sending Trackball (ACTION_MOVE): 0:(4.0,-4.0)
+    //[calendar_time:2026-11-22 13:55:40.236  system_uptime:71625]
+    // Sending event #300
+:Sending Trackball (ACTION_MOVE): 0:(0.0,-5.0)
+:Sending Trackball (ACTION_UP): 0:(0.0,0.0)
+:Sending Touch (ACTION_DOWN): 0:(55.0,883.0)
+:Sending Touch (ACTION_UP): 0:(56.818233,886.28253)
+:Switch: #Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;launchFlags=0x10200000;component=com.example.vinilosmobile/.feature.entry.EntryActivity;end
+    // Allowing start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.example.vinilosmobile/.feature.entry.EntryActivity } in package com.example.vinilosmobile
+:Sending Trackball (ACTION_MOVE): 0:(2.0,-4.0)
+:Switch: #Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;launchFlags=0x10200000;component=com.example.vinilosmobile/.feature.entry.EntryActivity;end
+    // Allowing start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.example.vinilosmobile/.feature.entry.EntryActivity } in package com.example.vinilosmobile
+:Sending Touch (ACTION_DOWN): 0:(677.0,1587.0)
+:Sending Touch (ACTION_UP): 0:(639.05426,1538.8981)
+    // Rejecting start of Intent { act=android.intent.action.CALL_BUTTON cmp=com.android.dialer/.DialtactsActivity } in package com.android.dialer
+:Sending Touch (ACTION_DOWN): 0:(823.0,203.0)
+:Sending Touch (ACTION_UP): 0:(834.74725,197.97253)
+:Sending Touch (ACTION_DOWN): 0:(968.0,1258.0)
+:Sending Touch (ACTION_UP): 0:(1003.88904,1247.4868)
+    // Allowing start of Intent { cmp=com.example.vinilosmobile/.feature.albumdetail.AlbumDetailActivity } in package com.example.vinilosmobile
+:Sending Touch (ACTION_DOWN): 0:(753.0,1349.0)
+:Sending Touch (ACTION_UP): 0:(745.3942,1363.1656)
+:Sending Trackball (ACTION_MOVE): 0:(-3.0,3.0)
+:Sending Trackball (ACTION_MOVE): 0:(2.0,4.0)
+    // activityResuming(com.example.vinilosmobile)
+:Sending Touch (ACTION_DOWN): 0:(328.0,304.0)
+:Sending Touch (ACTION_UP): 0:(325.85507,350.82538)
+:Sending Touch (ACTION_DOWN): 0:(275.0,450.0)
+:Sending Touch (ACTION_UP): 0:(267.61526,452.0784)
+:Sending Trackball (ACTION_MOVE): 0:(-3.0,-2.0)
+    //[calendar_time:2026-11-22 13:55:45.163  system_uptime:76552]
+    // Sending event #400
+:Sending Touch (ACTION_DOWN): 0:(339.0,900.0)
+:Sending Touch (ACTION_UP): 0:(203.10677,925.96124)
+:Sending Trackball (ACTION_MOVE): 0:(4.0,-2.0)
+:Sending Touch (ACTION_DOWN): 0:(306.0,1071.0)
+:Sending Touch (ACTION_UP): 0:(291.60214,1069.6687)
+    // Allowing start of Intent { cmp=com.example.vinilosmobile/.feature.albumdetail.AlbumDetailActivity } in package com.example.vinilosmobile
+:Sending Touch (ACTION_DOWN): 0:(841.0,808.0)
+:Sending Touch (ACTION_UP): 0:(944.0294,860.73694)
+:Sending Touch (ACTION_DOWN): 0:(7.0,1777.0)
+:Sending Touch (ACTION_UP): 0:(0.0,1779.3602)
+:Sending Trackball (ACTION_MOVE): 0:(-1.0,0.0)
+:Sending Trackball (ACTION_UP): 0:(0.0,0.0)
+    // activityResuming(com.example.vinilosmobile)
+    // activityResuming(com.example.vinilosmobile)
+:Switch: #Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;launchFlags=0x10200000;component=com.example.vinilosmobile/.feature.entry.EntryActivity;end
+    // Allowing start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.example.vinilosmobile/.feature.entry.EntryActivity } in package com.example.vinilosmobile
+:Sending Touch (ACTION_DOWN): 0:(163.0,1150.0)
+:Sending Touch (ACTION_UP): 0:(130.70346,1122.7762)
+    // Allowing start of Intent { cmp=com.example.vinilosmobile/.feature.albumdetail.AlbumDetailActivity } in package com.example.vinilosmobile
+:Sending Trackball (ACTION_MOVE): 0:(4.0,-1.0)
+:Sending Touch (ACTION_DOWN): 0:(145.0,1595.0)
+:Sending Touch (ACTION_UP): 0:(143.42874,1597.327)
+:Sending Touch (ACTION_DOWN): 0:(275.0,1475.0)
+:Sending Touch (ACTION_UP): 0:(263.05838,1475.8475)
+:Sending Touch (ACTION_DOWN): 0:(536.0,328.0)
+    //[calendar_time:2026-11-22 13:55:49.718  system_uptime:81107]
+    // Sending event #500
+:Sending Touch (ACTION_UP): 0:(530.2993,282.6472)
+:Sending Trackball (ACTION_MOVE): 0:(-1.0,-3.0)
+:Sending Trackball (ACTION_MOVE): 0:(0.0,-1.0)
+:Sending Touch (ACTION_DOWN): 0:(64.0,1396.0)
+:Sending Touch (ACTION_UP): 0:(49.240486,1417.8582)
+:Sending Touch (ACTION_DOWN): 0:(1030.0,1062.0)
+:Sending Touch (ACTION_UP): 0:(937.017,985.29614)
+:Sending Touch (ACTION_DOWN): 0:(59.0,1584.0)
+:Sending Touch (ACTION_UP): 0:(54.08356,1588.9098)
+:Sending Touch (ACTION_DOWN): 0:(784.0,392.0)
+:Sending Touch (ACTION_UP): 0:(771.975,382.44873)
+:Sending Trackball (ACTION_MOVE): 0:(-2.0,-2.0)
+:Sending Trackball (ACTION_MOVE): 0:(-4.0,2.0)
+:Sending Touch (ACTION_DOWN): 0:(907.0,200.0)
+:Sending Touch (ACTION_UP): 0:(902.0784,197.25456)
+:Sending Touch (ACTION_DOWN): 0:(113.0,672.0)
+:Sending Touch (ACTION_UP): 0:(176.31827,727.2555)
+:Sending Flip keyboardOpen=true
+Got IOException performing flipjava.io.IOException: write failed: EINVAL (Invalid argument)
+    // Injection Failed
+:Sending Trackball (ACTION_MOVE): 0:(3.0,3.0)
+Events injected: 600
+:Sending rotation degree=0, persist=false
+:Dropped: keys=0 pointers=0 trackballs=0 flips=2 rotations=0
+## Network stats: elapsed time=29567ms (0ms mobile, 0ms wifi, 29567ms not connected)
+// Monkey finished
