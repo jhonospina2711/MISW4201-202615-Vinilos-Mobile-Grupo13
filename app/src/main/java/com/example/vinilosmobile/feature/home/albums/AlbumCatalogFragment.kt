@@ -43,6 +43,9 @@ class AlbumCatalogFragment : Fragment() {
     }
 
     private fun render(state: AlbumCatalogUiState) {
+        (requireActivity() as AlbumNavigator).setAlbumCreationAvailable(
+            state !is AlbumCatalogUiState.Error && state != AlbumCatalogUiState.Cancelled,
+        )
         binding.catalogLoading.isVisible = state is AlbumCatalogUiState.Loading
         binding.albumGrid.isVisible = state is AlbumCatalogUiState.Content
         binding.albumCount.isVisible = state is AlbumCatalogUiState.Content
