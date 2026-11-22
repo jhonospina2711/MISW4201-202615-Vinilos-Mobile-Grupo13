@@ -319,7 +319,7 @@
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="/Users/davidcombita/Documents/GitHub/MISW4201-202615-Vinilos-Mobile-Grupo13/app/src/main/res/values/strings.xml"
-            line="6"
+            line="12"
             column="5"/>
     </issue>
 
@@ -419,7 +419,7 @@
         errorLine2="                     ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="/Users/davidcombita/Documents/GitHub/MISW4201-202615-Vinilos-Mobile-Grupo13/app/src/main/java/com/example/vinilosmobile/coreui/molecules/SectionHeaderView.kt"
-            line="27"
+            line="29"
             column="22"/>
     </issue>
 

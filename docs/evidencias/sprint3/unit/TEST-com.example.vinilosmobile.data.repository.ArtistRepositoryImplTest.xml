@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-22T01:10:30.076Z" hostname="dscombita.local" time="0.091">
+<testsuite name="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-22T15:03:55.301Z" hostname="dscombita.local" time="0.278">
   <properties/>
-  <testcase name="listsArtistsFromAdapter" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.037"/>
-  <testcase name="timeoutBecomesTypedFailure" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.007"/>
-  <testcase name="independentCancellationIsNotConvertedToNetworkFailure" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.007"/>
-  <testcase name="retrievesDetailWithTypeAndId" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.03"/>
-  <testcase name="missingArtistKeepsNotFoundMeaning" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.009"/>
+  <testcase name="listsArtistsFromAdapter" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.149"/>
+  <testcase name="timeoutBecomesTypedFailure" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.017"/>
+  <testcase name="independentCancellationIsNotConvertedToNetworkFailure" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.042"/>
+  <testcase name="retrievesDetailWithTypeAndId" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.057"/>
+  <testcase name="missingArtistKeepsNotFoundMeaning" classname="com.example.vinilosmobile.data.repository.ArtistRepositoryImplTest" time="0.012"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -9,7 +9,6 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.action.ViewActions.scrollTo
-import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
@@ -142,8 +141,8 @@ class FinalSprintEspressoTest {
             onView(withId(R.id.durationInput)).perform(replaceText(" 7:21 "), closeSoftKeyboard())
             onView(withId(R.id.saveButton)).perform(click())
             waitFor(allOf(withId(R.id.trackList), hasDescendant(withText("Pedro Navaja"))))
-            onView(withId(R.id.detailContent)).perform(swipeUp())
-            waitFor(allOf(withText("Pedro Navaja"), isCompletelyDisplayed()))
+            onView(withText("Pedro Navaja")).perform(scrollTo())
+            onView(withText("Pedro Navaja")).check(matches(isCompletelyDisplayed()))
             val sent = JsonParser.parseString(fixtures.sentTrack).asJsonObject
             assertEquals("Pedro Navaja", sent["name"].asString)
             assertEquals("7:21", sent["duration"].asString)

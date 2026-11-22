@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.vinilosmobile.domain.usecase.CreateTrackUseCaseTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-22T01:10:30.419Z" hostname="dscombita.local" time="0.046">
+<testsuite name="com.example.vinilosmobile.domain.usecase.CreateTrackUseCaseTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-22T15:03:56.077Z" hostname="dscombita.local" time="0.064">
   <properties/>
-  <testcase name="validTrackReturnsCreatedTrack" classname="com.example.vinilosmobile.domain.usecase.CreateTrackUseCaseTest" time="0.024"/>
-  <testcase name="missingAlbumAndNetworkFailureHaveDistinctResults" classname="com.example.vinilosmobile.domain.usecase.CreateTrackUseCaseTest" time="0.015"/>
-  <testcase name="invalidDataNeverPosts" classname="com.example.vinilosmobile.domain.usecase.CreateTrackUseCaseTest" time="0.007"/>
+  <testcase name="validTrackReturnsCreatedTrack" classname="com.example.vinilosmobile.domain.usecase.CreateTrackUseCaseTest" time="0.041"/>
+  <testcase name="missingAlbumAndNetworkFailureHaveDistinctResults" classname="com.example.vinilosmobile.domain.usecase.CreateTrackUseCaseTest" time="0.012"/>
+  <testcase name="invalidDataNeverPosts" classname="com.example.vinilosmobile.domain.usecase.CreateTrackUseCaseTest" time="0.011"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

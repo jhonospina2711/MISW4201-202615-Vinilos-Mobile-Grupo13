@@ -1,0 +1,76 @@
+Applications Memory Usage (in Kilobytes):
+Uptime: 257560836 Realtime: 600573594
+
+** MEMINFO in pid 2132 [com.example.vinilosmobile] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap    21716    21712        0       10    24552    32088    24111     4275
+  Dalvik Heap     8470     5440     2736        6    12712    31103     6527    24576
+ Dalvik Other    11368     4288        0        0    18924                           
+        Stack     2144     2144        0        0     2152                           
+       Ashmem        5        0        0        0      604                           
+      Gfx dev     4132     4132        0        0     4136                           
+    Other dev       19        0       12        0     1152                           
+     .so mmap     2459      620      560        0    45488                           
+    .jar mmap     1795        0      472        0    49212                           
+    .apk mmap      243        0       20        0     2888                           
+    .ttf mmap      105        0        0        0      712                           
+    .dex mmap    18038    18036        0        0    18840                           
+    .oat mmap        8        0        0        0     1412                           
+    .art mmap     8424     8200       76        3    23548                           
+   Other mmap     3860        4       32        0     8772                           
+   EGL mtrack    40288    40288        0        0    40288                           
+    GL mtrack    32412    32412        0        0    32412                           
+      Unknown      920      868       48        3     2092                           
+        TOTAL   156428   138144     3956       22   289896    63191    30638    28851
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    13716                          36260
+         Native Heap:    21712                          24552
+                Code:    20172                         133164
+               Stack:     2144                           2152
+            Graphics:    76832                          76836
+       Private Other:     7524
+              System:    14328
+             Unknown:                                   16932
+ 
+           TOTAL PSS:   156428            TOTAL RSS:   289896       TOTAL SWAP PSS:       22
+ 
+ Objects
+               Views:      147         ViewRootImpl:        1
+         AppContexts:        5           Activities:        1
+              Assets:       36        AssetManagers:        0
+       Local Binders:       21        Proxy Binders:       71
+       Parcel memory:        8         Parcel count:       34
+    Death Recipients:        0             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     2239                            212
+ Other (nonmalloced):       95                             70
+   Bitmap (malloced):        8                           3848
+ 
+ Mapped Bitmaps
+                         Count                       Size(KB)
+                        ------                         ------
+              Mapped:        0                              0
+              Unique:        0                              0
+ 
+ SQL
+         MEMORY_USED:      170
+  PAGECACHE_OVERFLOW:       45          MALLOC_SIZE:       46
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4       20             41     7    43     4  /data/user/0/com.example.vinilosmobile/databases/vinilos.db
+         4        8                    0     0     0    (attached) temp
+         4       20             49     3    18     3  /data/user/0/com.example.vinilosmobile/databases/vinilos.db (1)
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+             10            65             7  /data/user/0/com.example.vinilosmobile/databases/vinilos.db
+ 

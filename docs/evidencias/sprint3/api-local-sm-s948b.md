@@ -29,8 +29,9 @@ El script es de solo lectura salvo que se indique `--create-track`; esa opción 
 3. Al seleccionar Manolo, HU06 mostró teléfono, correo, favorito, álbum y comentario. [Captura del detalle](hu06-api-local-sm-s948b.png).
 4. Con rol Visitante, el álbum no mostró «Agregar track». Al elegir Coleccionista, sí lo mostró.
 5. En HU08 se ingresó `VinilosMovilQA` y `03:24`; la app cerró el formulario tras guardar. La lista pasó a cuatro filas y mostró el nuevo track. [Captura de HU08](hu08-api-local-sm-s948b.png).
+6. En HU07 se creó `VinilosQA37` desde el formulario de la app. El catálogo pasó de cuatro a cinco álbumes y el detalle mostró su fecha, género y sello. `GET /albums/1` confirmó el registro en BackVynils local. [Captura del detalle creado](hu07-api-local-sm-s948b.png).
 
-Durante la primera ejecución, el contador marcó cuatro, pero el detalle solo dibujó las dos filas iniciales. Se corrigió el contenedor del detalle a `NestedScrollView` y se solicitó una nueva medición de la lista tras `submitList`. La repetición en el mismo teléfono mostró las cuatro filas, incluidas las dos creadas para prueba. El problema y su corrección se documentan para la regresión del PR.
+Durante la primera ejecución, el contador marcó cuatro, pero el detalle solo dibujó las dos filas iniciales. Se corrigió el contenedor del detalle a `NestedScrollView` y se solicitó una nueva medición de la lista tras `submitList`. La repetición en el mismo teléfono mostró las cuatro filas, incluidas las dos creadas para prueba. El defecto quedó registrado en el [issue #107](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/107) y la regresión Espresso pasó 32/32 en API 33 y API 37.
 
 ## Límites de esta evidencia
 

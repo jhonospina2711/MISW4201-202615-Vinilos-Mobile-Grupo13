@@ -1,4 +1,10 @@
 <resources>
+    <string name="section_item_count_a11y">Elementos en %1$s: %2$d</string>
+    <string name="collectors_catalog_accessibility_title">Listado de coleccionistas</string>
+    <string name="artists_catalog_accessibility_title">Listado de artistas</string>
+    <string name="artist_album_total">Total de álbumes</string>
+    <string name="album_choose_genre">Elegir género</string>
+    <string name="album_choose_record_label">Elegir sello discográfico</string>
     <string name="app_name">Vinilos</string>
     <string name="nav_albums">Álbumes</string>
     <string name="nav_artists">Artistas</string>

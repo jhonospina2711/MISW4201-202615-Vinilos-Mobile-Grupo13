@@ -24,7 +24,7 @@ class ArtistAvatarView @JvmOverloads constructor(
     private var bindingVersion = 0
 
     init {
-        setCardBackgroundColor(ContextCompat.getColor(context, R.color.vinilos_cover_three))
+        setCardBackgroundColor(ContextCompat.getColor(context, R.color.vinilos_on_surface_variant))
         cardElevation = 0f
         portrait.scaleType = ImageView.ScaleType.CENTER_INSIDE
         addView(portrait, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
@@ -71,7 +71,7 @@ class ArtistAvatarView @JvmOverloads constructor(
         val inset = (width * 0.27f).toInt()
         portrait.setPadding(inset, inset, inset, inset)
         portrait.imageTintList = ColorStateList.valueOf(
-            ContextCompat.getColor(context, R.color.vinilos_on_surface_variant),
+            ContextCompat.getColor(context, R.color.vinilos_background),
         )
         portrait.scaleType = ImageView.ScaleType.CENTER_INSIDE
         portrait.setImageResource(icon)

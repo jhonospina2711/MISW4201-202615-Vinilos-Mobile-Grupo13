@@ -35,6 +35,7 @@ class CollectorsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         ViewCompat.setAccessibilityHeading(binding.collectorTitle, true)
+        binding.collectorTitle.contentDescription = getString(R.string.collectors_catalog_accessibility_title)
         binding.collectorList.layoutManager = LinearLayoutManager(requireContext())
         binding.collectorList.adapter = collectorAdapter
         viewModel.state.observe(viewLifecycleOwner, ::render)
