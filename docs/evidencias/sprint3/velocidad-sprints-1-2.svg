@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Velocidad de los sprints 1 y 2</title>
+  <desc id="desc">Historias terminadas: Sprint 1, 14 PHU; Sprint 2, 5 PHU. El Sprint 2 había planeado 18 PHU.</desc>
+  <rect width="640" height="360" fill="#141218"/>
+  <text x="32" y="44" fill="#E6E0E9" font-family="Arial, sans-serif" font-size="23" font-weight="bold">Velocidad del equipo · PHU terminados</text>
+  <line x1="88" y1="278" x2="598" y2="278" stroke="#CAC4D0" stroke-width="2"/>
+  <line x1="88" y1="72" x2="88" y2="278" stroke="#CAC4D0" stroke-width="2"/>
+  <g fill="#CAC4D0" font-family="Arial, sans-serif" font-size="14" text-anchor="end">
+    <text x="76" y="283">0</text><text x="76" y="231">5</text><text x="76" y="180">10</text><text x="76" y="129">15</text><text x="76" y="77">20</text>
+  </g>
+  <g stroke="#49454F" stroke-dasharray="4 5">
+    <line x1="89" y1="226" x2="598" y2="226"/><line x1="89" y1="175" x2="598" y2="175"/><line x1="89" y1="123" x2="598" y2="123"/><line x1="89" y1="72" x2="598" y2="72"/>
+  </g>
+  <rect x="164" y="134" width="118" height="144" rx="8" fill="#D0BCFF"/>
+  <rect x="402" y="226" width="118" height="52" rx="8" fill="#D0BCFF"/>
+  <g fill="#141218" font-family="Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle">
+    <text x="223" y="167">14</text><text x="461" y="259">5</text>
+  </g>
+  <g fill="#E6E0E9" font-family="Arial, sans-serif" font-size="18" text-anchor="middle">
+    <text x="223" y="309">Sprint 1</text><text x="461" y="309">Sprint 2</text>
+  </g>
+  <text x="320" y="342" fill="#CAC4D0" font-family="Arial, sans-serif" font-size="14" text-anchor="middle">Sprint 2: 18 PHU planeados · 5 terminados · 13 trasladados</text>
+</svg>
