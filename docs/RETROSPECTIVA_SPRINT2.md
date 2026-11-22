@@ -14,6 +14,8 @@
 
 ![Gráfica de trabajo restante del Sprint 2](evidencias/sprint3/burndown-sprint2.svg)
 
+![Velocidad completada en Sprints 1 y 2: 14 y 5 PHU](evidencias/sprint3/velocidad-sprints-1-2.svg)
+
 La velocidad real fue **5 PHU**, frente a 18 comprometidos: diferencia de **−13 PHU** y cumplimiento por puntos de **27,8 %**. La gráfica utiliza el cierre de HU07 del 8 de noviembre; los puntos de una historia se descuentan solo al estar terminada, no por trabajo parcial. El avance puede haber existido en ramas o tareas, pero no equivale a una historia aceptada en `main` al cierre. La velocidad del Sprint 1 fue 14 PHU; esta diferencia no implica por sí sola que el equipo trabajara menos horas, porque los puntos miden historias terminadas y hubo trabajo transversal de rendimiento, pruebas y documentación.
 
 ## Lectura del proceso

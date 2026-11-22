@@ -23,6 +23,8 @@ El recorrido de Scanner añadió captura de catálogo, detalle de álbum, hoja d
 
 En el emulador API 28 se ejecutó `adb shell monkey -p com.example.vinilosmobile -s 20261122 --throttle 250 -v 200`. El [registro íntegro](evidencias/sprint3/monkey-api28-seed20261122.txt) muestra **200 eventos inyectados**, sin mensaje de crash ni ANR y con cierre normal de Monkey. El [estado final](evidencias/sprint3/monkey-api28-final.png) fue el launcher Android; algunos eventos salieron de la app. Por ello, esta corrida confirma que no hubo un fallo detectado durante esos eventos, pero **no demuestra cobertura aleatoria de todas las historias**. La semilla permite repetirla.
 
+Se hizo una segunda corrida de **300 eventos** con semilla `2026112202`, 80 % toques y 20 % gestos, sin teclas de sistema ni cambio de aplicación configurados. El [log](evidencias/sprint3/monkey-api28-seed2026112202.txt) terminó normalmente sin crash ni ANR. La [captura final](evidencias/sprint3/monkey-api28-seed2026112202-final.png) muestra Vinilos en estado de error de conexión, con la cortina de ajustes rápidos abierta: los toques llegaron al área del sistema y activaron el modo avión. Se restauró la conectividad al terminar. Esta corrida ejercitó una pérdida inesperada de red sin cierre de la app, pero tampoco permite atribuir cobertura completa de HU01–HU08.
+
 ## Defectos y límites
 
 - [Issue #107](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/107): tracks creados no visibles por altura antigua; corregido y repetido en Samsung/fixtures.

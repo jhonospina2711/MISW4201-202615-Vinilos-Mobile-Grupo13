@@ -4,7 +4,7 @@ Aplicación móvil Android de **Vinilos**, desarrollada en Kotlin para el proyec
 
 La aplicación implementa las ocho historias del MVP: catálogo y detalle de álbumes, listado y detalle de artistas y coleccionistas, creación de álbumes y asociación de tracks. La selección de rol Visitante/Coleccionista controla las acciones de escritura.
 
-> **Estado de la rama `feature/sprint-3-final`:** HU01–HU08 implementadas. En Android 13 (API 33) pasaron 80 pruebas JVM y 32 escenarios Espresso; Lint terminó sin errores. La matriz final desde API 21, Accessibility Scanner, exploración y perfilamiento físico están descritos como trabajo de cierre en la [estrategia de pruebas](docs/PRUEBAS_SPRINT3.md). La [arquitectura del MVP](docs/ARQUITECTURA_SPRINT3.md) y la [retrospectiva del Sprint 2](docs/RETROSPECTIVA_SPRINT2.md) están disponibles para revisión del equipo. Esta rama todavía debe integrarse por PR y promoverse a `main` antes de etiquetar el release.
+> **Estado de Sprint 3:** HU01–HU08 están integradas en `develop` mediante [PR #105](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/pull/105). Pasaron 80 pruebas JVM y 32 escenarios Espresso en API 28, 33 y 37; Lint terminó sin errores. Hay [reporte de Accessibility Scanner](docs/ACCESIBILIDAD_SPRINT3.md), [exploración](docs/EXPLORACION_SPRINT3.md) y [perfilamiento físico](docs/PERFILAMIENTO_SPRINT3.md). Faltan la comprobación en API 21, revisión manual con TalkBack y más dispositivos físicos, además de promover a `main` y etiquetar el release.
 
 Al abrir por primera vez, la app permite elegir Visitante o Coleccionista y guarda la selección con DataStore. Las siguientes aperturas entran directamente a Inicio. La arquitectura de ese flujo está descrita en [docs/ACCESO.md](docs/ACCESO.md).
 
@@ -54,6 +54,7 @@ No se necesita instalar Gradle ni Kotlin aparte: el proyecto usa el *wrapper* in
 | Ejecutar las 32 pruebas Espresso (requiere dispositivo o emulador) | `./gradlew :app:connectedDebugAndroidTest --no-configuration-cache` |
 | Analizar con Android Lint | `./gradlew :app:lintDebug --no-configuration-cache` |
 | Comprobar la API Docker de HU01–HU04 | `python3 scripts/smoke_sprint1_api.py` |
+| Comprobar la API Docker de HU01–HU08 | `python3 scripts/smoke_sprint3_api.py` |
 | Limpiar los artefactos de compilación | `./gradlew clean` |
 
 En Windows usa `gradlew.bat` en lugar de `./gradlew`.
@@ -63,7 +64,7 @@ El APK Release queda en `app/build/outputs/apk/release/app-release.apk`, con R8 
 
 ### APK listo para instalar
 
-Los APK de entregas anteriores están versionados en el repositorio. El de Sprint 3 se publica tras integrar y etiquetar la versión final en `main`:
+Los APK candidatos del Sprint 3 están versionados en el repositorio. Se consideran release solo cuando el código correspondiente quede en `main` y tenga el tag de la entrega:
 
 | Archivo | Cuándo usarlo |
 |---|---|
@@ -86,10 +87,10 @@ La diferencia se explica en [`releases/sprint-2/LEEME.md`](releases/sprint-2/LEE
 Instalación directa:
 
 ```bash
-adb install releases/sprint-2/vinilos-sprint2-release.apk
+adb install releases/sprint-3/vinilos-sprint3-release.apk
 ```
 
-El SHA-256, las advertencias de firma y los defectos conocidos están en [`releases/sprint-1/LEEME.md`](releases/sprint-1/LEEME.md).
+El SHA-256 del Sprint 3 y sus limitaciones están en [`releases/sprint-3/LEEME.md`](releases/sprint-3/LEEME.md).
 
 ## 4. Estructura del proyecto
 

@@ -68,12 +68,15 @@ class Sprint1EspressoTest {
 
     @Test fun hu01_serverErrorCanRetry() {
         fixtures.responseCodes["/albums"] = 500
+        (roleRepository as FakeUserRoleRepository).run { kotlinx.coroutines.runBlocking { setRole(UserRole.COLLECTOR) } }
         ActivityScenario.launch(MainActivity::class.java).use {
             waitForVisible(allOf(withId(R.id.contentStateTitle), withText(R.string.catalog_error_title)))
+            onView(withId(R.id.addAlbumFab)).check(matches(not(isDisplayed())))
             fixtures.responseCodes.remove("/albums")
             onView(allOf(withId(R.id.contentStateAction), isDescendantOfA(withId(R.id.catalogMessage))))
                 .perform(click())
             waitForVisible(allOf(withId(R.id.albumTitle), withText("Buscando América")))
+            onView(withId(R.id.addAlbumFab)).check(matches(isDisplayed()))
         }
     }
 
