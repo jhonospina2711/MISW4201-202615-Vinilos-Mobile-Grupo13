@@ -122,7 +122,9 @@ class AlbumDetailActivity : AppCompatActivity() {
         binding.tracksHeader.show(R.string.album_tracks, tracks.size)
         trackAdapter.submitList(tracks.mapIndexed { index, track ->
             DetailRowUiModel(track.id, (index + 1).toString(), track.name, trailing = track.duration)
-        })
+        }) {
+            binding.trackList.requestLayout()
+        }
         binding.tracksEmpty.isVisible = tracks.isEmpty()
         binding.tracksEmpty.setText(
             if (album.tracks == null) R.string.related_data_unavailable else R.string.album_no_tracks,

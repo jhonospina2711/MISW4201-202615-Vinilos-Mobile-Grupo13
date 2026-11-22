@@ -6,6 +6,8 @@ El objetivo es verificar las ocho historias HU01–HU08 del MVP, las tres histor
 
 Las fixtures Espresso sustituyen la respuesta HTTP, pero recorren Retrofit, DTO, repositorio, caso de uso, ViewModel, Activity/Fragment y los recursos de interfaz reales. Los tests no escriben en el backend compartido. La verificación contra BackVynils local y en dispositivos físicos es una etapa adicional, no está sustituida por la fixture.
 
+El [recorrido con BackVynils local y un Samsung SM-S948B (API 37)](evidencias/sprint3/api-local-sm-s948b.md) verificó datos reales para HU01–HU06, la restricción de HU08 por rol y un POST de track desde la app. Incluye capturas y el [smoke test HTTP](../scripts/smoke_sprint3_api.py). La lista de tracks se corrigió después de observar un contador actualizado con filas recortadas.
+
 ## Inventario automatizado
 
 | HU | Escenarios Espresso | Pruebas JVM específicas o compartidas |
@@ -62,6 +64,7 @@ La app reduce trabajo de la interfaz con Retrofit/Room en dispatcher IO, `Recycl
 |---|---|
 | Unitarias, integración y Espresso con fixtures | 80/80 JVM y 32/32 Espresso en API 33; XML guardados. Repetir Espresso tras cualquier cambio funcional posterior. |
 | Matriz API 21, intermedio y reciente | Pendiente de ejecutar en cada dispositivo |
+| API local y recorrido físico | HU01–HU06 y HU08 verificados en Samsung API 37; [bitácora y capturas](evidencias/sprint3/api-local-sm-s948b.md) |
 | Accesibilidad con Accessibility Scanner | Pendiente de instalar/ejecutar y guardar capturas |
 | Exploración sistemática y aleatoria | Guion definido; falta bitácora de ejecución |
 | Perfilamiento de HU01–HU08 en tres físicos | Pendiente de dispositivos y mediciones |

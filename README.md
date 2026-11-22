@@ -167,9 +167,12 @@ docker compose -f docs/backvynils-compose.local.yml up -d --build
 
 # 3. Comprobar que responde
 curl http://localhost:3000/albums
+python3 scripts/smoke_sprint1_api.py
+python3 scripts/smoke_sprint3_api.py
 ```
 
 El paso 3 debe devolver `HTTP 200` con cuatro álbumes de ejemplo. La base se crea y se siembra sola con la migración `DataSetup` del backend.
+Los smoke tests comprueban HU01–HU06 y la lectura de tracks de HU08. Para probar también el POST de HU08 **solo en esta base local de desarrollo**, ejecutar `python3 scripts/smoke_sprint3_api.py --create-track`; deja un track de prueba en el volumen Docker. El [recorrido real en un Samsung Android 17](docs/evidencias/sprint3/api-local-sm-s948b.md) incluye capturas de HU05, HU06 y HU08.
 
 | Acción | Comando |
 |---|---|
