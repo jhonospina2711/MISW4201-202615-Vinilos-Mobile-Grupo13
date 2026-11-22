@@ -4,6 +4,8 @@ import com.example.vinilosmobile.domain.models.Album
 import com.example.vinilosmobile.domain.models.AlbumCatalog
 import com.example.vinilosmobile.domain.models.DataResult
 import com.example.vinilosmobile.domain.models.NewAlbum
+import com.example.vinilosmobile.domain.models.NewTrack
+import com.example.vinilosmobile.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 
 interface AlbumRepository {
@@ -12,4 +14,6 @@ interface AlbumRepository {
 
     /** Throws [com.example.vinilosmobile.domain.models.RequestFailure] if the API does not create it. */
     suspend fun createAlbum(album: NewAlbum): Album
+
+    suspend fun addTrack(albumId: Long, track: NewTrack): Track
 }
