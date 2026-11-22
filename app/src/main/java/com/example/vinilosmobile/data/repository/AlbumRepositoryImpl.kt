@@ -13,6 +13,8 @@ import com.example.vinilosmobile.domain.models.AlbumSource
 import com.example.vinilosmobile.domain.models.DataError
 import com.example.vinilosmobile.domain.models.DataResult
 import com.example.vinilosmobile.domain.models.NewAlbum
+import com.example.vinilosmobile.domain.models.NewTrack
+import com.example.vinilosmobile.domain.models.Track
 import com.example.vinilosmobile.domain.models.RequestFailure
 import com.example.vinilosmobile.domain.models.RequestFailureKind
 import com.example.vinilosmobile.domain.repository.AlbumNotFoundException
@@ -134,5 +136,21 @@ class AlbumRepositoryImpl @Inject constructor(
             // The album already exists in the API; the next catalog refresh will cache it.
         }
         newAlbum
+    }
+
+    override suspend fun addTrack(albumId: Long, track: NewTrack): Track = withContext(ioDispatcher) {
+        val response = try {
+            service.addTrack(albumId, track.toDto())
+        } catch (exception: CancellationException) {
+            throw exception
+        } catch (exception: HttpException) {
+            if (exception.code() == 404) throw AlbumNotFoundException()
+            throw errorMapper.map(exception)
+        } catch (exception: Exception) {
+            throw errorMapper.map(exception)
+        }
+        response.toDomain() ?: throw RequestFailure(
+            RequestFailureKind.UNKNOWN, IllegalStateException("Track without id or name"),
+        )
     }
 }

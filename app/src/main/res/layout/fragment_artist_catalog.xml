@@ -6,12 +6,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/artistCatalogTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/vinilos_space_md"
         android:layout_marginTop="@dimen/vinilos_space_lg"
         android:layout_marginEnd="@dimen/vinilos_space_md"
         android:text="@string/nav_artists"
+        android:contentDescription="@string/artists_catalog_accessibility_title"
         android:textAppearance="?attr/textAppearanceHeadlineMedium" />
 
     <com.google.android.material.chip.ChipGroup

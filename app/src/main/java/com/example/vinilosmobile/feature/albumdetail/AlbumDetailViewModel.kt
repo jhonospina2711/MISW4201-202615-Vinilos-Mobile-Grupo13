@@ -10,6 +10,7 @@ import com.example.vinilosmobile.domain.models.RequestFailureKind
 import com.example.vinilosmobile.domain.usecase.GetAlbumUseCase
 import com.example.vinilosmobile.domain.usecase.GetUserRoleUseCase
 import com.example.vinilosmobile.domain.models.UserRole
+import com.example.vinilosmobile.domain.models.Track
 import com.example.vinilosmobile.domain.models.DataError
 import com.example.vinilosmobile.domain.models.DataResult
 import com.example.vinilosmobile.feature.albumdetail.models.AlbumDetailUiState
@@ -29,6 +30,7 @@ class AlbumDetailViewModel @Inject constructor(
     private val _selectedRole = MutableLiveData<UserRole?>()
     val selectedRole: LiveData<UserRole?> = _selectedRole
     private var activeRequest = false
+    private val addedTracks = linkedMapOf<Long, Track>()
 
     init {
         viewModelScope.launch {
@@ -55,7 +57,15 @@ class AlbumDetailViewModel @Inject constructor(
                 getAlbum(id).collect { result ->
                     when (result) {
                         DataResult.Loading -> _state.value = AlbumDetailUiState.Loading
-                        is DataResult.Success -> _state.value = AlbumDetailUiState.Content(result.value)
+                        is DataResult.Success -> {
+                            val album = result.value
+                            val mergedTracks = album.tracks.orEmpty() + addedTracks.values.filter { added ->
+                                album.tracks.orEmpty().none { it.id == added.id }
+                            }
+                            _state.value = AlbumDetailUiState.Content(
+                                if (addedTracks.isEmpty()) album else album.copy(tracks = mergedTracks),
+                            )
+                        }
                         is DataResult.Error -> when (val reason = result.reason) {
                             DataError.NotFound -> _state.value = AlbumDetailUiState.NotFound
                             is DataError.Request -> if (_state.value !is AlbumDetailUiState.Content) {
@@ -79,6 +89,13 @@ class AlbumDetailViewModel @Inject constructor(
                 activeRequest = false
             }
         }
+    }
+
+    fun trackAdded(track: Track) {
+        val current = (_state.value as? AlbumDetailUiState.Content)?.album ?: return
+        if (current.tracks.orEmpty().any { it.id == track.id }) return
+        addedTracks[track.id] = track
+        _state.value = AlbumDetailUiState.Content(current.copy(tracks = current.tracks.orEmpty() + track))
     }
 
 }

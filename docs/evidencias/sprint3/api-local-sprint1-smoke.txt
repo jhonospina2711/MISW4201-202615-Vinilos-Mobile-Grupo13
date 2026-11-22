@@ -1,0 +1,4 @@
+PASS HU01 GET /albums (4 registros)
+PASS HU02 GET /albums/100 (tracks: 4)
+PASS HU03 GET /musicians y GET /bands
+PASS HU04 detalle de músico, banda y catálogo de premios

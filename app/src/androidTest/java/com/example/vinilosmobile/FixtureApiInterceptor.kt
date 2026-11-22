@@ -17,11 +17,15 @@ class FixtureApiInterceptor : Interceptor {
     val requestedPaths: MutableList<String> = Collections.synchronizedList(mutableListOf())
     @Volatile var emptyAlbums = false
     @Volatile var emptyArtists = false
+    @Volatile var emptyCollectors = false
     @Volatile var albumWithoutTracks = false
+    @Volatile var collectorWithoutRelations = false
 
     /** JSON body of the last POST /albums, as the app sent it. */
     @Volatile var sentAlbum: String? = null
+    @Volatile var sentTrack: String? = null
     @Volatile private var createdAlbum: String? = null
+    @Volatile private var createdTrack: String? = null
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
@@ -31,20 +35,25 @@ class FixtureApiInterceptor : Interceptor {
         requestedPaths.add(key)
         val code = responseCodes[key] ?: when (key) {
             "/albums", "/albums/100", "/musicians", "/bands", "/musicians/100",
-            "/bands/101", "/performerprizes", "POST /albums" -> 200
+            "/bands/101", "/performerprizes", "POST /albums", "/collectors",
+            "/collectors/100", "/collectors/100/albums", "POST /albums/100/tracks" -> 200
             "/albums/$CREATED_ALBUM_ID" -> if (createdAlbum != null) 200 else 404
             else -> 404
         }
         val body = if (code == 200) when (key) {
             "/albums" -> albums()
             "POST /albums" -> createAlbum(request)
+            "POST /albums/100/tracks" -> createTrack(request)
             "/albums/$CREATED_ALBUM_ID" -> createdAlbumDetail()
-            "/albums/100" -> if (albumWithoutTracks) ALBUM_WITHOUT_TRACKS else ALBUM_DETAIL
+            "/albums/100" -> albumDetail()
             "/musicians" -> if (emptyArtists) "[]" else MUSICIANS
             "/bands" -> if (emptyArtists) "[]" else BANDS
             "/musicians/100" -> MUSICIAN_DETAIL
             "/bands/101" -> BAND_DETAIL
             "/performerprizes" -> PRIZES
+            "/collectors" -> if (emptyCollectors) "[]" else COLLECTORS
+            "/collectors/100" -> if (collectorWithoutRelations) COLLECTOR_EMPTY else COLLECTOR_DETAIL
+            "/collectors/100/albums" -> if (collectorWithoutRelations) "[]" else COLLECTOR_ALBUMS
             else -> "{}"
         } else "{}"
         return Response.Builder()
@@ -77,8 +86,24 @@ class FixtureApiInterceptor : Interceptor {
             add("performers", JsonParser.parseString("[]"))
         }.toString()
 
+    private fun albumDetail(): String {
+        val base = if (albumWithoutTracks) ALBUM_WITHOUT_TRACKS else ALBUM_DETAIL
+        val added = createdTrack ?: return base
+        return JsonParser.parseString(base).asJsonObject.apply {
+            getAsJsonArray("tracks").add(JsonParser.parseString(added))
+        }.toString()
+    }
+
+    private fun createTrack(request: Request): String {
+        val sent = Buffer().also { request.body?.writeTo(it) }.readUtf8()
+        sentTrack = sent
+        val created = JsonParser.parseString(sent).asJsonObject.apply { addProperty("id", CREATED_TRACK_ID) }
+        return created.toString().also { createdTrack = it }
+    }
+
     companion object {
         const val CREATED_ALBUM_ID = 102L
+        const val CREATED_TRACK_ID = 502L
 
         private val ALBUMS = """[
           {"id":100,"name":"Buscando América","genre":"Salsa","releaseDate":"1984-08-01",
@@ -123,5 +148,23 @@ class FixtureApiInterceptor : Interceptor {
           "performerPrizes":[]
         }"""
         private val PRIZES = """[{"id":800,"prize":{"id":900,"name":"Grammy Award"}}]"""
+        private val COLLECTORS = """[
+          {"id":100,"name":"Carlos Molina","telephone":"3101234567","email":"carlos@example.com",
+           "favoritePerformers":[{"id":100,"name":"Rubén Blades","birthDate":"1948-07-16"}],
+           "collectorAlbums":[{"id":300}],"comments":[{"id":400,"description":"Gran colección","rating":5}]}
+        ]"""
+        private val COLLECTOR_DETAIL = """{
+          "id":100,"name":"Carlos Molina","telephone":"3101234567","email":"carlos@example.com",
+          "favoritePerformers":[{"id":100,"name":"Rubén Blades","birthDate":"1948-07-16"}],
+          "collectorAlbums":[{"id":300}],"comments":[{"id":400,"description":"Gran colección","rating":5}]
+        }"""
+        private val COLLECTOR_EMPTY = """{
+          "id":100,"name":"Carlos Molina","telephone":"3101234567","email":"carlos@example.com",
+          "favoritePerformers":[],"collectorAlbums":[],"comments":[]
+        }"""
+        private val COLLECTOR_ALBUMS = """[
+          {"id":300,"price":65000,"status":"Active",
+           "album":{"id":100,"name":"Buscando América","genre":"Salsa","releaseDate":"1984-08-01"}}
+        ]"""
     }
 }

@@ -5,6 +5,8 @@ import com.example.vinilosmobile.data.mappers.toEntity
 import com.example.vinilosmobile.data.network.errors.NetworkErrorMapper
 import com.example.vinilosmobile.data.network.models.AlbumDto
 import com.example.vinilosmobile.data.network.models.NewAlbumDto
+import com.example.vinilosmobile.data.network.models.NewTrackDto
+import com.example.vinilosmobile.data.network.models.TrackDto
 import com.example.vinilosmobile.data.network.models.PerformerDto
 import com.example.vinilosmobile.data.network.services.AlbumApiService
 import com.example.vinilosmobile.domain.models.Album
@@ -13,8 +15,10 @@ import com.example.vinilosmobile.domain.models.AlbumCatalog
 import com.example.vinilosmobile.domain.models.DataError
 import com.example.vinilosmobile.domain.models.DataResult
 import com.example.vinilosmobile.domain.models.NewAlbum
+import com.example.vinilosmobile.domain.models.NewTrack
 import com.example.vinilosmobile.domain.models.RequestFailure
 import com.example.vinilosmobile.domain.models.RequestFailureKind
+import com.example.vinilosmobile.domain.repository.AlbumNotFoundException
 import com.google.gson.Gson
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -272,6 +276,35 @@ class AlbumRepositoryImplTest {
         coEvery { dao.firstCatalogPosition() } throws IllegalStateException("disk full")
 
         assertEquals(120L, repository.createAlbum(newAlbum).id)
+    }
+
+    @Test fun addTrackSendsTrimmedFieldsAndMapsCreatedTrack() = runBlocking {
+        coEvery { service.addTrack(100, NewTrackDto("Decisiones", "5:05")) } returns
+            TrackDto(502, "Decisiones", "5:05")
+
+        val created = repository.addTrack(100, NewTrack(" Decisiones ", " 5:05 "))
+
+        assertEquals(502L, created.id)
+        assertEquals("Decisiones", created.name)
+        coVerify(exactly = 1) { service.addTrack(100, NewTrackDto("Decisiones", "5:05")) }
+    }
+
+    @Test fun addTrackDistinguishesMissingAlbumFromServerError() = runBlocking {
+        coEvery { service.addTrack(100, any()) } throws
+            HttpException(Response.error<TrackDto>(404, "{}".toResponseBody()))
+        try {
+            repository.addTrack(100, NewTrack("Decisiones", "5:05"))
+            fail("Se esperaba AlbumNotFoundException")
+        } catch (_: AlbumNotFoundException) { Unit }
+
+        coEvery { service.addTrack(100, any()) } throws
+            HttpException(Response.error<TrackDto>(500, "{}".toResponseBody()))
+        try {
+            repository.addTrack(100, NewTrack("Decisiones", "5:05"))
+            fail("Se esperaba RequestFailure")
+        } catch (failure: RequestFailure) {
+            assertEquals(RequestFailureKind.SERVER, failure.kind)
+        }
     }
 
     private val newAlbum = NewAlbum(

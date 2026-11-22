@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" tests="19" skipped="0" failures="0" errors="0" timestamp="2026-11-22T15:03:54.569Z" hostname="dscombita.local" time="0.729">
+  <properties/>
+  <testcase name="cancelledCollectingCoroutineStopsWithoutEmittingCancelled" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.177"/>
+  <testcase name="networkFailureReturnsRoomCatalogInStoredOrder" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.033"/>
+  <testcase name="cachedCatalogIsEmittedBeforeFreshNetworkData" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.065"/>
+  <testcase name="networkFailureReturnsCachedDetail" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.088"/>
+  <testcase name="remoteCatalogReplacesRoomAndReportsRemoteSource" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.046"/>
+  <testcase name="notFoundDoesNotUseStaleCachedDetail" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.024"/>
+  <testcase name="createAlbumOnEmptyCacheUsesPositionBeforeZero" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.038"/>
+  <testcase name="addTrackDistinguishesMissingAlbumFromServerError" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.061"/>
+  <testcase name="cachedDetailIsEmittedBeforeFreshNetworkDetail" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.014"/>
+  <testcase name="emptyRemoteCatalogReplacesOldRoomRows" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.021"/>
+  <testcase name="notFoundAfterCachedDetailEmitsNotFoundResult" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.012"/>
+  <testcase name="serverErrorWhileCreatingBecomesRequestFailure" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.011"/>
+  <testcase name="independentlyCancelledRequestEmitsCancelled" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.013"/>
+  <testcase name="networkFailureWithoutRoomDataBecomesFriendlyFailureKind" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.01"/>
+  <testcase name="createdAlbumIsSentTrimmedAndCachedFirstInCatalog" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.035"/>
+  <testcase name="remoteDetailUpdatesRoomWithoutAddingItToCatalog" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.019"/>
+  <testcase name="addTrackSendsTrimmedFieldsAndMapsCreatedTrack" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.015"/>
+  <testcase name="cachedCatalogIsAvailableWhileNetworkIsStillPending" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.035"/>
+  <testcase name="cacheErrorDoesNotHideACreatedAlbum" classname="com.example.vinilosmobile.data.repository.AlbumRepositoryImplTest" time="0.01"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

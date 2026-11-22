@@ -1,0 +1,10 @@
+Samsung SM-S948B, Android 17/API 37, 22 de noviembre de 2026.
+APK Debug con BackVynils local (127.0.0.1:3000 mediante adb reverse).
+Comando por corrida: adb shell am force-stop com.example.vinilosmobile;
+adb shell am start -W -n com.example.vinilosmobile/.feature.entry.EntryActivity
+
+Corrida 1: LaunchState COLD; TotalTime 214 ms; WaitTime 215 ms.
+Corrida 2: LaunchState COLD; TotalTime 203 ms; WaitTime 204 ms.
+Corrida 3: LaunchState COLD; TotalTime 222 ms; WaitTime 223 ms.
+Mediana de TotalTime: 214 ms. Mide primera Activity dibujada; no incluye
+tiempo hasta terminar la carga de datos del catálogo.

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/collectorTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/vinilos_space_md"
+        android:layout_marginTop="@dimen/vinilos_space_lg"
+        android:layout_marginEnd="@dimen/vinilos_space_md"
+        android:text="@string/nav_collectors"
+        android:textAppearance="?attr/textAppearanceHeadlineMedium" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/collectorList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/vinilos_space_sm"
+            android:paddingBottom="@dimen/vinilos_space_lg"
+            tools:listitem="@layout/vinilos_item_collector" />
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/collectorLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/collectors_loading" />
+        <com.example.vinilosmobile.coreui.organisms.ContentStateView
+            android:id="@+id/collectorMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="@dimen/vinilos_space_lg"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

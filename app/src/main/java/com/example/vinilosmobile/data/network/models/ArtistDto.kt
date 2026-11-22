@@ -3,6 +3,7 @@ package com.example.vinilosmobile.data.network.models
 data class ArtistDto(
     val id: Long? = null,
     val name: String? = null,
+    val type: String? = null,
     val image: String? = null,
     val description: String? = null,
     val birthDate: String? = null,

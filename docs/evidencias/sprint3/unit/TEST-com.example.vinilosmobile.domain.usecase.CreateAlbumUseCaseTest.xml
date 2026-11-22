@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.vinilosmobile.domain.usecase.CreateAlbumUseCaseTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-22T15:03:55.943Z" hostname="dscombita.local" time="0.128">
+  <properties/>
+  <testcase name="repositoryFailureKeepsItsKind" classname="com.example.vinilosmobile.domain.usecase.CreateAlbumUseCaseTest" time="0.089"/>
+  <testcase name="invalidAlbumNeverReachesTheRepository" classname="com.example.vinilosmobile.domain.usecase.CreateAlbumUseCaseTest" time="0.03"/>
+  <testcase name="validAlbumIsCreated" classname="com.example.vinilosmobile.domain.usecase.CreateAlbumUseCaseTest" time="0.009"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

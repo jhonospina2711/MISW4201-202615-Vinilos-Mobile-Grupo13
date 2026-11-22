@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.vinilosmobile.data.local.AlbumDaoTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-22T15:03:43.510Z" hostname="dscombita.local" time="8.655">
+  <properties/>
+  <testcase name="catalogQueryExcludesDetailOnlyRowsAndKeepsPosition" classname="com.example.vinilosmobile.data.local.AlbumDaoTest" time="7.691"/>
+  <testcase name="upsertUpdatesExistingAlbumByPrimaryKey" classname="com.example.vinilosmobile.data.local.AlbumDaoTest" time="0.108"/>
+  <testcase name="replaceAllClearsStaleAlbumsAndStoresNewCatalog" classname="com.example.vinilosmobile.data.local.AlbumDaoTest" time="0.088"/>
+  <testcase name="firstCatalogPositionIgnoresDetailOnlyRows" classname="com.example.vinilosmobile.data.local.AlbumDaoTest" time="0.154"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

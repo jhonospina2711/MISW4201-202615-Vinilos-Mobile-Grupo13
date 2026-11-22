@@ -8,7 +8,8 @@
     <com.example.vinilosmobile.coreui.molecules.DetailToolbarView
         android:id="@+id/detailToolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
         app:title="@string/artist_detail_title" />
     <FrameLayout
         android:layout_width="match_parent"
@@ -82,7 +83,7 @@
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/nav_albums"
+                            android:text="@string/artist_album_total"
                             android:textAppearance="?attr/textAppearanceLabelSmall"
                             android:textColor="@color/vinilos_on_surface_variant" />
                         <com.google.android.material.textview.MaterialTextView

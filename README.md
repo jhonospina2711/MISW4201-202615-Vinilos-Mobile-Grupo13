@@ -2,9 +2,9 @@
 
 Aplicación móvil Android de **Vinilos**, desarrollada en Kotlin para el proyecto transversal del curso Ingeniería de Software para Aplicaciones Móviles (MISO). Consume la API REST de [BackVynils](https://github.com/TheSoftwareDesignLab/BackVynils).
 
-La aplicación permite consultar el catálogo y detalle de álbumes, así como el listado y detalle de músicos y bandas. La sección de coleccionistas y las acciones de creación se completarán en una iteración posterior.
+La aplicación implementa las ocho historias del MVP: catálogo y detalle de álbumes, listado y detalle de artistas y coleccionistas, creación de álbumes y asociación de tracks. La selección de rol Visitante/Coleccionista controla las acciones de escritura.
 
-> **Estado de la iteración 1:** HU01–HU04 implementadas en un módulo `:app`. Hay navegación inferior con tres Fragments y gesto horizontal, catálogo de álbumes con caché Room, detalles en Activities y filtros de artistas. La sección Coleccionistas es una pantalla inicial. Pasaron 46 pruebas unitarias y las 15 Espresso en API 31 con `Flow<DataResult<T>>`; también hay una ejecución previa aprobada en API 28. Siguen pendientes la validación en API 21 y el backend HTTPS de entrega. Véanse la [arquitectura](docs/ARQUITECTURA_SPRINT1.md) y los [resultados de pruebas](docs/PRUEBAS_SPRINT1.md).
+> **Estado de la rama `feature/sprint-3-final`:** HU01–HU08 implementadas. En Android 13 (API 33) pasaron 80 pruebas JVM y 32 escenarios Espresso; Lint terminó sin errores. La matriz final desde API 21, Accessibility Scanner, exploración y perfilamiento físico están descritos como trabajo de cierre en la [estrategia de pruebas](docs/PRUEBAS_SPRINT3.md). La [arquitectura del MVP](docs/ARQUITECTURA_SPRINT3.md) y la [retrospectiva del Sprint 2](docs/RETROSPECTIVA_SPRINT2.md) están disponibles para revisión del equipo. Esta rama todavía debe integrarse por PR y promoverse a `main` antes de etiquetar el release.
 
 Al abrir por primera vez, la app permite elegir Visitante o Coleccionista y guarda la selección con DataStore. Las siguientes aperturas entran directamente a Inicio. La arquitectura de ese flujo está descrita en [docs/ACCESO.md](docs/ACCESO.md).
 
@@ -51,18 +51,26 @@ No se necesita instalar Gradle ni Kotlin aparte: el proyecto usa el *wrapper* in
 | Compilar el APK Release | `./gradlew :app:assembleRelease` |
 | Compilar e instalar en un dispositivo o emulador conectado | `./gradlew installDebug` |
 | Ejecutar las pruebas unitarias con JUnit y MockK | `./gradlew :app:testDebugUnitTest --no-configuration-cache` |
-| Ejecutar las 15 pruebas Espresso (requiere dispositivo o emulador) | `./gradlew :app:connectedDebugAndroidTest --no-configuration-cache` |
+| Ejecutar las 32 pruebas Espresso (requiere dispositivo o emulador) | `./gradlew :app:connectedDebugAndroidTest --no-configuration-cache` |
+| Analizar con Android Lint | `./gradlew :app:lintDebug --no-configuration-cache` |
 | Comprobar la API Docker de HU01–HU04 | `python3 scripts/smoke_sprint1_api.py` |
 | Limpiar los artefactos de compilación | `./gradlew clean` |
 
 En Windows usa `gradlew.bat` en lugar de `./gradlew`.
 
 El APK de depuración queda en `app/build/outputs/apk/debug/app-debug.apk`.
-El APK Release queda en `app/build/outputs/apk/release/app-release.apk`, con R8 aplicado (2,5 MB frente a 11 MB del Debug). Usa la firma Debug y la URL HTTPS publicada por defecto; el issue [#48](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/48) registra que ese servicio no responde.
+El APK Release queda en `app/build/outputs/apk/release/app-release.apk`, con R8 aplicado y firma de depuración para esta entrega académica. Apunta al backend HTTPS publicado por defecto. La URL se puede configurar con `-PvinilosApiBaseUrl=<url>` al compilar desde el código versionado.
 
 ### APK listo para instalar
 
-El APK de la entrega del Sprint 1 está versionado en el repositorio y no requiere compilar:
+Los APK de entregas anteriores están versionados en el repositorio. El de Sprint 3 se publica tras integrar y etiquetar la versión final en `main`:
+
+| Archivo | Cuándo usarlo |
+|---|---|
+| [`releases/sprint-3/vinilos-sprint3-release.apk`](releases/sprint-3/vinilos-sprint3-release.apk) | Android moderno con el backend HTTPS publicado |
+| [`releases/sprint-3/vinilos-sprint3-debug.apk`](releases/sprint-3/vinilos-sprint3-debug.apk) | Emulador con BackVynils local en el computador |
+
+Los detalles, SHA-256 y límites de compatibilidad están en [`releases/sprint-3/LEEME.md`](releases/sprint-3/LEEME.md).
 
 **Sprint 2** — cinco historias implementadas (HU01 a HU04 y HU07):
 
@@ -159,9 +167,12 @@ docker compose -f docs/backvynils-compose.local.yml up -d --build
 
 # 3. Comprobar que responde
 curl http://localhost:3000/albums
+python3 scripts/smoke_sprint1_api.py
+python3 scripts/smoke_sprint3_api.py
 ```
 
 El paso 3 debe devolver `HTTP 200` con cuatro álbumes de ejemplo. La base se crea y se siembra sola con la migración `DataSetup` del backend.
+Los smoke tests comprueban HU01–HU06 y la lectura de tracks de HU08. Para probar también el POST de HU08 **solo en esta base local de desarrollo**, ejecutar `python3 scripts/smoke_sprint3_api.py --create-track`; deja un track de prueba en el volumen Docker. El [recorrido real en un Samsung Android 17](docs/evidencias/sprint3/api-local-sm-s948b.md) incluye capturas de HU05, HU06 y HU08.
 
 | Acción | Comando |
 |---|---|
@@ -182,7 +193,7 @@ Para usar otra URL, compilar con `-PvinilosApiBaseUrl=<url>`. En un **dispositiv
 
 ### 6.3. Uso de la API en la aplicación
 
-El cliente Retrofit y el permiso `android.permission.INTERNET` ya están configurados. Los Repository y casos de uso exponen `Flow<DataResult<T>>` con estados sellados de carga, éxito, error y cancelación independiente; cada ViewModel recoge sus emisiones y actualiza un `MutableLiveData` privado que la pantalla observa. Para álbumes, el Repository emite primero la copia Room disponible y luego la respuesta nueva de la red. Si falla la red, deja visible la copia guardada; los artistas se consultan por red y **no tienen caché offline en este sprint**. La cancelación del ciclo de vida se propaga sin emitir un estado a una pantalla destruida. La copia Room de un detalle de álbum no incluye tracks, comentarios ni fecha completa. Sin datos guardados se muestra un error traducido al español. Room usa esquema versión 1 y se conserva el mínimo de Android 5.0 (API 21). El diseño completo está en [Arquitectura Sprint 1](docs/ARQUITECTURA_SPRINT1.md), y el estado del despliegue de TSDC y los pasos para Docker local están en [Backend para desarrollo](docs/BACKEND.md).
+El cliente Retrofit y el permiso `android.permission.INTERNET` ya están configurados. Los Repository y casos de uso de lectura exponen `Flow<DataResult<T>>` con estados sellados de carga, éxito, error y cancelación independiente; cada ViewModel recoge sus emisiones y actualiza un `MutableLiveData` privado. Para álbumes, el Repository emite primero la copia Room disponible y luego la respuesta nueva de la red. Si falla la red, deja visible la copia guardada; artistas y coleccionistas se consultan por red y no tienen caché offline. La copia Room de un detalle de álbum no incluye tracks, comentarios ni fecha completa. Sin datos guardados se muestra un error traducido al español. Room usa esquema versión 1 y se conserva el mínimo de Android 5.0 (API 21). El diseño completo está en [Arquitectura Sprint 3](docs/ARQUITECTURA_SPRINT3.md), y el estado del despliegue de TSDC y los pasos para Docker local están en [Backend para desarrollo](docs/BACKEND.md).
 
 ## 7. Flujo de trabajo en Git
 
@@ -193,12 +204,11 @@ El repositorio sigue GitFlow:
 | `main` | Versiones liberadas |
 | `develop` | Integración del trabajo del equipo |
 | `releases` | Preparación de la entrega de cada iteración |
-| `develop` | Integración del trabajo del equipo |
 | `feature/HUxx-descripcion` | Una funcionalidad por historia de usuario |
 
 Cada funcionalidad entra a `develop` por *pull request* aprobado por otro integrante, con **squash and merge**. Las reglas completas están en la wiki: [Flujo de trabajo en Git](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki/9.Flujo-de-trabajo-en-Git).
 
-Para la entrega de la iteración 1, el trabajo se integra por pull requests con squash and merge a `develop`, se promueve a `releases` y de allí a `main`, donde queda etiquetado. La suite Espresso se ejecutó en API 21, API 28 y API 31; el backend publicado sigue sin responder (issue #48).
+Para la entrega final, el trabajo se integra por pull requests con squash and merge a `develop`, se promueve a `releases` y de allí a `main`, donde se etiqueta. La evidencia de pruebas actual de esta rama está en [Pruebas Sprint 3](docs/PRUEBAS_SPRINT3.md); no equivale todavía a un release publicado.
 
 ## 8. Documentación del proyecto
 
@@ -215,6 +225,9 @@ Toda la documentación vive en la wiki del repositorio:
 | Tablero de trabajo | [GitHub Projects](https://github.com/jhonospina2711/projects/1) |
 | Arquitectura Sprint 1 | [Capas, diagramas y decisiones técnicas](docs/ARQUITECTURA_SPRINT1.md) |
 | Pruebas Sprint 1 | [Estrategia, casos y resultados](docs/PRUEBAS_SPRINT1.md) |
+| Arquitectura Sprint 3 | [Capas y diagramas del MVP completo](docs/ARQUITECTURA_SPRINT3.md) |
+| Pruebas Sprint 3 | [Inventario, estrategia y resultados](docs/PRUEBAS_SPRINT3.md) |
+| Retrospectiva Sprint 2 | [Burndown y reflexión sobre estimación](docs/RETROSPECTIVA_SPRINT2.md) |
 
 ## 9. Equipo
 

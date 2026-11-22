@@ -2,9 +2,11 @@ package com.example.vinilosmobile.di
 
 import com.example.vinilosmobile.data.repository.AlbumRepositoryImpl
 import com.example.vinilosmobile.data.repository.ArtistRepositoryImpl
+import com.example.vinilosmobile.data.repository.CollectorRepositoryImpl
 import com.example.vinilosmobile.data.repository.UserRoleRepositoryImpl
 import com.example.vinilosmobile.domain.repository.AlbumRepository
 import com.example.vinilosmobile.domain.repository.ArtistRepository
+import com.example.vinilosmobile.domain.repository.CollectorRepository
 import com.example.vinilosmobile.domain.repository.UserRoleRepository
 import dagger.Binds
 import dagger.Module
@@ -22,6 +24,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindArtistRepository(implementation: ArtistRepositoryImpl): ArtistRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCollectorRepository(implementation: CollectorRepositoryImpl): CollectorRepository
 
     @Binds
     @Singleton
