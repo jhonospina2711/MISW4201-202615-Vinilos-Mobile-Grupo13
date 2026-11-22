@@ -12,8 +12,8 @@ Ambos usan el paquete `com.example.vinilosmobile`, `minSdk 21` y firma de depura
 ## Integridad
 
 ```text
-Release SHA-256  99365e74bcf0c721aeb272df0798c67cbf0705b698062265e436ca8b10e25a50
-Debug SHA-256    a4f9bdd4aea97cb1f9c2cb8054c975b44a161cb3f2043c436973a0e430e07d72
+Release SHA-256  96eb70c198b539eb0c7e9a9fbab1f9d76303c4890d27909365a61a89b732c493
+Debug SHA-256    c56786eb1bc2b6d672575d217c4d1b0794863c131b987ec1f1652927f0376dac
 ```
 
 Comprobar con `shasum -a 256 releases/sprint-3/vinilos-sprint3-release.apk releases/sprint-3/vinilos-sprint3-debug.apk`.
@@ -21,10 +21,10 @@ Comprobar con `shasum -a 256 releases/sprint-3/vinilos-sprint3-release.apk relea
 ## Verificación disponible
 
 - `assembleRelease` y `assembleDebug`: correctos.
-- 80 pruebas JVM y 32 escenarios Espresso: correctos; Espresso se ejecutó en Pixel 6a emulado con Android 13 (API 33). XML en [`docs/evidencias/sprint3/`](../../docs/evidencias/sprint3/).
+- 80 pruebas JVM y 32 escenarios Espresso: correctos; Espresso se ejecutó en API 28, API 33 y en Samsung físico API 37. La regresión tras las correcciones finales de accesibilidad pasó 32/32 en API 28 y API 37. Resultados en [`docs/evidencias/sprint3/`](../../docs/evidencias/sprint3/).
 - Lint Debug: terminó sin errores y con 26 avisos, principalmente versiones de dependencias y recursos no usados. Se guarda el XML para su revisión.
 - El APK Release se instaló y abrió en API 33. `am start -W` informó arranque en frío de **440 ms** para `EntryActivity`; `dumpsys meminfo` informó **33.442 KB de PSS** en esa pantalla. Son mediciones puntuales de emulador, no un perfilamiento de las ocho historias ni de dispositivos físicos.
-- El 21 de noviembre de 2026, la comprobación HTTPS `GET /albums` contra el servicio publicado agotó 20 s sin bytes de respuesta. El APK puede instalarse y abrir, pero la carga de datos reales por esa URL no quedó verificada en esta corrida. Repetir antes del release.
+- El 21 de noviembre de 2026, la comprobación HTTPS `GET /albums` contra el servicio publicado agotó 20 s sin bytes de respuesta. El APK puede instalarse y abrir, pero la carga de datos reales por esa URL no quedó verificada en esta corrida. La app sí se recorrió contra BackVynils local en Samsung con un APK Debug compilado para `127.0.0.1` y `adb reverse`; ese APK de prueba difiere del Debug entregable que usa `10.0.2.2`. Repetir la comprobación publicada antes del release.
 
 ## Instalación
 
