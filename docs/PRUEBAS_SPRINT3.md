@@ -44,7 +44,7 @@ La exploración sistemática recorre cada historia con esta matriz, registrando 
 | Formularios HU07/HU08 | campos vacíos, caracteres largos, espacios, duración `7:21`/`7:99`, doble toque, cancelar, giro | Validación, una sola creación y estado posterior |
 | Tamaño y configuración | API 21+, pantalla pequeña, letra grande, modo oscuro si aplica | Sin texto cortado, controles operables |
 
-Se ejecutó Monkey con 200 eventos, semilla `20261122`, en API 28; no se registraron crash ni ANR, pero Monkey salió de la app hacia el launcher, por lo que esta sesión tiene cobertura limitada. Véanse [bitácora de exploración](EXPLORACION_SPRINT3.md), [log](evidencias/sprint3/monkey-api28-seed20261122.txt) y [captura final](evidencias/sprint3/monkey-api28-final.png). También se registró un recorrido sistemático de HU01–HU08 con API local en el Samsung.
+Se ejecutaron dos sesiones Monkey en API 28 (200 y 300 eventos, semillas registradas); no se registraron crash ni ANR. La primera salió al launcher y la segunda abrió los ajustes rápidos y desconectó la red, por lo que la cobertura es limitada. Véanse la [bitácora de exploración y las evidencias](EXPLORACION_SPRINT3.md). También se registró un recorrido sistemático de HU01–HU08 con API local en el Samsung.
 
 Los defectos reproducibles se registran como issues `bug` con versión/commit, dispositivo/API, pasos, esperado, obtenido y evidencia. Un fix se cierra al repetir el escenario fallido y la regresión.
 
@@ -66,6 +66,6 @@ La app reduce trabajo de la interfaz con Retrofit/Room en dispatcher IO, `Recycl
 | Matriz API 21, intermedio y reciente | API 28, API 33 y API 37 aprobadas; falta API 21 |
 | API local y recorrido físico | HU01–HU08 verificados en Samsung API 37; [bitácora y capturas](evidencias/sprint3/api-local-sm-s948b.md) |
 | Accesibilidad con Accessibility Scanner | [Reporte](ACCESIBILIDAD_SPRINT3.md) y capturas antes/después; quedan estados alternos, fuente ampliada y revisión manual con TalkBack |
-| Exploración sistemática y aleatoria | [Recorrido local y Monkey](EXPLORACION_SPRINT3.md); la sesión aleatoria salió al launcher y requiere mayor cobertura |
+| Exploración sistemática y aleatoria | [Recorrido local y dos sesiones Monkey](EXPLORACION_SPRINT3.md); las sesiones tocaron áreas del sistema y requieren mayor cobertura dentro de la app |
 | Perfilamiento de HU01–HU08 en tres físicos | [PSS puntual por historia](PERFILAMIENTO_SPRINT3.md) en un Samsung; faltan dos físicos y mediciones repetidas de CPU, latencia y frames |
 | Reporte de defectos | [Issue #107](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/107) documenta la lista de tracks recortada; [issue #108](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/108) los hallazgos del Scanner; correcciones y regresión en PR #105 |
