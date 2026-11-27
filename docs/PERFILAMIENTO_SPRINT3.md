@@ -37,6 +37,37 @@ La diferencia entre la hoja abierta y cerrada incluye superficies gráficas y re
 
 Las optimizaciones implementadas y su relación con memoria/ANR se describen en [Sprint 2](DESEMPENO_SPRINT2.md) y la [estrategia de Sprint 3](PRUEBAS_SPRINT3.md). Las solicitudes de red y Room salen del hilo principal mediante los despachadores de E/S; Glide y `RecyclerView` limitan el trabajo de imágenes y filas. El cambio a `NestedScrollView` corrigió la medición de la lista de tracks que crece tras HU08 ([issue #107](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/107)).
 
+## Medición cruzada en dispositivos de Firebase Test Lab (26 de noviembre)
+
+Para cubrir la falta de dispositivos físicos se agregó una prueba instrumentada, `DeviceAuditTest`, que abre las pantallas reales, espera el contenido y registra el consumo de memoria del proceso y los frames dibujados. Se ejecutó con Firebase Test Lab, en el proyecto de GCP que el equipo ya tenía habilitado, sin modificar ninguno de sus recursos existentes: Test Lab creó su propio bucket de resultados.
+
+| Dispositivo | Tipo | API | Resultado |
+|---|---|---|---|
+| Samsung SC-51E (Galaxy S24) | Físico | 36 | Auditoría aprobada; 5 pantallas medidas |
+| Emulador `vinilos21` | Virtual | 21 | Auditoría aprobada; 5 pantallas medidas |
+
+### Memoria y frames medidos
+
+| Pantalla | RSS (KB) en SC-51E físico | Frames / con jank |
+|---|---:|---|
+| HU01 catálogo de álbumes | 238 716 | 4 / 2 |
+| HU03 catálogo de artistas | 242 960 | 26 / 3 |
+| HU05 listado de coleccionistas | 243 120 | 48 / 4 |
+| HU02 detalle de álbum | 237 384 | 53 / 7 |
+| HU08 hoja de agregar track | 239 876 | 61 / 9 |
+
+En el emulador API 21, el mismo recorrido midió entre **121 268 KB y 134 148 KB** de RSS. El pico del proceso en el Galaxy S24 quedó entre **244 908 KB y 246 708 KB**.
+
+### Cómo leer estas cifras, sin inflarlas
+
+- La métrica es **RSS** (`/proc/self/status`), no PSS. No es comparable con la tabla anterior del Samsung SM-S948B, que usa PSS de `dumpsys meminfo`; sí es comparable **entre dispositivos medidos con este mismo método**.
+- La medición se toma **con el arnés de pruebas cargado** (Hilt de test, fixtures y runner), así que es un **límite superior** respecto del consumo de la app sola. Sirve para comparar pantallas y dispositivos, no como cifra de producto.
+- Es **una muestra por pantalla**, no una mediana de tres repeticiones.
+- Los frames son los acumulados de `dumpsys gfxinfo` durante la prueba, no una ventana de desplazamiento controlada.
+- El Infinix SMART 8 (API 33) que se intentó usar falló por **infraestructura de Test Lab**, no por la app; se reintentó en otro modelo.
+
+El detalle por ejecución está en [`evidencias/sprint3/testlab/`](evidencias/sprint3/testlab/).
+
 ## Límite de la entrega medido hasta ahora
 
 El perfilamiento de Sprint 2 incluyó tres equipos físicos de Firebase Test Lab, pero fue sobre el código anterior. En Sprint 3 solo se ha medido el Samsung conectado. Para afirmar desempeño de la versión final en **tres celulares físicos** faltan dos dispositivos o nuevas corridas en Test Lab, más tres repeticiones de cada escenario. También faltan trazas de CPU/red y medición del tiempo hasta contenido para HU01–HU08. No se ha medido una mejora cuantitativa frente al Sprint 2 en el mismo equipo.
