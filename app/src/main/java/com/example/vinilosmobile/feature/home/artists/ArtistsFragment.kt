@@ -36,6 +36,8 @@ class ArtistsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.artistList.layoutManager = LinearLayoutManager(requireContext())
+        // La lista ocupa el espacio del contenedor: su tamaño no depende del contenido.
+        binding.artistList.setHasFixedSize(true)
         binding.artistList.adapter = artistAdapter
         binding.artistFilters.setOnCheckedStateChangeListener { _, checkedIds ->
             when (checkedIds.firstOrNull()) {

@@ -162,6 +162,7 @@
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minHeight="@dimen/vinilos_touch_target"
             android:layout_marginEnd="@dimen/vinilos_space_sm"
             android:text="@string/cancel" />
 
@@ -169,6 +170,7 @@
             android:id="@+id/saveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minHeight="@dimen/vinilos_touch_target"
             android:text="@string/save_album" />
     </LinearLayout>
 </LinearLayout>

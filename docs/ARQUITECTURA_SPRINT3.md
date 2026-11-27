@@ -29,6 +29,7 @@ flowchart TB
     di[di: módulos Hilt]
     feature --> domain
     feature --> ui
+    feature -->|navegación entre pantallas| feature
     ui --> domain
     repos --> contracts
     repos --> mapper
@@ -40,9 +41,15 @@ flowchart TB
     usecases --> validation
     di --> data
     di --> domain
+    usecases -.->|@IoDispatcher| di
+    repos -.->|@IoDispatcher| di
+    network --> mapper
+    ui -->|UiModels| models
 ```
 
 `domain` no importa Android, Retrofit, OkHttp, Room ni las pantallas. Las Activities y Fragments observan `LiveData` del ViewModel y envían eventos. Los ViewModels reciben casos de uso, no servicios HTTP ni DAOs. Los DTO y entidades no llegan a Views. Hilt conecta los contratos con sus implementaciones.
+
+Hay dos excepciones reales que la versión anterior del diagrama no dibujaba y que conviene declarar en lugar de ocultar. Primera: **`domain.usecase` y `data.repository` importan `di.@IoDispatcher`** para inyectar el despachador de E/S; la regla «domain no depende de nada» se cumple para Android, `data` y `feature`, pero no para ese calificador de Hilt. Segunda: **`feature` depende de `feature`** por la navegación —`home` abre los tres detalles y el formulario, `albumdetail` abre la hoja de track, y `collectordetail` abre el detalle de álbum y el de artista—. Ambas aristas están verificadas con los `import` del código y aparecen en el [diagrama de paquetes](diagramas/01-paquetes.puml) y en el [de componentes](diagramas/02-componentes.puml).
 
 ## Componentes e historias
 
@@ -160,6 +167,21 @@ classDiagram
 ```
 
 Los casos de consulta restantes (`GetAlbumsUseCase`, `GetAlbumUseCase`, `GetArtistsUseCase`, `GetArtistUseCase`, `GetUserRoleUseCase` y `SetUserRoleUseCase`) conservan la misma estructura; están descritos en la arquitectura anterior. Los estados `DataResult` representan carga, éxito, error tipado y cancelación. Los `UiState` de cada pantalla son excluyentes y pertenecen a `feature/*/models`.
+
+## Diagramas de paquetes y componentes
+
+Los dos diagramas se regeneraron el 26 de noviembre de 2026 a partir del árbol real de archivos: **136 archivos `.kt`** y **41 subpaquetes** bajo `app/src/main/java/com/example/vinilosmobile/` (42 directorios contando la raíz, con `VinilosApplication`).
+
+| Diagrama | Fuente | Imagen |
+|---|---|---|
+| Paquetes | [`diagramas/01-paquetes.puml`](diagramas/01-paquetes.puml) | [`01-paquetes.svg`](diagramas/01-paquetes.svg) |
+| Componentes | [`diagramas/02-componentes.puml`](diagramas/02-componentes.puml) | [`02-componentes.svg`](diagramas/02-componentes.svg) |
+
+![Diagrama de paquetes del Sprint 3](diagramas/01-paquetes.svg)
+
+![Diagrama de componentes del Sprint 3](diagramas/02-componentes.svg)
+
+Los paquetes que faltaban en la versión anterior y ya están dibujados son `feature.collectordetail`, `feature.collectordetail.models`, `feature.trackcreate`, `feature.trackcreate.models` y `feature.home.collectors.models`. Los componentes de HU05, HU06 y HU08 —`CollectorsFragment`, `CollectorCatalogViewModel`, `CollectorDetailActivity`, `CollectorDetailViewModel`, `AddTrackBottomSheet`, `CreateTrackViewModel`, `CollectorRepository` con su implementación, `CollectorApiService`, `TrackValidator` y el método `addTrack` de `AlbumApiService`— también estaban ausentes y ahora aparecen con sus dependencias.
 
 ## Decisiones de implementación
 

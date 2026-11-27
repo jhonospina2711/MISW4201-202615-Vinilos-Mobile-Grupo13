@@ -54,6 +54,9 @@ class AlbumDetailActivity : AppCompatActivity() {
         binding.commentList.layoutManager = LinearLayoutManager(this)
         binding.commentList.adapter = commentAdapter
         binding.commentList.isNestedScrollingEnabled = false
+        // Tracks y comentarios usan la misma fila (DetailRowAdapter): comparten
+        // el pool de vistas recicladas en lugar de inflar cada fila dos veces.
+        binding.commentList.setRecycledViewPool(binding.trackList.recycledViewPool)
         binding.addTrackFab.setOnClickListener {
             val album = (viewModel.state.value as? AlbumDetailUiState.Content)?.album ?: return@setOnClickListener
             if (supportFragmentManager.findFragmentByTag(AddTrackBottomSheet.TAG) == null) {
