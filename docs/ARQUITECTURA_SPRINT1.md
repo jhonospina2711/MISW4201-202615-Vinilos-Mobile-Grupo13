@@ -26,19 +26,19 @@ Las nueve figuras siguen la notación UML 2 y usan los mismos nombres que el có
 
 ![Diagrama de paquetes](diagramas/01-paquetes.svg)
 
-El diagrama dibuja los 38 nodos de paquete del proyecto: los cuatro contenedores de capa (`coreui`, `domain`, `data`, `feature`) y los 34 paquetes que contienen archivos Kotlin. La regla que gobierna las flechas es de una sola dirección: la presentación conoce al dominio, el dominio no conoce a nadie.
+El diagrama dibuja los **41 subpaquetes** del código final, agrupados en los cuatro contenedores de capa (`coreui`, `domain`, `data`, `feature`). Se regeneró el 26 de noviembre de 2026 contra el árbol real de archivos —136 archivos `.kt`—, porque la versión del Sprint 1 había quedado desactualizada al entrar HU05, HU06 y HU08; el estado final y los paquetes añadidos (`feature.collectordetail`, `feature.trackcreate` y `feature.home.collectors.models`) están en la [arquitectura del Sprint 3](ARQUITECTURA_SPRINT3.md).
 
-- `feature` depende de `domain` y de `coreui`. Nunca importa `data` ni `di`: los ViewModels reciben casos de uso, no repositorios concretos.
-- `data` depende de `domain`. Implementa sus contratos y traduce DTO y entidades a modelos de dominio; no conoce pantallas ni componentes visuales.
+- `feature` depende de `domain`, de `coreui` y de **`feature`**: la navegación hace que `home` abra los tres detalles y el formulario, que `albumdetail` abra la hoja de track y que `collectordetail` abra el detalle de álbum y el de artista. Nunca importa `data` ni `di`.
+- `data` depende de `domain` y de **`di.@IoDispatcher`**. Implementa sus contratos y traduce DTO y entidades a modelos de dominio; no conoce pantallas ni componentes visuales.
 - `coreui` depende de `domain`. Los adapters y las vistas compartidas consumen modelos de dominio y modelos de presentación propios, sin acceder a la red ni a la base de datos.
 - `di` depende de `data` y de `domain`. Es el único lugar donde se nombran las implementaciones concretas.
-- `domain` no depende de Android (`android.*` ni `androidx.*`), ni de `data`, ni de `feature`, ni de `coreui`, ni de `di`.
+- `domain` no depende de Android (`android.*` ni `androidx.*`), ni de `data`, ni de `feature`, ni de `coreui`. **La única excepción es `di.@IoDispatcher`**, que los diez casos de uso inyectan para sacar la validación y el parseo del hilo principal; es un calificador de infraestructura, no una regla de negocio.
 
 | Origen | Puede depender de | No puede depender de |
 |---|---|---|
-| `feature` | `domain`, `coreui` | `data`, `di` |
-| `domain` | Solo Kotlin y `kotlinx.coroutines` | `android`, `androidx`, `data`, `feature`, `coreui`, `di` |
-| `data` | `domain` | `feature`, `coreui`, `di` |
+| `feature` | `domain`, `coreui`, `feature` | `data`, `di` |
+| `domain` | Kotlin, `kotlinx.coroutines` y `di.@IoDispatcher` | `android`, `androidx`, `data`, `feature`, `coreui` |
+| `data` | `domain`, `di.@IoDispatcher` | `feature`, `coreui` |
 | `coreui` | `domain` | `data`, `feature`, `di` |
 | `di` | `data`, `domain` | `feature`, `coreui` |
 
@@ -48,16 +48,18 @@ La regla no es una intención: una búsqueda de imports sobre `app/src/main` no 
 
 ![Diagrama de componentes](diagramas/02-componentes.svg)
 
-El diagrama usa la notación UML de componentes con interfaces provistas y requeridas. Las tres interfaces de repositorio son el contrato entre capas:
+El diagrama usa la notación UML de componentes con interfaces provistas y requeridas. Las cuatro interfaces de repositorio son el contrato entre capas:
 
-- `AlbumRepository` y `ArtistRepository` son requeridas por los casos de uso de dominio y provistas por `AlbumRepositoryImpl` y `ArtistRepositoryImpl`. El caso de uso declara lo que necesita; la implementación decide si la respuesta viene de Retrofit, de Room o de una combinación de ambos.
+- `AlbumRepository`, `ArtistRepository` y `CollectorRepository` son requeridas por los casos de uso de dominio y provistas por `AlbumRepositoryImpl`, `ArtistRepositoryImpl` y `CollectorRepositoryImpl`. El caso de uso declara lo que necesita; la implementación decide si la respuesta viene de Retrofit, de Room o de una combinación de ambos.
 - `UserRoleRepository` sigue el mismo esquema: la requieren `GetUserRoleUseCase` y `SetUserRoleUseCase`, y la provee `UserRoleRepositoryImpl`, que delega en `UserRolePreferencesDataSource` sobre DataStore.
 
-Las interfaces de red son de otra naturaleza: `AlbumApiService` y `ArtistApiService` las provee Retrofit a partir de anotaciones sobre la interfaz, no una clase escrita a mano. `AlbumRepositoryImpl` consume `AlbumApiService`; `ArtistRepositoryImpl` consume `ArtistServiceAdapter`, que a su vez usa `ArtistApiService` para combinar músicos y bandas. Los componentes de infraestructura —Retrofit + OkHttp, Room y DataStore— quedan detrás de esas interfaces y solo los instancia Hilt en `di`, que aparece en la figura con las dependencias `«inject»` y `«provide»`.
+Las interfaces de red son de otra naturaleza: `AlbumApiService`, `ArtistApiService` y `CollectorApiService` las provee Retrofit a partir de anotaciones sobre la interfaz, no una clase escrita a mano. `AlbumRepositoryImpl` consume `AlbumApiService` —incluido el `POST albums/{id}/tracks` de HU08—; `ArtistRepositoryImpl` consume `ArtistServiceAdapter`, que a su vez usa `ArtistApiService` para combinar músicos y bandas; `CollectorRepositoryImpl` coordina `GET /collectors/{id}` y `GET /collectors/{id}/albums`. Los componentes de infraestructura —Retrofit + OkHttp, Room y DataStore— quedan detrás de esas interfaces y solo los instancia Hilt en `di`, que aparece en la figura con las dependencias `«inject»` y `«provide»`.
 
 ### 1.3. Diagramas de clases
 
 Las tres figuras siguientes cubren las clases de cada capa. Se separaron por paquete para que cada una quepa en una lectura y para que el cambio de una capa obligue a regenerar solo su figura.
+
+**Alcance de estas tres figuras.** Los diagramas de clases 03, 04 y 05 documentan el corte del **Sprint 1** (HU01–HU04): el catálogo, el detalle del álbum, el listado y el detalle de artistas. Las clases que entraron con HU05, HU06, HU07 y HU08 —`CollectorDetail`, `CollectorAlbum`, `CollectorRepositoryImpl`, `CollectorApiService`, `CollectorMappers`, `TrackValidator`, `CreateTrackUseCase`, `CollectorDetailViewModel` y `AddTrackBottomSheet`— están en el [diagrama de clases del Sprint 3](ARQUITECTURA_SPRINT3.md#clases-principales), que es el que debe contrastarse con el código final. Los diagramas de **paquetes** y **componentes** sí se regeneraron para el código completo, porque describen la estructura y no el detalle de una iteración.
 
 #### Clases del paquete `domain`
 
