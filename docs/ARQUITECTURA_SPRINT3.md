@@ -194,4 +194,4 @@ Los paquetes que faltaban en la versión anterior y ya están dibujados son `fea
 | Trabajo de red en dispatcher IO | Retrofit, Room y repositorios se ejecutan fuera del hilo de interfaz. Los ViewModels cancelan solicitudes al destruirse. |
 | Componentes compartidos | `ArtistRowAdapter`, `AlbumCardAdapter`, `DetailRowAdapter`, `SectionHeaderView`, `ContentStateView` y `ArtistAvatarView` mantienen el lenguaje visual entre historias. |
 
-La arquitectura debe contrastarse con la versión final integrada en `develop` y `main` antes del release. Los diagramas describen el código de esta rama de funcionalidad.
+Los diagramas describen las ocho historias integradas en `main` para el release de Sprint 3. Sus fuentes editables y versiones SVG y PNG están en `docs/diagramas/`.
