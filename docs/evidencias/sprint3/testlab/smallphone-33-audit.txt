@@ -1,0 +1,16 @@
+Firebase Test Lab — auditoría de dispositivo en SmallPhone.arm (virtual, 4.65 pulgadas, 720p), API 33
+Clase: com.example.vinilosmobile.DeviceAuditTest (2 pruebas, 2 aprobadas)
+
+VINILOS_AUDIT device=Google sdk_gphone64_arm64 api=33
+VINILOS_AUDIT perfil="HU01 catálogo de álbumes" rss_kb=181308 peak_rss_kb=188080 frames_total=6 janky_frames=4
+VINILOS_AUDIT perfil="HU03 catálogo de artistas" rss_kb=180648 peak_rss_kb=188080 frames_total=13 janky_frames=6
+VINILOS_AUDIT perfil="HU05 listado de coleccionistas" rss_kb=181292 peak_rss_kb=188080 frames_total=25 janky_frames=7
+VINILOS_AUDIT perfil="HU02 detalle de álbum" rss_kb=181216 peak_rss_kb=188080 frames_total=30 janky_frames=11
+VINILOS_AUDIT perfil="HU08 hoja de agregar track" rss_kb=184408 peak_rss_kb=191544 frames_total=41 janky_frames=17
+VINILOS_AUDIT pantalla="HU01 catálogo de álbumes" vistas=90 clicables=13
+VINILOS_AUDIT pantalla="HU03 catálogo de artistas (chips)" vistas=89 clicables=12
+VINILOS_AUDIT pantalla="HU05 listado de coleccionistas" vistas=89 clicables=12
+VINILOS_AUDIT pantalla="HU07 formulario de nuevo álbum" vistas=51 clicables=12
+VINILOS_AUDIT pantalla="HU02 detalle de álbum" vistas=52 clicables=2
+VINILOS_AUDIT pantalla="HU08 hoja de agregar track" vistas=29 clicables=5
+VINILOS_AUDIT objetivos_tactiles_menores_48dp=0

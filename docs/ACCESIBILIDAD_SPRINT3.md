@@ -58,7 +58,15 @@ Además de la revisión visual, se agregó una prueba instrumentada, `DeviceAudi
 | HU08 hoja de agregar track | 29 | 5 |
 | **Hallazgos menores a 48 dp** | — | **0** |
 
-La auditoría corrió en el emulador API 21 y en un **Samsung Galaxy S24 (SC-51E) físico con Android 16 / API 36** de Firebase Test Lab, con el mismo resultado: **cero objetivos por debajo del mínimo**.
+La auditoría corrió en tres entornos, con el mismo resultado de **cero objetivos por debajo del mínimo**:
+
+| Entorno | Pantalla | Hallazgos |
+|---|---|---:|
+| Emulador API 21 | 720 × 1280 | 0 |
+| **SmallPhone.arm API 33** (virtual, 4,65 pulgadas) | 720 × 1280 | 0 |
+| **Samsung Galaxy S24 (SC-51E) físico, API 36** | 1080 × 2340 | 0 |
+
+El de 4,65 pulgadas reproduce el escenario de pantalla pequeña que reportó la revisión en un Pixel 4.
 
 La primera pasada encontró un defecto real: en la hoja de agregar track los botones Cancelar y Guardar quedaban en **46 dp** porque el contenido no podía desplazarse y se comprimía al alto disponible. Se envolvió el contenido en un `NestedScrollView`, lo que además hace la hoja usable con fuente ampliada, y la segunda pasada quedó en cero.
 

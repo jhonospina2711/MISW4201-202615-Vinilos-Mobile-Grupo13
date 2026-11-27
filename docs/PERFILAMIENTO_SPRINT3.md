@@ -45,6 +45,7 @@ Para cubrir la falta de dispositivos físicos se agregó una prueba instrumentad
 |---|---|---|---|
 | Samsung SC-51E (Galaxy S24) | Físico | 36 | Auditoría aprobada; 5 pantallas medidas |
 | Emulador `vinilos21` | Virtual | 21 | Auditoría aprobada; 5 pantallas medidas |
+| `SmallPhone.arm` (4,65 pulgadas) | Virtual | 33 | Auditoría aprobada; RSS entre 180 648 y 184 408 KB |
 
 ### Memoria y frames medidos
 
@@ -56,7 +57,7 @@ Para cubrir la falta de dispositivos físicos se agregó una prueba instrumentad
 | HU02 detalle de álbum | 237 384 | 53 / 7 |
 | HU08 hoja de agregar track | 239 876 | 61 / 9 |
 
-En el emulador API 21, el mismo recorrido midió entre **121 268 KB y 134 148 KB** de RSS. El pico del proceso en el Galaxy S24 quedó entre **244 908 KB y 246 708 KB**.
+En el emulador API 21, el mismo recorrido midió entre **121 268 KB y 134 148 KB** de RSS; en el `SmallPhone.arm` de API 33, entre **180 648 KB y 184 408 KB**, con un pico de 191 544 KB. El pico del proceso en el Galaxy S24 quedó entre **244 908 KB y 246 708 KB**.
 
 ### Cómo leer estas cifras, sin inflarlas
 
