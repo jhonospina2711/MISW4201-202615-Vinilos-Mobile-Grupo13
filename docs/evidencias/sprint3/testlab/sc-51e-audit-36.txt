@@ -1,0 +1,17 @@
+Firebase Test Lab — auditoría de dispositivo en Samsung SC-51E (físico, API 36)
+Clase: com.example.vinilosmobile.DeviceAuditTest (2 pruebas, 2 aprobadas)
+Extraído del logcat de la ejecución; se eliminaron líneas duplicadas.
+
+VINILOS_AUDIT device=samsung SC-51E api=36
+VINILOS_AUDIT perfil="HU01 catálogo de álbumes" rss_kb=238716 peak_rss_kb=244908 frames_total=4 janky_frames=2
+VINILOS_AUDIT perfil="HU03 catálogo de artistas" rss_kb=242960 peak_rss_kb=244944 frames_total=26 janky_frames=3
+VINILOS_AUDIT perfil="HU05 listado de coleccionistas" rss_kb=243120 peak_rss_kb=244944 frames_total=48 janky_frames=4
+VINILOS_AUDIT perfil="HU02 detalle de álbum" rss_kb=237384 peak_rss_kb=244944 frames_total=53 janky_frames=7
+VINILOS_AUDIT perfil="HU08 hoja de agregar track" rss_kb=239876 peak_rss_kb=246708 frames_total=61 janky_frames=9
+VINILOS_AUDIT pantalla="HU01 catálogo de álbumes" vistas=91 clicables=13
+VINILOS_AUDIT pantalla="HU03 catálogo de artistas (chips)" vistas=90 clicables=12
+VINILOS_AUDIT pantalla="HU05 listado de coleccionistas" vistas=90 clicables=12
+VINILOS_AUDIT pantalla="HU07 formulario de nuevo álbum" vistas=52 clicables=12
+VINILOS_AUDIT pantalla="HU02 detalle de álbum" vistas=53 clicables=2
+VINILOS_AUDIT pantalla="HU08 hoja de agregar track" vistas=29 clicables=5
+VINILOS_AUDIT objetivos_tactiles_menores_48dp=0

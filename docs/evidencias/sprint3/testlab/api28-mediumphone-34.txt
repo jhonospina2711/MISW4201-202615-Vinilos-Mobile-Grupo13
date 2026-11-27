@@ -1,0 +1,9 @@
+Firebase Test Lab — suite completa en API 28 (MediumPhone.arm, virtual)
+Matriz: MediumPhone.arm-28-es_ES-portrait
+Resultado: 34 pruebas, 0 fallos, 0 errores, 74.11 s
+
+Clases ejecutadas:
+    7  com.example.vinilosmobile.CreateAlbumEspressoTest
+    2  com.example.vinilosmobile.DeviceAuditTest
+   10  com.example.vinilosmobile.FinalSprintEspressoTest
+   15  com.example.vinilosmobile.Sprint1EspressoTest

@@ -14,8 +14,8 @@ Se entregan **dos APK** por una razón concreta: el certificado ECDSA del backen
 ## Integridad
 
 ```text
-Release SHA-256  3ad1a82b9e34c6c6607b7e0e3ff92726175844cca253edc81eac858a7767474c
-Debug SHA-256    e7dba708385d9eaf93b2b0f1724ba9fce79f6a5f7b1bb92a728824455262ca99
+Release SHA-256  4733a73fd8cc28b57385a55f6bac9ccccb1242ea4566ab0e21d884fabecf3150
+Debug SHA-256    2c5f892777a97cce100581193f98962bec7fc339213236b746922351b7df98f2
 ```
 
 Comprobar con `shasum -a 256 releases/sprint-3/vinilos-sprint3-release.apk releases/sprint-3/vinilos-sprint3-debug.apk`.
@@ -25,8 +25,9 @@ Comprobar con `shasum -a 256 releases/sprint-3/vinilos-sprint3-release.apk relea
 - `assembleRelease` y `assembleDebug`: correctos, y `lintDebug` termina con **0 errores y 13 avisos** (recursos sin usar, atributos que solo aplican desde API 23, dependencias con versión más nueva y sugerencias de formato). No hay `NewApi`.
 - **80 de 80** pruebas unitarias JVM aprobadas.
 - **32 de 32** escenarios Espresso en **API 21, 28, 33 y 37**: 128 ejecuciones aprobadas del mismo conjunto. En Android 5.0.2 corrieron los 32 completos.
+- **34 de 34** pruebas en Firebase Test Lab sobre API 28 y API 33 (32 escenarios + 2 auditorías de dispositivo); auditoría aprobada también en un Galaxy S24 físico con API 36.
 - Reconocimiento aleatorio en API 21: 600 eventos acotados al paquete, cinco actividades, **0 crashes y 0 ANR**.
-- Accesibilidad: Accessibility Scanner en cinco pantallas con capturas antes y después; objetivos táctiles corregidos a 48 dp en la semana 8.
+- Accesibilidad: Accessibility Scanner en cinco pantallas; objetivos táctiles corregidos a 48 dp y verificados con una auditoría instrumentada en seis pantallas —**0 elementos por debajo del mínimo**— en emulador API 21 y en Galaxy S24 físico.
 - Perfilamiento: arranque en frío de `EntryActivity` con mediana de **214 ms** y PSS por historia en un Samsung SM-S948B físico. Faltan dos dispositivos.
 
 Los resultados completos están en la wiki, en [Sprint 3](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki/8.Sprint-3), y en [`docs/evidencias/sprint3/`](../../docs/evidencias/sprint3/).
