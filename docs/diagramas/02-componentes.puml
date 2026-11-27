@@ -1,5 +1,5 @@
 @startuml 02-componentes
-title Diagrama de componentes — Vinilos Mobile (Sprint 2)
+title Diagrama de componentes — Vinilos Mobile (Sprint 3)
 skinparam componentStyle uml2
 skinparam shadowing false
 skinparam arrowColor #4A5568
@@ -8,31 +8,40 @@ skinparam defaultFontSize 11
 left to right direction
 
 package "Presentación (feature)" {
-  component "EntryActivity" as entry
-  component "MainActivity" as main
-  component "AlbumCatalogFragment" as fragAlbums
-  component "ArtistsFragment" as fragArtists
-  component "AlbumDetailActivity" as actAlbum
-  component "CreateAlbumActivity" as actCreate
-  component "ArtistDetailActivity" as actArtist
-  component "ViewModels" as vms
+  component "EntryActivity\n/ EntryViewModel" as entry
+  component "MainActivity\n/ HomeViewModel" as main
+  component "AlbumCatalogFragment\n/ AlbumCatalogViewModel" as fragAlbums
+  component "ArtistsFragment\n/ ArtistCatalogViewModel" as fragArtists
+  component "CollectorsFragment\n/ CollectorCatalogViewModel" as fragCollectors
+  component "AlbumDetailActivity\n/ AlbumDetailViewModel" as actAlbum
+  component "ArtistDetailActivity\n/ ArtistDetailViewModel" as actArtist
+  component "CollectorDetailActivity\n/ CollectorDetailViewModel" as actCollector
+  component "CreateAlbumActivity\n/ CreateAlbumViewModel" as actCreate
+  component "AddTrackBottomSheet\n/ CreateTrackViewModel" as sheetTrack
 }
 
 package "Dominio (domain)" {
-  component "Casos de uso" as usecases
-  component "AlbumValidator" as validator
+  component "GetAlbumsUseCase\nGetAlbumUseCase\nGetArtistsUseCase\nGetArtistUseCase\nGetCollectorsUseCase\nGetCollectorUseCase" as ucRead
+  component "CreateAlbumUseCase\nCreateTrackUseCase" as ucWrite
+  component "GetUserRoleUseCase\nSetUserRoleUseCase" as ucRole
+  component "AlbumValidator" as vAlbum
+  component "TrackValidator" as vTrack
   interface "AlbumRepository" as IAlbumRepo
   interface "ArtistRepository" as IArtistRepo
+  interface "CollectorRepository" as ICollectorRepo
   interface "UserRoleRepository" as IUserRoleRepo
 }
 
 package "Datos (data)" {
   component "AlbumRepositoryImpl" as albumRepoImpl
   component "ArtistRepositoryImpl" as artistRepoImpl
+  component "CollectorRepositoryImpl" as collectorRepoImpl
   component "UserRoleRepositoryImpl" as userRoleRepoImpl
   component "ArtistServiceAdapter" as serviceAdapter
-  interface "AlbumApiService" as IAlbumApi
+  interface "AlbumApiService\n(+ addTrack)" as IAlbumApi
   interface "ArtistApiService" as IArtistApi
+  interface "CollectorApiService" as ICollectorApi
+  component "AlbumMappers\nArtistMappers\nCollectorMappers\nTrackMappers" as mappers
   component "AlbumDao" as albumDao
   component "UserRolePreferencesDataSource" as prefs
 }
@@ -46,40 +55,80 @@ package "Infraestructura (di)" {
 
 cloud "BackVynils REST" as backend
 
-entry --> vms
-fragAlbums --> vms
-fragArtists --> vms
-actAlbum --> vms
-actCreate --> vms
+entry --> main : «lleva al inicio»
+main --> fragAlbums
+main --> fragArtists
+main --> fragCollectors
 main --> actCreate : «result»
-actArtist --> vms
+main --> actAlbum
+main --> actArtist
+main --> actCollector
+fragAlbums --> actAlbum : «onAlbumClick»
+fragArtists --> actArtist : «onArtistClick»
+fragCollectors --> actCollector : «onCollectorClick»
+actAlbum --> sheetTrack : «añadir track»
+actCollector --> actAlbum : «abre álbum»
+actCollector --> actArtist : «abre artista»
+actArtist --> actAlbum : «abre álbum»
 
-vms --> usecases
-usecases --> IAlbumRepo
-usecases --> IArtistRepo
-usecases --> IUserRoleRepo
-usecases --> validator
+fragAlbums --> ucRead
+fragArtists --> ucRead
+fragCollectors --> ucRead
+actAlbum --> ucRead
+actArtist --> ucRead
+actCollector --> ucRead
+actCreate --> ucWrite
+sheetTrack --> ucWrite
+main --> ucRole
+
+ucRead --> IAlbumRepo
+ucRead --> IArtistRepo
+ucRead --> ICollectorRepo
+ucWrite --> IAlbumRepo
+ucWrite --> vAlbum
+ucWrite --> vTrack
+ucRole --> IUserRoleRepo
 
 albumRepoImpl ..|> IAlbumRepo
 artistRepoImpl ..|> IArtistRepo
+collectorRepoImpl ..|> ICollectorRepo
 userRoleRepoImpl ..|> IUserRoleRepo
 
 albumRepoImpl --> IAlbumApi
+albumRepoImpl --> mappers
 artistRepoImpl --> serviceAdapter
+artistRepoImpl --> mappers
+collectorRepoImpl --> ICollectorApi
+collectorRepoImpl --> mappers
 serviceAdapter --> IArtistApi
+serviceAdapter --> mappers
+mappers --> IAlbumApi
 albumRepoImpl --> albumDao
 userRoleRepoImpl --> prefs
 
 IAlbumApi --> http
 IArtistApi --> http
+ICollectorApi --> http
 albumDao --> room
 prefs --> dataStore
 http --> backend
 
 hilt ..> albumRepoImpl : «inject»
 hilt ..> artistRepoImpl : «inject»
+hilt ..> collectorRepoImpl : «inject»
 hilt ..> userRoleRepoImpl : «inject»
 hilt ..> http : «provide»
 hilt ..> room : «provide»
+
+note bottom of ucWrite
+  HU07: CreateAlbumUseCase → POST /albums
+  HU08: CreateTrackUseCase → POST /albums/{id}/tracks
+end note
+
+note bottom of actCollector
+  HU05: catálogo de coleccionistas
+  HU06: detalle de coleccionista
+  (álbumes favoritos e histórico)
+end note
 
 @enduml

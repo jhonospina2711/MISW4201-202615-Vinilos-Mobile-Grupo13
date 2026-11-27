@@ -1,0 +1,31 @@
+Lint del Sprint 3 — corrida final (después de las micro-optimizaciones)
+Comando: ./gradlew :app:lintDebug
+
+Total: 13 avisos, 0 errores
+
+UnusedAttribute    app/src/debug/AndroidManifest.xml:3
+   Attribute usesCleartextTraffic is only used in API level 23 and higher (current min is 21)
+UnusedAttribute    app/src/main/res/layout/vinilos_item_album.xml:10
+   Attribute android:foreground has no effect on API levels lower than 23 (current min is 21)
+UnusedAttribute    app/src/main/res/layout/vinilos_item_artist.xml:9
+   Attribute android:foreground has no effect on API levels lower than 23 (current min is 21)
+GradleDependency   gradle/libs.versions.toml:3
+   A newer version of androidx.core:core-ktx than 1.10.1 is available: 1.13.1
+GradleDependency   gradle/libs.versions.toml:7
+   A newer version of androidx.appcompat:appcompat than 1.6.1 is available: 1.7.0
+GradleDependency   gradle/libs.versions.toml:9
+   A newer version of androidx.activity:activity-ktx than 1.8.0 is available: 1.8.1
+PluralsCandidate   app/src/main/res/values/strings.xml:12
+   Formatting %d followed by words ("álbumes"): This should probably be a plural rather than a string
+UnusedResources    app/src/main/res/values/colors.xml:3
+   The resource R.color.black appears to be unused
+UnusedResources    app/src/main/res/values/colors.xml:4
+   The resource R.color.white appears to be unused
+UnusedResources    app/src/main/res/drawable/ic_launcher_background.xml:2
+   The resource R.drawable.ic_launcher_background appears to be unused
+UnusedResources    app/src/main/res/drawable/ic_launcher_foreground.xml:1
+   The resource R.drawable.ic_launcher_foreground appears to be unused
+SetTextI18n        app/src/main/java/com/example/vinilosmobile/feature/artistdetail/ArtistDetailActivity.kt:104
+   Number formatting does not take into account locale settings. Consider using String.format instead.
+SetTextI18n        app/src/main/java/com/example/vinilosmobile/coreui/molecules/SectionHeaderView.kt:29
+   Number formatting does not take into account locale settings. Consider using String.format instead.

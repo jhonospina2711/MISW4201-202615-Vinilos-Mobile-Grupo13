@@ -6,4 +6,7 @@
     <dimen name="vinilos_space_lg">24dp</dimen>
     <dimen name="vinilos_radius_card">12dp</dimen>
     <dimen name="vinilos_option_stroke">1dp</dimen>
+    <!-- Mínimo de Material y WCAG 2.5.5 para objetivos táctiles. -->
+    <dimen name="vinilos_touch_target">48dp</dimen>
+    <dimen name="vinilos_chip_min_height">48dp</dimen>
 </resources>

@@ -40,12 +40,18 @@ class AlbumValidator @Inject constructor() {
 
     private fun isDate(value: String): Boolean {
         if (!ISO_DATE.matches(value)) return false
-        val format = SimpleDateFormat("yyyy-MM-dd", Locale.US).apply { isLenient = false }
+        val format = ISO_DATE_FORMAT.get()
         val position = ParsePosition(0)
         return format.parse(value, position) != null && position.index == value.length
     }
 
     private companion object {
         val ISO_DATE = Regex("""\d{4}-\d{2}-\d{2}""")
+
+        /** Se reutiliza por hilo: la validación corre en el despachador de E/S. */
+        val ISO_DATE_FORMAT: ThreadLocal<SimpleDateFormat> = object : ThreadLocal<SimpleDateFormat>() {
+            override fun initialValue(): SimpleDateFormat =
+                SimpleDateFormat("yyyy-MM-dd", Locale.US).apply { isLenient = false }
+        }
     }
 }

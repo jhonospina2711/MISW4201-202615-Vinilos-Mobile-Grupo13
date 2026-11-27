@@ -1,0 +1,10 @@
+Banco de micro-optimizaciones de formato (JVM, OpenJDK del equipo de desarrollo)
+2.000 iteraciones de calentamiento + 10.000 medidas por operación
+
+== NumberFormat (precio por álbum, HU06) ==
+crear por llamada                                  21,0 ms total     2,10 us/op  (sink 140000)
+reutilizar                                          1,5 ms total     0,15 us/op  (sink 140000)
+
+== SimpleDateFormat (fecha por fila, HU02/HU04/HU06) ==
+crear 2 por llamada + parse + format               49,5 ms total     4,95 us/op  (sink 190000)
+reutilizar 2 formateadores                          8,2 ms total     0,82 us/op  (sink 190000)

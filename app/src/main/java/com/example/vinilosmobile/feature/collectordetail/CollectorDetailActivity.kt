@@ -38,6 +38,13 @@ class CollectorDetailActivity : AppCompatActivity() {
     private val favoritesAdapter = ArtistRowAdapter { key -> startActivity(ArtistDetailActivity.intent(this, key)) }
     private val albumsAdapter = AlbumCardAdapter { id -> startActivity(AlbumDetailActivity.intent(this, id)) }
     private val commentsAdapter = DetailRowAdapter()
+    /**
+     * Un solo formateador para toda la pantalla. Antes se creaba uno por cada
+     * álbum de la colección; `NumberFormat.getCurrencyInstance` es una de las
+     * fábricas más costosas de `java.text` y se llamaba en cada elemento.
+     */
+    private val currencyFormat: NumberFormat =
+        NumberFormat.getCurrencyInstance(Locale.forLanguageTag("es-CO"))
     private val collectorId: Long by lazy { intent.getLongExtra(EXTRA_COLLECTOR_ID, -1L) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -125,7 +132,7 @@ class CollectorDetailActivity : AppCompatActivity() {
     }
 
     private fun toAlbumCard(item: CollectorAlbum): AlbumCardUiModel {
-        val price = item.price?.let { NumberFormat.getCurrencyInstance(Locale.forLanguageTag("es-CO")).format(it) }
+        val price = item.price?.let { currencyFormat.format(it) }
             ?: getString(R.string.not_available)
         val status = when (item.status) {
             "Active" -> getString(R.string.collector_album_active)

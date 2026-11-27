@@ -31,6 +31,7 @@
             style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:chipMinHeight="@dimen/vinilos_chip_min_height"
             android:checked="true"
             android:text="@string/artist_filter_all" />
         <com.google.android.material.chip.Chip
@@ -38,12 +39,14 @@
             style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:chipMinHeight="@dimen/vinilos_chip_min_height"
             android:text="@string/artist_filter_musicians" />
         <com.google.android.material.chip.Chip
             android:id="@+id/filterBands"
             style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:chipMinHeight="@dimen/vinilos_chip_min_height"
             android:text="@string/artist_filter_bands" />
     </com.google.android.material.chip.ChipGroup>
 

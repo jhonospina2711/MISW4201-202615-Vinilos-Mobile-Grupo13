@@ -37,6 +37,8 @@ class CollectorsFragment : Fragment() {
         ViewCompat.setAccessibilityHeading(binding.collectorTitle, true)
         binding.collectorTitle.contentDescription = getString(R.string.collectors_catalog_accessibility_title)
         binding.collectorList.layoutManager = LinearLayoutManager(requireContext())
+        // La lista ocupa el espacio del contenedor: su tamaño no depende del contenido.
+        binding.collectorList.setHasFixedSize(true)
         binding.collectorList.adapter = collectorAdapter
         viewModel.state.observe(viewLifecycleOwner, ::render)
     }

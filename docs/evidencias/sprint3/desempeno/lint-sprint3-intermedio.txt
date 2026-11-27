@@ -1,0 +1,28 @@
+Lint del Sprint 3 — corrida intermedia (micro-optimizaciones aplicadas, primer intento)
+Comando: ./gradlew :app:lintDebug
+Fecha: 26 de noviembre de 2026
+
+Total: 15 avisos, 0 errores
+
+Resumen por regla:
+   4 UnusedResources
+   3 UnusedAttribute
+   3 GradleDependency
+   2 NewApi          <-- nuevos, introducidos por el cambio
+   2 SetTextI18n
+   1 PluralsCandidate
+
+Hallazgos nuevos:
+
+NewApi   app/src/main/java/com/example/vinilosmobile/domain/validation/AlbumValidator.kt:52
+   Call requires API level 26 (current min is 21): java.lang.ThreadLocal#withInitial
+NewApi   app/src/main/java/com/example/vinilosmobile/feature/shared/DateTextFormatter.kt:65
+   Call requires API level 26 (current min is 21): java.lang.ThreadLocal#withInitial
+
+Causa: la primera versión del caché de formateadores usó ThreadLocal.withInitial,
+que existe desde API 26. En Android 5.0 (API 21) habría lanzado
+NoSuchMethodError al formatear la primera fecha.
+
+Corrección: se reemplazó por una subclase anónima de ThreadLocal que sobrescribe
+initialValue(), disponible desde API 1. La corrida final vuelve a 13 avisos,
+sin NewApi. Ver lint-sprint3-despues.txt.

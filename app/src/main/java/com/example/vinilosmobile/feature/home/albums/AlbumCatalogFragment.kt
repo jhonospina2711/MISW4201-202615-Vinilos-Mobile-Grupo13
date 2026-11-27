@@ -33,6 +33,8 @@ class AlbumCatalogFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.albumGrid.layoutManager = GridLayoutManager(requireContext(), 2)
+        // La cuadrícula ocupa el espacio del contenedor: su tamaño no depende del contenido.
+        binding.albumGrid.setHasFixedSize(true)
         binding.albumGrid.adapter = albumAdapter
         binding.cachedRetry.setOnClickListener { viewModel.reload() }
         viewModel.state.observe(viewLifecycleOwner, ::render)

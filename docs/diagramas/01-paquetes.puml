@@ -1,5 +1,5 @@
 @startuml 01-paquetes
-title Diagrama de paquetes — Vinilos Mobile (Sprint 2)
+title Diagrama de paquetes — Vinilos Mobile (Sprint 3)
 skinparam packageStyle rectangle
 skinparam shadowing false
 skinparam arrowColor #4A5568
@@ -52,7 +52,9 @@ package "com.example.vinilosmobile" as root {
       package "home.artists" as feature_home_artists {
         package "artists.models" as feature_home_artists_models
       }
-      package "home.collectors" as feature_home_collectors
+      package "home.collectors" as feature_home_collectors {
+        package "collectors.models" as feature_home_collectors_models
+      }
       package "home.navigation" as feature_home_navigation
     }
     package "albumcreate" as feature_albumcreate {
@@ -64,6 +66,12 @@ package "com.example.vinilosmobile" as root {
     package "artistdetail" as feature_artistdetail {
       package "artistdetail.models" as feature_artistdetail_models
     }
+    package "collectordetail" as feature_collectordetail {
+      package "collectordetail.models" as feature_collectordetail_models
+    }
+    package "trackcreate" as feature_trackcreate {
+      package "trackcreate.models" as feature_trackcreate_models
+    }
     package "shared" as feature_shared
   }
 
@@ -71,21 +79,42 @@ package "com.example.vinilosmobile" as root {
 
 feature ..> domain : «use»
 feature ..> coreui : «use»
+feature ..> feature : «navega»
 data ..> domain : «use»
+data ..> di : «@IoDispatcher»
 coreui ..> domain : «use»
-di ..> data : «use»
-di ..> domain : «use»
+coreui_molecules ..> coreui_models
+data_network ..> data_mappers
+di ..> data : «provide»
+di ..> domain : «provide»
 
 note right of domain
   **domain** no depende de Android,
   ni de data, ni de feature.
+  Única excepción declarada:
+  **domain.usecase → di.@IoDispatcher**
+  (los 10 casos de uso inyectan
+  el dispatcher; no es una regla
+  de negocio).
   Verificado: 0 imports de
   android/androidx y de data/feature.
 end note
 
 note left of data
-  **104 archivos .kt** en app/src/main
-  y **37 paquetes** en total.
+  **136 archivos .kt** en app/src/main
+  y **41 subpaquetes** (42 directorios
+  con código, contando la raíz).
+  Actualizado en el Sprint 3.
+end note
+
+note bottom of feature
+  Aristas internas reales:
+  home → albumdetail, artistdetail,
+  collectordetail, albumcreate, entry;
+  albumdetail → trackcreate;
+  collectordetail → albumdetail, artistdetail;
+  artistdetail → albumdetail;
+  todo feature → feature.shared.
 end note
 
 @enduml
