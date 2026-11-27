@@ -1,0 +1,13 @@
+Comprobación de la API HTTPS pública — 26 de noviembre de 2026 (hora Colombia)
+
+URL: https://backvynils-q6yc.onrender.com/albums
+Método: GET
+Comando: curl -sS -o /private/tmp/vinilos-api-check.txt -w '%{http_code} %{time_total} %{size_download}\n' --max-time 25 https://backvynils-q6yc.onrender.com/albums
+
+Salida:
+curl: (28) Operation timed out after 25003 milliseconds with 0 bytes received
+000 25.003658 0
+
+Código de salida de curl: 28. HTTP 000 significa que no se recibió una respuesta
+HTTP; no es una respuesta del servidor con código 000. La prueba se hizo desde
+un solo entorno y no determina la disponibilidad desde otras redes.

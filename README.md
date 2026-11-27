@@ -4,7 +4,7 @@ Aplicación móvil Android de **Vinilos**, desarrollada en Kotlin para el proyec
 
 La aplicación implementa las ocho historias del MVP: catálogo y detalle de álbumes, listado y detalle de artistas y coleccionistas, creación de álbumes y asociación de tracks. La selección de rol Visitante/Coleccionista controla las acciones de escritura.
 
-> **Estado de Sprint 3:** HU01–HU08 están integradas en `develop` mediante [PR #105](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/pull/105). Pasaron 80 pruebas JVM y 32 escenarios Espresso en API 28, 33 y 37; Lint terminó sin errores. Hay [reporte de Accessibility Scanner](docs/ACCESIBILIDAD_SPRINT3.md), [exploración](docs/EXPLORACION_SPRINT3.md) y [perfilamiento físico](docs/PERFILAMIENTO_SPRINT3.md). Faltan la comprobación en API 21, revisión manual con TalkBack y más dispositivos físicos, además de promover a `main` y etiquetar el release.
+> **Estado de Sprint 3:** HU01–HU08 están integradas en `main` y el [release `v3.0.0-sprint3-entrega`](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/releases/tag/v3.0.0-sprint3-entrega) está publicado con dos APK. Hay 80 pruebas JVM y 32 escenarios Espresso aprobados en API 21, 28, 33 y 37; la auditoría instrumentada de objetivos táctiles también pasó en un teléfono físico y dos emuladores. Lint terminó sin errores. La [wiki del Sprint 3](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki/8.Sprint-3) reúne estrategia, exploración, accesibilidad y perfilamiento. El recorrido con TalkBack y un tercer teléfono físico siguen sin evidencia. La URL HTTPS predeterminada del APK Release no respondió en la [comprobación documentada](docs/BACKEND.md); el recorrido con datos reales se hizo contra BackVynils local.
 
 Al abrir por primera vez, la app permite elegir Visitante o Coleccionista y guarda la selección con DataStore. Las siguientes aperturas entran directamente a Inicio. La arquitectura de ese flujo está descrita en [docs/ACCESO.md](docs/ACCESO.md).
 
@@ -64,7 +64,7 @@ El APK Release queda en `app/build/outputs/apk/release/app-release.apk`, con R8 
 
 ### APK listo para instalar
 
-Los APK candidatos del Sprint 3 están versionados en el repositorio. Se consideran release solo cuando el código correspondiente quede en `main` y tenga el tag de la entrega:
+Los APK del Sprint 3 están versionados en el repositorio y adjuntos al [release publicado](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/releases/tag/v3.0.0-sprint3-entrega). El tag de entrega apunta a `main`:
 
 | Archivo | Cuándo usarlo |
 |---|---|
@@ -209,7 +209,7 @@ El repositorio sigue GitFlow:
 
 Cada funcionalidad entra a `develop` por *pull request* aprobado por otro integrante, con **squash and merge**. Las reglas completas están en la wiki: [Flujo de trabajo en Git](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki/9.Flujo-de-trabajo-en-Git).
 
-Para la entrega final, el trabajo se integra por pull requests con squash and merge a `develop`, se promueve a `releases` y de allí a `main`, donde se etiqueta. La evidencia de pruebas actual de esta rama está en [Pruebas Sprint 3](docs/PRUEBAS_SPRINT3.md); no equivale todavía a un release publicado.
+La versión `v3.0.0-sprint3-entrega` está publicada sobre `main`; las evidencias de la iteración están en [Pruebas Sprint 3](docs/PRUEBAS_SPRINT3.md) y en la [wiki](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/wiki/8.Sprint-3). Si se modifica código después del tag, el equipo vuelve a verificar el APK y actualiza la versión entregada.
 
 ## 8. Documentación del proyecto
 

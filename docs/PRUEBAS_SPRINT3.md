@@ -62,10 +62,10 @@ La app reduce trabajo de la interfaz con Retrofit/Room en dispatcher IO, `Recycl
 
 | Producto | Estado actual |
 |---|---|
-| Unitarias, integración y Espresso con fixtures | 80/80 JVM; 32/32 Espresso en API 28, API 33 y API 37, resultados guardados. Repetir Espresso tras cualquier cambio funcional posterior. |
+| Unitarias, integración y Espresso con fixtures | 80/80 JVM; 32/32 Espresso en API 21, 28, 33 y 37, resultados guardados. Repetir Espresso tras cualquier cambio funcional posterior. |
 | Matriz API 21, intermedio y reciente | API 21, API 28, API 33 y API 37 aprobadas |
 | API local y recorrido físico | HU01–HU08 verificados en Samsung API 37; [bitácora y capturas](evidencias/sprint3/api-local-sm-s948b.md) |
 | Accesibilidad con Accessibility Scanner | [Reporte](ACCESIBILIDAD_SPRINT3.md) y capturas antes/después; quedan estados alternos, fuente ampliada y revisión manual con TalkBack |
-| Exploración sistemática y aleatoria | [Recorrido local y dos sesiones Monkey](EXPLORACION_SPRINT3.md); las sesiones tocaron áreas del sistema y requieren mayor cobertura dentro de la app |
-| Perfilamiento de HU01–HU08 en tres físicos | [PSS puntual por historia](PERFILAMIENTO_SPRINT3.md) en un Samsung; faltan dos físicos y mediciones repetidas de CPU, latencia y frames |
-| Reporte de defectos | [Issue #107](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/107) documenta la lista de tracks recortada; [issue #108](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/108) los hallazgos del Scanner; correcciones y regresión en PR #105 |
+| Exploración sistemática y aleatoria | [Recorrido local y tres sesiones Monkey](EXPLORACION_SPRINT3.md); la tercera se limitó al paquete y llegó a cinco actividades, sin cubrir aleatoriamente todas las historias |
+| Perfilamiento de HU01–HU08 en tres físicos | [PSS puntual por historia](PERFILAMIENTO_SPRINT3.md) en un Samsung y [RSS/frames de cinco pantallas](evidencias/sprint3/testlab/README.md) en un segundo físico; falta un tercero, además de mediciones repetidas de CPU y latencia |
+| Reporte de defectos | [#107](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/107) y [#108](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/108) documentan correcciones y regresión; siguen abiertos para verificar su cierre. [#111](https://github.com/jhonospina2711/MISW4201-202615-Vinilos-Mobile-Grupo13/issues/111) registra una superposición al 200 % de fuente y permanece abierto. |
