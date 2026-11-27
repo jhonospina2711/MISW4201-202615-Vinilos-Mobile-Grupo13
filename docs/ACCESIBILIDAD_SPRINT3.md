@@ -27,11 +27,29 @@ El formulario HU07 tiene [captura inicial](evidencias/sprint3/accessibility-scan
 
 La grabación de Artistas produjo un aviso en el listado y dos en el detalle: [lista inicial](evidencias/sprint3/accessibility-scanner-artists-list-sm-s948b.png) y [detalle de los hallazgos](evidencias/sprint3/accessibility-scanner-artists-findings-sm-s948b.png). Las segundas instantáneas del [listado](evidencias/sprint3/accessibility-scanner-artists-list-after-sm-s948b.png) y [detalle](evidencias/sprint3/accessibility-scanner-artist-detail-after-sm-s948b.png) muestran cero sugerencias.
 
+## Objetivos táctiles en pantalla pequeña (corregido el 26 de noviembre)
+
+La revisión en un **Pixel 4** con el Scanner señaló que los elementos eran pequeños. La causa no estaba en el `padding` de los layouts: estaba en la altura por defecto de los componentes de Material. Los `Chip` de filtro medían **32 dp** y los `MaterialButton` de texto, **40 dp**.
+
+Se añadió una dimensión compartida, `vinilos_touch_target` (**48 dp**), y se aplicó así:
+
+| Elemento | Archivo | Antes | Después |
+|---|---|---:|---:|
+| Chips Todos / Músicos / Bandas | `fragment_artist_catalog.xml` | 32 dp | **48 dp** (`app:chipMinHeight`) |
+| Reintento de caché | `fragment_album_catalog.xml` | 40 dp | **48 dp** |
+| Acción de estado vacío y error | `vinilos_view_content_state.xml` | 40 dp | **48 dp** |
+| Cancelar / Guardar de nuevo álbum | `activity_create_album.xml` | 40 dp | **48 dp** |
+| Cancelar / Guardar de agregar track | `vinilos_sheet_add_track.xml` | 40 dp | **48 dp** |
+| Ítem de la grilla de álbumes | `vinilos_item_album.xml` | altura por ancho de columna | **48 dp** explícitos |
+
+Los ítems de lista ya cumplían: artistas **72 dp** y coleccionistas **80 dp**; la tarjeta de álbum mide el alto de su columna (≈177 dp en Pixel 4). Los chevrones de 24 dp no son clicables porque el toque está en la raíz de la fila, y los chips de género, sello y tipo de artista son decorativos (`clickable="false"`). El botón de cambio de rol mide 48 × 48 dp aunque su icono sea de 24 dp.
+
 ## Pendiente de revisión manual
 
 - Ejecutar Scanner sobre estados vacío/error y letra ampliada.
+- Repetir el Scanner en el Pixel 4 después del ajuste a 48 dp y guardar la captura de la segunda pasada.
 - Recorrer con TalkBack el orden de foco, las etiquetas de botones, los errores de formularios, la navegación de regreso y el foco tras cerrar la hoja de track.
-- Probar ampliación de fuente al 200 % y objetivos táctiles en una pantalla pequeña.
+- Probar ampliación de fuente al 200 %.
 - Obtener retroalimentación de usuarios reales sobre lectura y manejo.
 
 Estas tareas quedan separadas de la prueba automática para no presentar la ausencia de sugerencias de Scanner como garantía de accesibilidad completa.
